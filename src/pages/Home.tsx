@@ -2,7 +2,7 @@
         <aside className="w-full md:w-56 shrink-0 order-1 md:order-2">
           
           {/* FOLLOW US ON */}
-          <div className="mb-10 px-2">
+          <div className="mb-10 px-2 text-left">
             <h3 className="text-[10px] font-black uppercase text-gray-400 mb-4 tracking-[0.15em] border-b border-gray-100 pb-1">
               Follow Us On
             </h3>
@@ -19,7 +19,7 @@
           </div>
 
           {/* TEMPLATE CATEGORIES (MANUS STYLE) */}
-          <div className="border border-gray-100 rounded-sm p-4 bg-[#FCFDFD]">
+          <div className="border border-gray-100 rounded-sm p-4 bg-[#FCFDFD] text-left">
             <h3 className="text-[10px] font-black uppercase text-gray-400 mb-4 tracking-[0.15em] border-b border-gray-100 pb-1">
               Template Categories
             </h3>
