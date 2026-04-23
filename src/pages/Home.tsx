@@ -1,180 +1,151 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 
-const API = "";
-const GREEN = "#2D5A27";
-
-interface Category { id: string; name: string; slug: string; image_url?: string; }
-interface Template { id: string; title: string; slug: string; category_id: string | null; description: string; thumbnail_url: string; download_url: string; }
+const GREEN_DARK = "#2D5A27";
 
 export default function Home() {
-  const navigate = useNavigate();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [activeCat, setActiveCat] = useState<string | null>(null);
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    const load = async () => {
+    const fetchData = async () => {
       setLoading(true);
-      const [cats, tpls] = await Promise.all([
-        fetch(`${API}/api/categories`).then(r => r.json()),
-        fetch(`${API}/api/templates`).then(r => r.json()),
-      ]);
-      setCategories(Array.isArray(cats) ? cats : []);
-      setTemplates(Array.isArray(tpls) ? tpls : []);
+      const { data: tpls } = await supabase.from("templates").select("*").order("created_at", { ascending: false });
+      const { data: cats } = await supabase.from("categories").select("*").order("name");
+      setTemplates(tpls || []);
+      setCategories(cats || []);
       setLoading(false);
     };
-    load();
+    fetchData();
   }, []);
 
-  const catName = (id: string | null) =>
-    categories.find(c => c.id === id)?.name ?? "Uncategorized";
-
-  const filtered = activeCat
-    ? templates.filter(t => t.category_id === activeCat)
-    : templates;
+  const filteredTemplates = templates.filter(t => {
+    const matchesCategory = selectedCategory ? t.category_id === selectedCategory : true;
+    const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
-    <div className="flex min-h-[calc(100vh-56px)] bg-gray-50">
-      {/* Sidebar */}
-      <aside className="w-56 shrink-0 bg-white border-r border-gray-200 flex flex-col">
-        <div style={{ backgroundColor: GREEN }} className="px-5 py-4">
-          <p className="text-white font-bold text-sm uppercase tracking-wide">Categories</p>
-        </div>
-        <nav className="flex flex-col py-2 overflow-y-auto flex-1">
-          <button
-            onClick={() => setActiveCat(null)}
-            className={"text-left px-5 py-2.5 text-sm font-medium border-l-4 transition-colors " + (
-              activeCat === null
-                ? "bg-green-50 border-green-700 text-green-800"
-                : "border-transparent text-gray-600 hover:bg-gray-50"
-            )}
-          >
-            All Templates
-          </button>
-          {categories.map(c => (
-            <button
-              key={c.id}
-              onClick={() => setActiveCat(c.id)}
-              className={"text-left px-5 py-2.5 text-sm font-medium border-l-4 transition-colors flex items-center gap-2.5 " + (
-                activeCat === c.id
-                  ? "bg-green-50 border-green-700 text-green-800"
-                  : "border-transparent text-gray-600 hover:bg-gray-50"
-              )}
-            >
-              {c.image_url && (
-                <span className="shrink-0 w-6 h-6 aspect-square overflow-hidden rounded">
-                  <img src={c.image_url} alt="" loading="lazy"
-                    className="w-full h-full object-cover"
-                    onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+    <div className="min-h-screen bg-[#F8F9FA] font-sans text-gray-900">
+      
+      {/* HEADER SECTION */}
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div className="max-w-[1400px] mx-auto px-6 h-24 flex items-center justify-between">
+          
+          {/* Logo & Search Block */}
+          <div className="flex items-center gap-12 flex-1">
+            <Link to="/" className="flex items-center gap-3 shrink-0">
+              <div className="w-11 h-11 flex items-center justify-center rounded-xl shadow-lg" style={{ backgroundColor: GREEN_DARK }}>
+                <span className="text-white font-black text-lg tracking-tighter">TS</span>
+              </div>
+              <div className="flex flex-col leading-none">
+                <span className="text-xl font-black tracking-tighter uppercase" style={{ color: GREEN_DARK }}>
+                  Tracky<span className="text-gray-900">Sheets</span>
                 </span>
-              )}
-              {c.name}
+                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">Smart Templates</span>
+              </div>
+            </Link>
+
+            {/* Client Search Bar */}
+            <div className="max-w-md w-full relative hidden lg:block">
+              <input 
+                type="text" 
+                placeholder="Search templates..." 
+                className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-3 text-sm outline-none focus:ring-2 focus:ring-green-900/10 focus:bg-white transition-all"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <div className="absolute right-4 top-3 text-gray-300">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation & Admin */}
+          <div className="flex items-center gap-8">
+            <nav className="hidden xl:flex items-center gap-8 text-[11px] font-black uppercase tracking-widest text-gray-400">
+              <Link to="/" className="hover:text-green-900 transition-colors">How it works</Link>
+              <Link to="/admin" className="text-green-800 border border-green-800/20 px-4 py-2 rounded-lg hover:bg-green-50 transition-all">Admin Dashboard</Link>
+            </nav>
+            <button className="px-6 py-3 rounded-xl text-white text-[11px] font-black uppercase tracking-widest shadow-xl hover:opacity-90 transition-all" style={{ backgroundColor: GREEN_DARK }}>
+              Get All Access
             </button>
-          ))}
-        </nav>
-      </aside>
-
-      {/* Main content */}
-      <main className="flex-1 px-8 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
-            {activeCat ? catName(activeCat) : "Free Spreadsheet Templates"}
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {filtered.length} template{filtered.length !== 1 ? "s" : ""} available
-          </p>
+          </div>
         </div>
+      </header>
 
-        {loading && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-lg overflow-hidden animate-pulse">
-                <div className="aspect-[4/3] bg-gray-200" />
-                <div className="p-3 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-3/4" />
-                  <div className="h-3 bg-gray-100 rounded w-1/2" />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {!loading && filtered.length === 0 && (
-          <div className="text-center py-20 text-gray-400">
-            <p className="text-4xl mb-3">📄</p>
-            <p className="text-base font-medium">No templates yet.</p>
-            <p className="text-sm mt-1">Add some from the Admin panel.</p>
-          </div>
-        )}
-
-        {!loading && filtered.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-            {filtered.map(t => (
-              <div
-                key={t.id}
-                className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col"
+      <div className="max-w-[1400px] mx-auto px-6 py-12 flex flex-col md:flex-row gap-12">
+        
+        {/* SIDEBAR */}
+        <aside className="w-full md:w-64 shrink-0">
+          <div className="sticky top-32">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-6">Categories</h3>
+            <nav className="flex flex-col gap-1">
+              <button 
+                onClick={() => setSelectedCategory(null)}
+                className={`text-left px-5 py-4 rounded-2xl font-bold transition-all text-sm ${!selectedCategory ? "bg-white shadow-xl shadow-green-900/5 text-green-900" : "text-gray-400 hover:bg-gray-100"}`}
               >
-                {/* Clickable thumbnail — 4:3 */}
-                <button
-                  onClick={() => navigate(`/template/${t.slug}`)}
-                  className="aspect-[4/3] bg-gray-100 overflow-hidden w-full block focus:outline-none"
-                  aria-label={`View ${t.title}`}
+                All Sheets
+              </button>
+              {categories.map(cat => (
+                <button 
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`text-left px-5 py-4 rounded-2xl font-bold transition-all text-sm ${selectedCategory === cat.id ? "bg-white shadow-xl shadow-green-900/5 text-green-900" : "text-gray-400 hover:bg-gray-100"}`}
                 >
-                  {t.thumbnail_url ? (
-                    <img
-                      src={t.thumbnail_url}
-                      alt={t.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-300 text-3xl">📄</div>
-                  )}
+                  {cat.name}
                 </button>
-
-                <div className="p-3 flex flex-col flex-1 gap-2">
-                  <span
-                    className="text-xs font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full self-start"
-                    style={{ backgroundColor: "#e8f0e7", color: GREEN }}
-                  >
-                    {catName(t.category_id)}
-                  </span>
-
-                  {/* Clickable title */}
-                  <button
-                    onClick={() => navigate(`/template/${t.slug}`)}
-                    className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 flex-1 text-left hover:text-green-700 transition-colors focus:outline-none"
-                  >
-                    {t.title}
-                  </button>
-
-                  {t.download_url ? (
-                    <a
-                      href={t.download_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ backgroundColor: GREEN }}
-                      className="mt-1 w-full text-center text-xs font-semibold text-white py-2 rounded hover:opacity-90 transition-opacity"
-                    >
-                      Download Free
-                    </a>
-                  ) : (
-                    <button
-                      onClick={() => navigate(`/template/${t.slug}`)}
-                      style={{ borderColor: GREEN, color: GREEN }}
-                      className="mt-1 w-full text-center text-xs font-semibold py-2 rounded border hover:bg-green-50 transition"
-                    >
-                      View Details
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
+              ))}
+            </nav>
           </div>
-        )}
-      </main>
+        </aside>
+
+        {/* MAIN GRID */}
+        <main className="flex-1">
+          <div className="mb-10">
+            <h2 className="text-4xl font-black tracking-tight mb-2">
+              {selectedCategory ? categories.find(c => c.id === selectedCategory)?.name : "Premium Templates"}
+            </h2>
+            <div className="h-1 w-20 rounded-full" style={{ backgroundColor: GREEN_DARK }}></div>
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3, 4, 5, 6].map(n => <div key={n} className="aspect-[4/5] bg-gray-200 rounded-[2.5rem] animate-pulse"></div>)}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredTemplates.map(item => (
+                <Link 
+                  key={item.id} 
+                  to={`/template/${item.slug}`} 
+                  className="group bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col h-full"
+                >
+                  <div className="aspect-[4/3] overflow-hidden relative">
+                    <img 
+                      src={item.thumbnail_url} 
+                      alt={item.title} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">Free</div>
+                  </div>
+                  <div className="p-8 flex flex-col flex-1">
+                    <h3 className="font-black text-xl leading-tight mb-4 group-hover:text-green-800 transition-colors flex-1">{item.title}</h3>
+                    <div className="flex items-center justify-between pt-6 border-t border-gray-50 mt-auto">
+                       <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">GS PRO</span>
+                       <span className="text-green-800 font-black text-xs uppercase tracking-widest">Download →</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
