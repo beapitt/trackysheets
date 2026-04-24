@@ -1,103 +1,97 @@
-import React from "react";
-import { Link } from "react-router-dom";
-
-const GREEN_DARK = "#2D5A27";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 export default function AdminDashboard() {
-  const sections = [
-    { 
-      title: "Templates", 
-      desc: "Manage your spreadsheet products", 
-      icon: "📊", 
-      path: "/admin/templates", 
-      bgColor: "#E3F2FD" 
-    },
-    { 
-      title: "Categories", 
-      desc: "Organize products by type", 
-      icon: "📁", 
-      path: "/admin/categories", 
-      bgColor: "#F3E5F5" 
-    },
-    { 
-      title: "Site Settings", 
-      desc: "Logo, Title, and Intro texts", 
-      icon: "⚙️", 
-      path: "/admin/settings", 
-      bgColor: "#FCE4EC" 
-    },
-    { 
-      title: "Ad Slots", 
-      desc: "Paste AdSense or HTML codes", 
-      icon: "⚡", 
-      path: "/admin/ads", 
-      bgColor: "#FFF3E0" 
-    },
-    { 
-      title: "Legal & SEO", 
-      desc: "Privacy, Terms and Analytics", 
-      icon: "⚖️", 
-      path: "/admin/legal", 
-      bgColor: "#E0F2F1" 
+  const navigate = useNavigate();
+  const [stats, setStats] = useState({
+    templates: 0,
+    categories: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const [templatesRes, categoriesRes] = await Promise.all([
+        supabase.from('templates').select('id', { count: 'exact' }),
+        supabase.from('categories').select('id', { count: 'exact' }),
+      ]);
+
+      setStats({
+        templates: templatesRes.count || 0,
+        categories: categoriesRes.count || 0,
+      });
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5] text-left font-sans">
-      
-      {/* HEADER PROFESSIONALE CON LOGO */}
-      <header style={{ backgroundColor: GREEN_DARK }} className="h-12 flex items-center shadow-md">
-        <div className="max-w-[1060px] mx-auto w-full px-4 flex items-center justify-between">
-          
-          <Link to="/" className="flex items-center gap-2 no-underline">
-            <div className="w-8 h-8 flex items-center justify-center border border-white/30 rounded bg-transparent shrink-0">
-              <span className="text-white font-black text-sm uppercase">TS</span>
-            </div>
-            <div className="flex flex-col leading-none text-left ml-2">
-              <span className="text-[14px] font-bold text-white">TrackySheets</span>
-              <span className="text-[8px] font-medium text-white/80 uppercase tracking-tighter">Admin Panel</span>
-            </div>
-          </Link>
-
-          <Link 
-            to="/" 
-            className="text-[10px] font-bold text-white uppercase border border-white/40 px-3 py-1 rounded-full no-underline hover:bg-white/10 transition-all"
-          >
-            Back to Site
-          </Link>
-        </div>
-      </header>
-
-      <div className="max-w-5xl mx-auto p-8">
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <aside className="w-48 bg-green-900 text-white p-6">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-[#2D5A27]">Dashboard</h2>
-          <p className="text-gray-500 text-sm">Welcome back, Beatrice. What would you like to manage today?</p>
+          <div className="text-2xl font-bold mb-2">TS</div>
+          <div className="text-sm">TrackySheets Admin</div>
         </div>
+        <nav className="space-y-2">
+          <a href="/admin/templates" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Templates</a>
+          <a href="/admin/categories" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Categories</a>
+          <a href="/admin/settings" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Settings</a>
+          <a href="/admin/dashboard" className="block px-4 py-2 rounded bg-white bg-opacity-10 border-l-4 border-green-100">Dashboard</a>
+        </nav>
+      </aside>
 
-        {/* Grid 5 Sezioni Manus Style */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sections.map((s, i) => (
-            <Link 
-              key={i} 
-              to={s.path}
-              className="bg-white p-6 rounded-lg border border-[#e0e0e0] shadow-sm hover:shadow-md transition-all no-underline group"
-            >
-              <div className="flex items-center">
-                <div 
-                  style={{ backgroundColor: s.bgColor }} 
-                  className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl mr-4 group-hover:scale-110 transition-transform"
-                >
-                  {s.icon}
-                </div>
+      {/* Main Content */}
+      <main className="flex-1 p-8">
+        <h1 className="text-3xl font-bold text-green-900 mb-8">Admin Dashboard</h1>
+
+        {loading ? (
+          <div>Loading...</div>
+        ) : (
+          <div className="grid grid-cols-2 gap-6">
+            {/* Templates Card */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-[#333] text-lg">{s.title}</h3>
-                  <p className="text-gray-500 text-xs mt-1">{s.desc}</p>
+                  <p className="text-gray-600 text-sm">Total Templates</p>
+                  <p className="text-4xl font-bold text-green-900">{stats.templates}</p>
                 </div>
+                <div className="text-5xl">📄</div>
               </div>
-            </Link>
-          ))}
-        </div>
-      </div>
+              <button
+                onClick={() => navigate('/admin/templates')}
+                className="mt-4 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg transition"
+              >
+                Manage Templates
+              </button>
+            </div>
+
+            {/* Categories Card */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-600 text-sm">Total Categories</p>
+                  <p className="text-4xl font-bold text-green-900">{stats.categories}</p>
+                </div>
+                <div className="text-5xl">📁</div>
+              </div>
+              <button
+                onClick={() => navigate('/admin/categories')}
+                className="mt-4 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg transition"
+              >
+                Manage Categories
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
