@@ -1,197 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { supabase } from "../lib/supabase";
-import { ChevronRight, Search, Youtube, Pin } from "lucide-react";
-
-// MANUS COLORS
-const GREEN_DARK = "#2D5A27";
-const GREEN_MEDIUM = "#198754";
-const GREEN_SECTION = "#4a7c2f";
-const GREEN_MINT_HOVER = "#146c43";
-
-export default function Home() {
-  const [templates, setTemplates] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [settings, setSettings] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const activeCat = params.get("cat");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // Fetch Settings, Templates and Categories
-        const [tplsRes, catsRes, settingsRes] = await Promise.all([
-          supabase.from("templates").select("*").order("created_at", { ascending: false }),
-          supabase.from("categories").select("*").order("sort_order", { ascending: true }),
-          supabase.from("site_settings").select("*").single()
-        ]);
-
-        setTemplates(tplsRes.data || []);
-        setCategories(catsRes.data || []);
-        setSettings(settingsRes.data);
-      } catch (err) {
-        console.error("Fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const filteredTemplates = templates.filter(t => {
-    const matchesSearch = t.title?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCat = activeCat ? t.category_id === activeCat : true;
-    return matchesSearch && matchesCat;
-  });
-
-  return (
-    <div className="min-h-screen bg-[#f5f5f5] font-['Arial','Helvetica_Neue',sans-serif] text-[#333]">
-      
-      {/* 1. HEADER & NAVIGATION */}
-      <div className="fixed top-0 left-0 right-0 z-50 shadow-sm">
-        <header style={{ backgroundColor: GREEN_DARK }} className="h-12 flex items-center">
-          <div className="max-w-[1060px] mx-auto w-full px-4 flex items-center justify-between">
+{/* RIGHT: SIDEBAR RIFINITA */}
+        <aside className="w-full md:w-56 shrink-0 order-1 md:order-2 text-left">
+          <div style={{ backgroundColor: "#F9FDF9" }} className="p-5 rounded border border-green-50 shadow-sm">
             
-            {/* Logo Section */}
-            <Link to="/" className="flex items-center gap-2.5 no-underline group">
-              <div className="w-8 h-8 flex items-center justify-center border border-white/30 rounded-lg shadow-lg bg-transparent">
-                <span className="text-white font-black text-sm uppercase">TS</span>
+            {/* FOLLOW US ON */}
+            <div className="mb-8">
+              <h3 className="text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest border-b border-gray-100 pb-1">Follow Us On</h3>
+              <div className="flex gap-4 items-center">
+                {/* Pinterest Grafico */}
+                <a href={settings?.pinterest_url || '#'} className="hover:scale-105 transition-transform">
+                  <svg className="w-6 h-6 text-[#E60023]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.41 7.63 11.17-.1-.95-.19-2.41.04-3.45.21-.93 1.34-5.69 1.34-5.69s-.34-.69-.34-1.7c0-1.6 1.05-2.8 2.08-2.8.98 0 1.46.74 1.46 1.63 0 .99-.63 2.47-.95 3.84-.27 1.15.58 2.08 1.71 2.08 2.05 0 3.63-2.17 3.63-5.3 0-2.77-1.99-4.71-4.83-4.71-3.3 0-5.23 2.47-5.23 5.02 0 1 .38 2.07.86 2.65.09.11.11.21.08.32-.09.37-.28 1.14-.32 1.29-.05.21-.17.25-.39.15-1.45-.67-2.35-2.8-2.35-4.5 0-3.66 2.66-7.02 7.67-7.02 4.03 0 7.17 2.87 7.17 6.72 0 4.01-2.52 7.23-6.02 7.23-1.18 0-2.28-.61-2.66-1.33l-.72 2.76c-.26 1-1 2.25-1.49 3.05C10.12 23.85 11.03 24 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0z"/></svg>
+                </a>
+                {/* YouTube Grafico */}
+                <a href={settings?.youtube_url || '#'} className="hover:scale-105 transition-transform">
+                  <svg className="w-7 h-7 text-[#FF0000]" fill="currentColor" viewBox="0 0 24 24"><path d="M23.5 6.2c-.3-1.1-1.1-1.9-2.2-2.2C19.3 3.5 12 3.5 12 3.5s-7.3 0-9.3.5c-1.1.3-1.9 1.1-2.2 2.2C0 8.2 0 12 0 12s0 3.8.5 5.8c.3 1.1 1.1 1.9 2.2 2.2 2 1.1 9.3 1.1 9.3 1.1s7.3 0 9.3-.5c1.1-.3 1.9-1.1 2.2-2.2.5-2 .5-5.8.5-5.8s0-3.8-.5-5.8zM9.5 15.5V8.5l6.5 3.5-6.5 3.5z"/></svg>
+                </a>
               </div>
-              <div className="flex flex-col leading-none text-left">
-                <span className="text-[15px] font-bold text-white">{settings?.site_name || 'TrackySheets'}</span>
-                <span className="text-[7.5px] font-medium text-white/80 capitalize mt-0.5">Smart Trackers & Planners</span>
-              </div>
-            </Link>
-
-            {/* Search - Manus Style */}
-            <div className="flex items-center gap-2 max-w-[300px] w-full mx-4">
-              <input 
-                type="text" 
-                placeholder="Search templates..." 
-                className="w-full bg-white border-none rounded-sm px-3 py-1 text-[11px] text-gray-800 outline-none h-7 shadow-inner"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button style={{ backgroundColor: GREEN_SECTION }} className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-white hover:opacity-90">
-                <Search size={14} strokeWidth={3} />
-              </button>
             </div>
 
-            <Link to="/admin" className="text-[9px] font-bold text-white uppercase border border-white/40 px-3 py-1 rounded-full no-underline hover:bg-white/10">Admin</Link>
-          </div>
-        </header>
-
-        {/* Top Mint Bar (Medium Green) */}
-        <div style={{ backgroundColor: GREEN_MEDIUM }} className="h-auto flex items-center border-b border-black/10">
-          <div className="max-w-[1060px] mx-auto w-full flex text-[13px] font-bold text-white overflow-x-auto no-scrollbar">
-            <Link to="/" className="px-4 py-2 hover:bg-[#146c43] no-underline">Home</Link>
-            {categories.filter(c => c.placement === 'top-menu' || c.placement === 'both').map(cat => (
-              <Link key={cat.id} to={`/?cat=${cat.id}`} className="px-4 py-2 hover:bg-[#146c43] no-underline whitespace-nowrap">{cat.name}</Link>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="h-[84px]"></div>
-
-      {/* 2. MAIN LAYOUT GRID */}
-      <div className="max-w-[1060px] mx-auto px-4 py-6 flex flex-col md:flex-row gap-4">
-        
-        {/* LEFT: MAIN CONTENT (70%) */}
-        <main className="flex-[0_0_70%] order-2 md:order-1 text-left">
-          
-          {/* Intro/Hero Block */}
-          <div className="bg-white border border-[#ddd] p-[10px_12px] mb-[10px] leading-[1.4]">
-            <h1 className="text-[18px] font-bold mb-[10px] pb-1 border-b-2" style={{ color: GREEN_DARK, borderColor: GREEN_DARK }}>
-              {settings?.site_description_title}
-            </h1>
-            <p className="text-[#555] text-[12px] mb-1.5 italic">by {settings?.site_name} — The Guide to Google Sheets & Excel</p>
-            <p className="text-[13px] text-[#333] mb-1.5">{settings?.site_description_text}</p>
-          </div>
-
-          {/* Template Grid */}
-          <section className="mb-6">
-            <div style={{ backgroundColor: GREEN_SECTION }} className="text-white font-bold text-[13px] p-[5px_10px] mb-2">
-              New Templates
-            </div>
-            {loading ? (
-              <div className="text-center py-10 text-gray-400 text-[12px]">Loading templates...</div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[10px]">
-                {filteredTemplates.map(t => (
-                  <Link key={t.id} to={`/template/${t.slug}`} className="group block bg-white border border-[#ddd] overflow-hidden no-underline hover:border-[#aaa] transition-all hover:shadow-[0_1px_4px_rgba(0,0,0,0.12)]">
-                    <div className="aspect-[16/10] bg-[#f9f9f9] border-b border-[#eee]">
-                      <img src={t.thumbnail_url} className="w-full h-full object-contain" alt={t.title} />
-                    </div>
-                    <div className="p-[6px_8px]">
-                      <h4 className="font-bold text-[12px] text-[#2D5A27] leading-[1.3] mb-[3px] group-hover:underline">{t.title}</h4>
-                      <p className="text-[11px] text-[#555] leading-[1.35] uppercase font-bold">Free Download</p>
-                    </div>
+            {/* TEMPLATE CATEGORIES */}
+            <div>
+              <h3 className="text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest border-b border-gray-100 pb-1">Template Categories</h3>
+              <nav className="flex flex-col gap-1">
+                {categories.map(cat => (
+                  <Link 
+                    key={cat.id} 
+                    to={`/?cat=${cat.id}`} 
+                    className={`group flex items-center justify-between px-2 py-1 rounded no-underline transition-colors ${activeCat === cat.id ? "text-[#2D5A27] font-black bg-white shadow-sm" : "text-gray-600 hover:text-[#2D5A27]"}`}
+                  >
+                    <span>{cat.name}</span>
+                    <span className={`text-[10px] transition-opacity ${activeCat === cat.id ? "opacity-100" : "opacity-30 group-hover:opacity-100"}`}>›</span>
                   </Link>
                 ))}
-              </div>
-            )}
-          </section>
-        </main>
-
-        {/* RIGHT: SIDEBAR (30%) */}
-        <aside className="flex-1 order-1 md:order-2 text-left">
-          
-          {/* Follow Us Section */}
-          <div className="mb-[12px]">
-            <h3 className="text-[12px] font-medium text-[#333] mb-2 tracking-wide uppercase border-b border-gray-100 pb-1">Follow Us On</h3>
-            <div className="flex gap-2 items-center">
-              <a href={settings?.pinterest_url || '#'} target="_blank" rel="noopener noreferrer" className="text-[#E60023] hover:opacity-80">
-                <Youtube size={20} /> {/* Placeholder for Pinterest SVG */}
-              </a>
-              <a href={settings?.youtube_url || '#'} target="_blank" rel="noopener noreferrer" className="text-[#FF0000] hover:opacity-80">
-                <Youtube size={24} />
-              </a>
+              </nav>
             </div>
           </div>
-
-          {/* Template Categories */}
-          <div className="mb-6">
-            <div style={{ backgroundColor: GREEN_DARK }} className="text-white font-bold text-[11px] p-[5px_10px] mb-2 uppercase">
-              Template Categories
-            </div>
-            <nav className="flex flex-col border border-[#ddd] bg-white">
-              {categories.filter(c => c.placement === 'sidebar' || c.placement === 'both').map(cat => (
-                <Link 
-                  key={cat.id} 
-                  to={`/?cat=${cat.id}`} 
-                  className={`group flex items-center justify-between px-3 py-2 text-[12px] border-b border-[#eee] no-underline transition-all ${activeCat === cat.id ? "bg-[#e8f5e9] text-[#2D5A27] font-bold" : "text-[#333] hover:bg-[#f0f8f0]"}`}
-                >
-                  <span>{cat.name}</span>
-                  <ChevronRight size={10} className={`${activeCat === cat.id ? "opacity-100" : "opacity-30 group-hover:opacity-100"}`} />
-                </Link>
-              ))}
-            </nav>
-          </div>
-
-          {/* Featured Video (Dinamico da DB) */}
-          {settings?.homepage_video_url && (
-            <div className="mt-8">
-              <div style={{ backgroundColor: GREEN_DARK }} className="text-white font-bold text-[10px] p-[5px_10px] mb-2 uppercase">
-                Featured Tutorial
-              </div>
-              <div className="aspect-video w-full border border-[#ddd] bg-black">
-                <iframe 
-                  width="100%" height="100%" 
-                  src={settings.homepage_video_url}
-                  frameBorder="0" allowFullScreen
-                ></iframe>
-              </div>
-            </div>
-          )}
         </aside>
-
-      </div>
-    </div>
-  );
-}
