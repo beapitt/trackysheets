@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 export default function AdminTemplates() {
   const [templates, setTemplates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchTemplates();
@@ -15,6 +16,10 @@ export default function AdminTemplates() {
     if (data) setTemplates(data);
     setLoading(false);
   }
+
+  const filteredTemplates = templates.filter(t => 
+    t.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="flex min-h-screen bg-gray-100 text-left font-sans">
@@ -34,7 +39,17 @@ export default function AdminTemplates() {
             <h1 className="text-2xl font-bold">Manage Templates</h1>
             <p className="text-sm text-green-100">Edit or add new products</p>
           </div>
-          <button className="bg-green-700 hover:bg-green-800 px-6 py-2 rounded font-bold text-white">+ Add New</button>
+          <Link to="/admin/templates/new" className="bg-green-700 hover:bg-green-800 px-6 py-2 rounded font-bold text-white no-underline shadow">+ Add New</Link>
+        </div>
+
+        <div className="mb-6">
+          <input 
+            type="text" 
+            placeholder="Search templates by title..." 
+            className="w-full max-w-md p-2 border rounded shadow-sm outline-none focus:ring-2 focus:ring-green-600"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
 
         <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
@@ -46,18 +61,18 @@ export default function AdminTemplates() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {templates.map((t) => (
+              {filteredTemplates.map((t) => (
                 <tr key={t.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{t.title}</td>
-                  <td className="px-6 py-4 text-sm flex gap-3 text-left">
-                    <button className="text-blue-600 hover:text-blue-900 font-bold">✏️ Edit</button>
-                    <button className="text-red-600 hover:text-red-900 font-bold">🗑️ Delete</button>
+                  <td className="px-6 py-4 text-sm flex gap-4">
+                    <Link to={`/admin/templates/edit/${t.id}`} className="text-blue-600 hover:text-blue-900 font-bold no-underline">✏️ Edit</Link>
+                    <button className="text-red-600 hover:text-red-900 font-bold bg-transparent border-none cursor-pointer">🗑️ Delete</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          {templates.length === 0 && !loading && <p className="p-10 text-center text-gray-500">No templates found in database.</p>}
+          {filteredTemplates.length === 0 && !loading && <p className="p-10 text-center text-gray-500">No templates found.</p>}
         </div>
       </main>
     </div>
