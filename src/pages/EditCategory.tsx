@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-// Modificato l'import per essere esplicito con Vercel
-import { supabase } from '../supabase.ts';
+import { supabase } from "../supabase";
 
 export default function EditCategory() {
   const { id } = useParams();
@@ -11,8 +10,12 @@ export default function EditCategory() {
   const [message, setMessage] = useState('');
 
   const [formData, setFormData] = useState({
-    name: '', slug: '', seo_title: '', meta_description: '',
-    placement: 'sidebar', sort_order: 1,
+    name: '',
+    slug: '',
+    seo_title: '',
+    meta_description: '',
+    placement: 'sidebar',
+    sort_order: 1,
   });
 
   useEffect(() => {
@@ -36,12 +39,12 @@ export default function EditCategory() {
     e.preventDefault();
     setSaving(true);
     try {
-      const { error } = id && id !== 'new'
+      const { error } = (id && id !== 'new')
         ? await supabase.from('categories').update(formData).eq('id', id)
         : await supabase.from('categories').insert([formData]);
 
       if (error) throw error;
-      setMessage('✅ Category saved!');
+      setMessage('✅ Category saved successfully!');
       setTimeout(() => navigate('/admin/categories'), 1500);
     } catch (err: any) {
       setMessage(`❌ Error: ${err.message}`);
@@ -50,7 +53,10 @@ export default function EditCategory() {
     }
   };
 
-  if (loading) return <div className="p-8 font-sans">Loading...</div>;
+  if (loading) return <div className="p-8 font-sans text-gray-500">Loading...</div>;
+
+  const labelClass = "block text-[11px] font-bold text-gray-500 uppercase mb-2";
+  const inputClass = "w-full p-2 border border-gray-300 rounded outline-none focus:ring-1 focus:ring-green-600 text-sm";
 
   return (
     <div className="flex min-h-screen bg-gray-100 text-left font-sans">
@@ -63,24 +69,51 @@ export default function EditCategory() {
         </nav>
       </aside>
 
-      <main className="flex-1 p-8 text-left">
+      <main className="flex-1 p-8 text-left overflow-y-auto">
+        <div className="bg-[#2D5A27] text-white p-6 rounded-lg mb-8 shadow-md">
+          <h1 className="text-2xl font-bold uppercase tracking-tight">
+            {id && id !== 'new' ? 'Edit Category' : 'New Category'}
+          </h1>
+        </div>
+
+        {message && (
+          <div className={`mb-6 p-4 rounded font-bold text-xs border-l-4 ${
+            message.includes('✅') ? 'bg-green-100 text-green-800 border-green-500' : 'bg-red-100 text-red-800 border-red-500'
+          }`}>
+            {message}
+          </div>
+        )}
+
         <div className="bg-white p-8 rounded-lg shadow-sm max-w-2xl border border-gray-200">
-          <h1 className="text-xl font-bold uppercase text-[#2D5A27] border-b pb-2 mb-6">Category Detail</h1>
-          {message && <div className={`p-3 mb-4 rounded font-bold text-xs ${message.includes('✅') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>{message}</div>}
-          <form onSubmit={handleSave} className="space-y-4">
-            <div>
-              <label className="block text-[11px] font-bold text-gray-500 uppercase">Name</label>
-              <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2 border rounded outline-none focus:ring-1 focus:ring-green-600" />
+          <form onSubmit={handleSave} className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className={labelClass}>Category Name *</label>
+                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>Slug *</label>
+                <input required type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className={inputClass} />
+              </div>
             </div>
+
             <div>
-              <label className="block text-[11px] font-bold text-gray-500 uppercase">Slug</label>
-              <input required type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded outline-none focus:ring-1 focus:ring-green-600" />
+              <label className={labelClass}>SEO Title</label>
+              <input type="text" value={formData.seo_title} onChange={e => setFormData({...formData, seo_title: e.target.value})} className={inputClass} />
             </div>
-            <div className="pt-4 flex gap-4">
-              <button type="submit" disabled={saving} className="bg-[#2D5A27] text-white px-8 py-2 rounded font-bold uppercase text-xs">
-                {saving ? 'Saving...' : '💾 Save'}
+
+            <div>
+              <label className={labelClass}>Meta Description</label>
+              <textarea value={formData.meta_description} onChange={e => setFormData({...formData, meta_description: e.target.value})} className={inputClass} rows={3} />
+            </div>
+
+            <div className="pt-4 flex gap-4 border-t">
+              <button type="submit" disabled={saving} className="bg-[#2D5A27] text-white px-8 py-2 rounded font-bold uppercase text-xs shadow-md disabled:opacity-50">
+                {saving ? 'Saving...' : '💾 Save Category'}
               </button>
-              <Link to="/admin/categories" className="bg-gray-200 text-gray-700 px-8 py-2 rounded font-bold no-underline uppercase text-xs">Cancel</Link>
+              <Link to="/admin/categories" className="bg-gray-200 text-gray-700 px-8 py-2 rounded font-bold no-underline uppercase text-xs">
+                Cancel
+              </Link>
             </div>
           </form>
         </div>
