@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 // Import corretto per la struttura delle cartelle di Vercel
-import { supabase } from "../supabase";
-
+import { supabase } from "../lib/supabase";
 interface Template {
   id: string;
   title: string;
