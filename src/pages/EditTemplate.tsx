@@ -6,6 +6,7 @@ export default function EditTemplate() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: '', slug: '', category_id: '', short_description: '', description: '',
@@ -28,6 +29,32 @@ export default function EditTemplate() {
     const { data } = await supabase.from("templates").select("*").eq("id", id).single();
     if (data) setFormData(data);
   }
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    try {
+      setUploading(true);
+      if (!event.target.files || event.target.files.length === 0) return;
+
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`; // Salvataggio diretto nel bucket
+
+      const { error: uploadError } = await supabase.storage
+        .from('templates') // NOME DEL TUO BUCKET REALE
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from('templates').getPublicUrl(filePath);
+      setFormData({ ...formData, [field]: data.publicUrl });
+      
+    } catch (error: any) {
+      alert('Error uploading image: ' + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,86 +80,87 @@ export default function EditTemplate() {
       </aside>
 
       <main className="flex-1 p-8 overflow-y-auto">
-        <div className="max-w-4xl bg-white rounded-lg shadow-md mb-10">
-          <div className="bg-[#2D5A27] p-6 text-white font-bold text-xl uppercase tracking-tight">
+        <div className="max-w-4xl bg-white rounded-lg shadow-md mb-10 p-8">
+          <h1 className="text-2xl font-bold text-[#2D5A27] mb-6 border-b pb-4 uppercase tracking-tight">
             {id ? 'Edit Template' : 'Add New Template'}
-          </div>
-          <form onSubmit={handleSave} className="p-8 space-y-8">
-            
-            {/* BASIC INFO */}
-            <section className="space-y-4">
-              <h3 className="font-bold text-gray-400 uppercase text-xs border-b pb-1">Basic Information</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Title</label>
-                  <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-2 border rounded" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Slug</label>
-                  <input required type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded" />
-                </div>
+          </h1>
+          
+          <form onSubmit={handleSave} className="space-y-8">
+            <section className="bg-gray-50 p-4 rounded-lg border">
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Main Thumbnail</label>
+              <div className="flex items-center gap-4">
+                {formData.thumbnail_url && <img src={formData.thumbnail_url} className="w-32 h-20 object-cover rounded border" alt="Preview" />}
+                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'thumbnail_url')} className="text-xs" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Category</label>
-                  <select required value={formData.category_id} onChange={e => setFormData({...formData, category_id: e.target.value})} className="w-full p-2 border rounded">
-                    <option value="">Select Category</option>
-                    {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">YouTube Video URL</label>
-                  <input type="text" value={formData.youtube_url} onChange={e => setFormData({...formData, youtube_url: e.target.value})} className="w-full p-2 border rounded" placeholder="https://www.youtube.com/watch?v=..." />
-                </div>
+              <p className="text-[10px] text-gray-400 mt-1">{uploading ? 'Uploading...' : 'Upload your main listing image'}</p>
+            </section>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label>
+                <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-2 border rounded" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Slug</label>
+                <input required type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Category</label>
+                <select required value={formData.category_id} onChange={e => setFormData({...formData, category_id: e.target.value})} className="w-full p-2 border rounded">
+                  <option value="">Select Category</option>
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">YouTube Video URL</label>
+                <input type="text" value={formData.youtube_url} onChange={e => setFormData({...formData, youtube_url: e.target.value})} className="w-full p-2 border rounded" />
+              </div>
+            </div>
+
+            <section className="space-y-4">
+              <h3 className="font-bold text-gray-400 uppercase text-xs border-b pb-1">Carousel Images</h3>
+              <div className="grid grid-cols-3 gap-4">
+                {[1, 2, 3].map((num) => (
+                  <div key={num} className="border p-2 rounded bg-white">
+                    <label className="block text-[10px] font-bold mb-1">Image {num}</label>
+                    <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, `img_${num}`)} className="text-[10px] w-full" />
+                    {formData[`img_${num}` as keyof typeof formData] && (
+                      <img src={formData[`img_${num}` as keyof typeof formData] as string} className="mt-2 h-16 w-full object-cover rounded" />
+                    )}
+                  </div>
+                ))}
               </div>
             </section>
 
-            {/* ASSETS & DOWNLOAD */}
-            <section className="space-y-4">
-              <h3 className="font-bold text-gray-400 uppercase text-xs border-b pb-1">Assets & Download</h3>
-              <div>
-                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Main Thumbnail URL</label>
-                <input required type="text" value={formData.thumbnail_url} onChange={e => setFormData({...formData, thumbnail_url: e.target.value})} className="w-full p-2 border rounded" />
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Carousel Image 1</label>
-                  <input type="text" value={formData.img_1} onChange={e => setFormData({...formData, img_1: e.target.value})} className="w-full p-2 border rounded text-xs" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Carousel Image 2</label>
-                  <input type="text" value={formData.img_2} onChange={e => setFormData({...formData, img_2: e.target.value})} className="w-full p-2 border rounded text-xs" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Carousel Image 3</label>
-                  <input type="text" value={formData.img_3} onChange={e => setFormData({...formData, img_3: e.target.value})} className="w-full p-2 border rounded text-xs" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Google Sheets Download URL</label>
-                <input required type="url" value={formData.download_url} onChange={e => setFormData({...formData, download_url: e.target.value})} className="w-full p-2 border rounded" />
-              </div>
-            </section>
-
-            {/* SEO & DESCRIPTION */}
             <section className="space-y-4">
               <h3 className="font-bold text-gray-400 uppercase text-xs border-b pb-1">SEO & Content</h3>
-              <div>
-                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">SEO Title</label>
-                <input type="text" value={formData.seo_title} onChange={e => setFormData({...formData, seo_title: e.target.value})} className="w-full p-2 border rounded" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">SEO Title</label>
+                  <input type="text" value={formData.seo_title} onChange={e => setFormData({...formData, seo_title: e.target.value})} className="w-full p-2 border rounded" />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Download URL</label>
+                  <input required type="url" value={formData.download_url} onChange={e => setFormData({...formData, download_url: e.target.value})} className="w-full p-2 border rounded" />
+                </div>
               </div>
               <div>
                 <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Meta Description</label>
                 <textarea rows={2} value={formData.meta_description} onChange={e => setFormData({...formData, meta_description: e.target.value})} className="w-full p-2 border rounded text-sm" />
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Full Description (HTML allowed)</label>
+                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Full Description (HTML)</label>
                 <textarea rows={6} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full p-2 border rounded text-sm" />
               </div>
             </section>
 
             <div className="pt-6 border-t flex gap-4">
-              <button disabled={loading} type="submit" className="bg-[#2D5A27] text-white px-10 py-3 rounded font-bold uppercase text-sm shadow-md">{loading ? 'Saving...' : 'Save Template'}</button>
+              <button disabled={loading || uploading} type="submit" className="bg-[#2D5A27] text-white px-10 py-3 rounded font-bold uppercase text-sm shadow-md">
+                {loading ? 'Saving...' : 'Save Template'}
+              </button>
               <Link to="/admin/templates" className="bg-gray-200 text-gray-700 px-10 py-3 rounded font-bold no-underline uppercase text-sm">Cancel</Link>
             </div>
           </form>
