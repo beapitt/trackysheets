@@ -16,17 +16,18 @@ export default function App() {
         <Route path="/template/:slug" element={<TemplateDetail />} />
         <Route path="/admin" element={<AdminDashboard />} />
         
+        {/* Templates */}
         <Route path="/admin/templates" element={<AdminTemplates />} />
         <Route path="/admin/templates/new" element={<EditTemplate />} />
         <Route path="/admin/templates/edit/:id" element={<EditTemplate />} />
         
+        {/* Categories */}
         <Route path="/admin/categories" element={<AdminCategories />} />
         <Route path="/admin/categories/new" element={<EditCategory />} />
         <Route path="/admin/categories/edit/:id" element={<EditCategory />} />
         
         <Route path="/admin/settings" element={<Settings />} />
         
-        {/* Prossimamente AdSlots e Legal */}
         <Route path="/admin/ads" element={<div className="p-10 text-left">Ads coming soon...</div>} />
         <Route path="/admin/legal" element={<div className="p-10 text-left">Legal coming soon...</div>} />
       </Routes>
