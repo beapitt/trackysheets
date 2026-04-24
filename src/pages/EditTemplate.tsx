@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { supabase } from "../supabase";
+import { supabase } from "../supabase.ts";
 
 interface Template {
   id: string;
