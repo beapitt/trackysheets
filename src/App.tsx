@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-// Import delle pagine - CONTROLLA CHE I NOMI FILE SU GITHUB SIANO UGUALI
 import Home from './pages/Home';
 import TemplateDetail from './pages/TemplateDetail';
 import AdminDashboard from './pages/AdminDashboard';
@@ -17,23 +16,18 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/template/:slug" element={<TemplateDetail />} />
-        
-        {/* Admin Dashboard */}
         <Route path="/admin" element={<AdminDashboard />} />
         
-        {/* Gestione Templates */}
         <Route path="/admin/templates" element={<AdminTemplates />} />
         <Route path="/admin/templates/new" element={<EditTemplate />} />
         <Route path="/admin/templates/:id/edit" element={<EditTemplate />} />
 
-        {/* Gestione Categorie - QUESTA PARTE DEVE ESSERE COSI PER FAR FUNZIONARE IL FILE DI CLAUDE */}
         <Route path="/admin/categories" element={<AdminCategories />} />
         <Route path="/admin/categories/new" element={<EditCategory />} />
         <Route path="/admin/categories/:id/edit" element={<EditCategory />} />
 
         <Route path="/admin/settings" element={<Settings />} />
 
-        {/* Reindirizzamento se la rotta è sbagliata */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
