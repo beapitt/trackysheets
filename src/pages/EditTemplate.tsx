@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { supabase } from "../supabase";
+// Percorso corretto: esci da pages, entra in lib
+import { supabase } from "../lib/supabase";
 
 export default function EditTemplate() {
   const { id } = useParams();
@@ -42,7 +43,7 @@ export default function EditTemplate() {
         : await supabase.from('templates').insert([formData]);
 
       if (error) throw error;
-      setMessage('✅ Template saved successfully!');
+      setMessage('✅ Template saved!');
       setTimeout(() => navigate('/admin/templates'), 1500);
     } catch (err: any) {
       setMessage(`❌ Error: ${err.message}`);
@@ -51,10 +52,7 @@ export default function EditTemplate() {
     }
   };
 
-  if (loading) return <div className="p-8 font-sans text-gray-500">Loading...</div>;
-
-  const labelClass = "block text-[11px] font-bold text-gray-500 uppercase mb-2";
-  const inputClass = "w-full p-2 border border-gray-300 rounded outline-none focus:ring-1 focus:ring-green-600 text-sm";
+  if (loading) return <div className="p-8 font-sans">Loading...</div>;
 
   return (
     <div className="flex min-h-screen bg-gray-100 text-left font-sans">
@@ -69,28 +67,23 @@ export default function EditTemplate() {
 
       <main className="flex-1 p-8 text-left overflow-y-auto">
         <div className="bg-[#2D5A27] text-white p-6 rounded-lg mb-8 shadow-md">
-          <h1 className="text-2xl font-bold uppercase tracking-tight">
-            {id && id !== 'new' ? 'Edit Template' : 'New Template'}
-          </h1>
+          <h1 className="text-2xl font-bold uppercase tracking-tight">Edit Template</h1>
         </div>
-
         <div className="bg-white p-8 rounded-lg shadow-sm max-w-4xl border border-gray-200">
           <form onSubmit={handleSave} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={labelClass}>Title *</label>
-                <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className={inputClass} />
+                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Title</label>
+                <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-2 border rounded" />
               </div>
               <div>
-                <label className={labelClass}>Slug *</label>
-                <input required type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className={inputClass} />
+                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Slug</label>
+                <input required type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded" />
               </div>
             </div>
-            <div className="pt-4 border-t">
-              <button type="submit" disabled={saving} className="bg-[#2D5A27] text-white px-8 py-2 rounded font-bold uppercase text-xs shadow-md">
-                {saving ? 'Saving...' : '💾 Save Template'}
-              </button>
-            </div>
+            <button type="submit" disabled={saving} className="bg-[#2D5A27] text-white px-8 py-2 rounded font-bold uppercase text-xs">
+              {saving ? 'Saving...' : '💾 Save'}
+            </button>
           </form>
         </div>
       </main>
