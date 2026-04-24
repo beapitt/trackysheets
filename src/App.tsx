@@ -1,43 +1,29 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./layout/Navbar";
-import Footer from "./components/Footer";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import TemplateDetail from "./pages/TemplateDetail";
-import AdminDashboard from "./pages/AdminDashboard";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import Disclaimer from "./pages/Disclaimer";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminTemplates from "./pages/admin/AdminTemplates"; // Verifica il nome file
+import AdminCategories from "./pages/admin/AdminCategories"; // Verifica il nome file
+import Settings from "./pages/admin/Settings";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <div className="flex flex-col min-h-screen bg-gray-50">
-        <Routes>
-          {/* Admin — no Navbar/Footer */}
-          <Route path="/admin" element={<AdminDashboard />} />
-
-          {/* Public pages — with Navbar and Footer */}
-          <Route
-            path="/*"
-            element={
-              <>
-                <Navbar />
-                <main className="flex-1">
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/template/:slug" element={<TemplateDetail />} />
-                    <Route path="/privacy" element={<Privacy />} />
-                    <Route path="/terms" element={<Terms />} />
-                    <Route path="/disclaimer" element={<Disclaimer />} />
-                  </Routes>
-                </main>
-                <Footer />
-              </>
-            }
-          />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <Router>
+      <Routes>
+        {/* Sito Pubblico */}
+        <Route path="/" element={<Home />} />
+        
+        {/* Dashboard Admin Centrale */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        
+        {/* Sottopagine Admin - Qui colleghiamo le mattonelle */}
+        <Route path="/admin/templates" element={<AdminTemplates />} />
+        <Route path="/admin/categories" element={<AdminCategories />} />
+        <Route path="/admin/settings" element={<Settings />} />
+        
+        {/* Placeholder per le sezioni mancanti, così non vedi vuoto */}
+        <Route path="/admin/ads" element={<div className="p-10">Sezione Ads in arrivo...</div>} />
+        <Route path="/admin/legal" element={<div className="p-10">Sezione Legal in arrivo...</div>} />
+      </Routes>
+    </Router>
   );
 }
