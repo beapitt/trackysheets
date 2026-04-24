@@ -6,8 +6,12 @@ export default function EditCategory() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
+  
   const [formData, setFormData] = useState({
-    name: '', slug: '', seo_title: '', meta_description: '', placement: 'sidebar'
+    name: '', slug: '', seo_title: '', meta_description: '',
+    placement: 'sidebar' as 'sidebar' | 'top' | 'both', sort_order: 1,
   });
 
   useEffect(() => {
@@ -16,22 +20,35 @@ export default function EditCategory() {
   }, [id]);
 
   async function fetchCategory() {
-    const { data } = await supabase.from('categories').select('*').eq('id', id).single();
-    if (data) setFormData(data);
-    setLoading(false);
+    try {
+      const { data, error } = await supabase.from('categories').select('*').eq('id', id).single();
+      if (error) throw error;
+      setFormData(data);
+    } catch (err) {
+      setMessage('❌ Error loading category');
+    } finally {
+      setLoading(false);
+    }
   }
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { error } = id && id !== 'new'
-      ? await supabase.from('categories').update(formData).eq('id', id)
-      : await supabase.from('categories').insert([formData]);
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const { error } = id && id !== 'new'
+        ? await supabase.from('categories').update(formData).eq('id', id)
+        : await supabase.from('categories').insert([formData]);
 
-    if (!error) navigate('/admin/categories');
-    else alert(error.message);
+      if (error) throw error;
+      setMessage('✅ Category saved!');
+      setTimeout(() => navigate('/admin/categories'), 1500);
+    } catch (err: any) {
+      setMessage(`❌ Error: ${err.message}`);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  if (loading) return <div className="p-10 font-sans">Loading...</div>;
+  if (loading) return <div className="p-8 font-sans">Loading...</div>;
 
   return (
     <div className="flex min-h-screen bg-gray-100 text-left font-sans">
@@ -43,24 +60,30 @@ export default function EditCategory() {
           <Link to="/admin/settings" className="block px-4 py-2 rounded hover:bg-white/10 no-underline text-white">Settings</Link>
         </nav>
       </aside>
+
       <main className="flex-1 p-8">
-        <div className="bg-white p-8 rounded-lg shadow-sm max-w-2xl">
-          <h2 className="text-xl font-bold mb-6 uppercase text-[#2D5A27] border-b pb-2">{id && id !== 'new' ? 'Edit Category' : 'Add New Category'}</h2>
-          <form onSubmit={handleSave} className="space-y-4">
+        <div className="bg-white p-8 rounded-lg shadow-sm max-w-2xl space-y-6">
+          <h1 className="text-xl font-bold uppercase text-[#2D5A27] border-b pb-2">Category Detail</h1>
+          
+          {message && <div className="p-3 bg-green-50 text-green-700 rounded font-bold text-xs">{message}</div>}
+
+          <div className="space-y-4">
             <div>
-              <label className="block text-[11px] font-bold text-gray-500 uppercase">Name</label>
-              <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2 border rounded" />
+              <label className="block text-[11px] font-bold text-gray-500 uppercase">Category Name *</label>
+              <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2 border rounded outline-none focus:ring-1 focus:ring-green-600" />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-gray-500 uppercase">Slug</label>
-              <input required type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded" />
+              <label className="block text-[11px] font-bold text-gray-500 uppercase">Slug *</label>
+              <input type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded outline-none focus:ring-1 focus:ring-green-600" />
             </div>
-            <div>
-              <label className="block text-[11px] font-bold text-gray-500 uppercase">SEO Title</label>
-              <input type="text" value={formData.seo_title} onChange={e => setFormData({...formData, seo_title: e.target.value})} className="w-full p-2 border rounded" />
-            </div>
-            <button type="submit" className="bg-[#2D5A27] text-white px-8 py-2 rounded font-bold uppercase text-xs">Save Category</button>
-          </form>
+          </div>
+
+          <div className="pt-4 flex gap-4">
+            <button onClick={handleSave} disabled={saving} className="bg-[#2D5A27] text-white px-8 py-2 rounded font-bold uppercase text-xs">
+              {saving ? 'Saving...' : '💾 Save'}
+            </button>
+            <Link to="/admin/categories" className="bg-gray-200 text-gray-700 px-8 py-2 rounded font-bold no-underline uppercase text-xs">Cancel</Link>
+          </div>
         </div>
       </main>
     </div>
