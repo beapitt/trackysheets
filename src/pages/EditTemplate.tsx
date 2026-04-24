@@ -1,170 +1,158 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { supabase } from "../lib/supabase";
+import { supabase } from "../supabase"; // Collegamento al tuo file reale
 
 export default function EditTemplate() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
-    title: '', slug: '', category_id: '', short_description: '', description: '',
-    download_url: '', thumbnail_url: '', youtube_url: '', 
-    img_1: '', img_2: '', img_3: '',
-    seo_title: '', meta_description: '', is_featured: false
+    title: '', slug: '', category_id: '', short_description: '', long_description: '',
+    thumbnail: '', img_1: '', img_2: '', img_3: '',
+    download_url: '', youtube_url: '', seo_title: '', meta_description: '',
+    featured: false, status: 'draft'
   });
+
+  const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
     fetchCategories();
-    if (id) fetchTemplate();
+    if (id && id !== 'new') {
+      fetchTemplate();
+    } else {
+      setLoading(false);
+    }
   }, [id]);
 
   async function fetchCategories() {
-    const { data } = await supabase.from("categories").select("*").order("name");
+    const { data } = await supabase.from('categories').select('*').order('name');
     if (data) setCategories(data);
   }
 
   async function fetchTemplate() {
-    const { data } = await supabase.from("templates").select("*").eq("id", id).single();
+    const { data, error } = await supabase.from('templates').select('*').eq('id', id).single();
     if (data) setFormData(data);
+    setLoading(false);
   }
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldName: string) => {
     try {
-      setUploading(true);
-      if (!event.target.files || event.target.files.length === 0) return;
+      const file = e.target.files?.[0];
+      if (!file) return;
 
-      const file = event.target.files[0];
+      setUploadingField(fieldName);
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`; // Salvataggio diretto nel bucket
+      const filePath = `${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('templates') // NOME DEL TUO BUCKET REALE
+        .from('templates')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage.from('templates').getPublicUrl(filePath);
-      setFormData({ ...formData, [field]: data.publicUrl });
-      
-    } catch (error: any) {
-      alert('Error uploading image: ' + error.message);
+      setFormData(prev => ({ ...prev, [fieldName]: data.publicUrl }));
+      setMessage(`✅ ${fieldName} uploaded!`);
+    } catch (err: any) {
+      alert('Upload error: ' + err.message);
     } finally {
-      setUploading(false);
+      setUploadingField(null);
     }
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    const { error } = id 
-      ? await supabase.from("templates").update(formData).eq("id", id)
-      : await supabase.from("templates").insert([formData]);
+    setSaving(true);
+    
+    const { error } = id && id !== 'new'
+      ? await supabase.from('templates').update(formData).eq('id', id)
+      : await supabase.from('templates').insert([formData]);
 
-    if (error) alert("Error: " + error.message);
-    else navigate('/admin/templates');
-    setLoading(false);
+    if (error) {
+      setMessage('❌ Error: ' + error.message);
+    } else {
+      setMessage('✅ Saved successfully!');
+      setTimeout(() => navigate('/admin/templates'), 1500);
+    }
+    setSaving(false);
   };
+
+  if (loading) return <div className="p-10 font-sans">Loading...</div>;
 
   return (
     <div className="flex min-h-screen bg-gray-100 text-left font-sans">
       <aside className="w-48 bg-[#1a3a1a] text-white p-6 shrink-0">
-        <div className="mb-8 font-bold text-2xl">TS</div>
+        <div className="mb-8 font-bold text-2xl uppercase">TS</div>
         <nav className="space-y-2 text-sm">
           <Link to="/admin/templates" className="block px-4 py-2 rounded bg-white/10 border-l-4 border-green-400 no-underline text-white font-bold">Templates</Link>
           <Link to="/admin/categories" className="block px-4 py-2 rounded hover:bg-white/10 no-underline text-white">Categories</Link>
           <Link to="/admin/settings" className="block px-4 py-2 rounded hover:bg-white/10 no-underline text-white">Settings</Link>
+          <Link to="/admin" className="block px-4 py-2 rounded hover:bg-white/10 no-underline text-white border-t border-white/10 mt-4 pt-4">Dashboard</Link>
         </nav>
       </aside>
 
       <main className="flex-1 p-8 overflow-y-auto">
-        <div className="max-w-4xl bg-white rounded-lg shadow-md mb-10 p-8">
-          <h1 className="text-2xl font-bold text-[#2D5A27] mb-6 border-b pb-4 uppercase tracking-tight">
-            {id ? 'Edit Template' : 'Add New Template'}
-          </h1>
-          
-          <form onSubmit={handleSave} className="space-y-8">
-            <section className="bg-gray-50 p-4 rounded-lg border">
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Main Thumbnail</label>
-              <div className="flex items-center gap-4">
-                {formData.thumbnail_url && <img src={formData.thumbnail_url} className="w-32 h-20 object-cover rounded border" alt="Preview" />}
-                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'thumbnail_url')} className="text-xs" />
-              </div>
-              <p className="text-[10px] text-gray-400 mt-1">{uploading ? 'Uploading...' : 'Upload your main listing image'}</p>
-            </section>
+        <div className="bg-[#2D5A27] text-white p-6 rounded-lg mb-8 shadow-md">
+          <h1 className="text-2xl font-bold uppercase">{id && id !== 'new' ? 'Edit Template' : 'Add New Template'}</h1>
+        </div>
 
-            <div className="grid grid-cols-2 gap-4">
+        {message && <div className="mb-6 p-4 bg-white border-l-4 border-green-500 shadow-sm font-bold">{message}</div>}
+
+        <form onSubmit={handleSave} className="bg-white p-8 rounded-lg shadow-sm space-y-8 max-w-4xl">
+          <section className="space-y-4">
+            <h3 className="font-bold text-gray-400 uppercase text-xs border-b pb-1">Media (Upload)</h3>
+            <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label>
+                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Main Thumbnail</label>
+                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'thumbnail')} className="text-xs w-full" />
+                {uploadingField === 'thumbnail' && <p className="text-blue-600 text-[10px]">Uploading...</p>}
+                {formData.thumbnail && <img src={formData.thumbnail} className="mt-2 h-20 w-32 object-cover rounded border" />}
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {[1, 2, 3].map(n => (
+                  <div key={n}>
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase">Img {n}</label>
+                    <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, `img_${n}`)} className="text-[8px] w-full" />
+                    {formData[`img_${n}` as keyof typeof formData] && <img src={formData[`img_${n}` as keyof typeof formData] as string} className="mt-1 h-10 w-full object-cover rounded border" />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="grid grid-cols-2 gap-4">
+             <div>
+                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Title</label>
                 <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-2 border rounded" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Slug</label>
+                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Slug</label>
                 <input required type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded" />
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Category</label>
+                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Category</label>
                 <select required value={formData.category_id} onChange={e => setFormData({...formData, category_id: e.target.value})} className="w-full p-2 border rounded">
                   <option value="">Select Category</option>
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">YouTube Video URL</label>
-                <input type="text" value={formData.youtube_url} onChange={e => setFormData({...formData, youtube_url: e.target.value})} className="w-full p-2 border rounded" />
+                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Download URL</label>
+                <input required type="url" value={formData.download_url} onChange={e => setFormData({...formData, download_url: e.target.value})} className="w-full p-2 border rounded" />
               </div>
-            </div>
+          </section>
 
-            <section className="space-y-4">
-              <h3 className="font-bold text-gray-400 uppercase text-xs border-b pb-1">Carousel Images</h3>
-              <div className="grid grid-cols-3 gap-4">
-                {[1, 2, 3].map((num) => (
-                  <div key={num} className="border p-2 rounded bg-white">
-                    <label className="block text-[10px] font-bold mb-1">Image {num}</label>
-                    <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, `img_${num}`)} className="text-[10px] w-full" />
-                    {formData[`img_${num}` as keyof typeof formData] && (
-                      <img src={formData[`img_${num}` as keyof typeof formData] as string} className="mt-2 h-16 w-full object-cover rounded" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="space-y-4">
-              <h3 className="font-bold text-gray-400 uppercase text-xs border-b pb-1">SEO & Content</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">SEO Title</label>
-                  <input type="text" value={formData.seo_title} onChange={e => setFormData({...formData, seo_title: e.target.value})} className="w-full p-2 border rounded" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Download URL</label>
-                  <input required type="url" value={formData.download_url} onChange={e => setFormData({...formData, download_url: e.target.value})} className="w-full p-2 border rounded" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Meta Description</label>
-                <textarea rows={2} value={formData.meta_description} onChange={e => setFormData({...formData, meta_description: e.target.value})} className="w-full p-2 border rounded text-sm" />
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Full Description (HTML)</label>
-                <textarea rows={6} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full p-2 border rounded text-sm" />
-              </div>
-            </section>
-
-            <div className="pt-6 border-t flex gap-4">
-              <button disabled={loading || uploading} type="submit" className="bg-[#2D5A27] text-white px-10 py-3 rounded font-bold uppercase text-sm shadow-md">
-                {loading ? 'Saving...' : 'Save Template'}
-              </button>
-              <Link to="/admin/templates" className="bg-gray-200 text-gray-700 px-10 py-3 rounded font-bold no-underline uppercase text-sm">Cancel</Link>
-            </div>
-          </form>
-        </div>
+          <div className="pt-6 border-t">
+            <button disabled={saving} type="submit" className="bg-[#2D5A27] text-white px-10 py-3 rounded font-bold uppercase text-sm">
+              {saving ? 'Saving...' : '💾 Save Template'}
+            </button>
+          </div>
+        </form>
       </main>
     </div>
   );
