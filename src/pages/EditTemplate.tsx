@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 interface Template {
@@ -21,10 +21,15 @@ interface Template {
   status: 'draft' | 'published';
 }
 
+interface Category {
+  id: string;
+  name: string;
+}
+
 export default function EditTemplate() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [template, setTemplate] = useState<Template | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -49,365 +54,153 @@ export default function EditTemplate() {
   });
 
   const [files, setFiles] = useState<{ [key: string]: File | null }>({
-    thumbnail: null,
-    img_1: null,
-    img_2: null,
-    img_3: null,
+    thumbnail: null, img_1: null, img_2: null, img_3: null,
+  });
+
+  const [previews, setPreviews] = useState<{ [key: string]: string }>({
+    thumbnail: '', img_1: '', img_2: '', img_3: '',
   });
 
   useEffect(() => {
-    if (id && id !== 'new') {
-      fetchTemplate();
-    } else {
+    const init = async () => {
+      await fetchCategories();
+      if (id && id !== 'new') await fetchTemplate();
       setLoading(false);
-    }
+    };
+    init();
   }, [id]);
 
-  const fetchTemplate = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('templates')
-        .select('*')
-        .eq('id', id)
-        .single();
+  const fetchCategories = async () => {
+    const { data } = await supabase.from('categories').select('id, name').order('name');
+    if (data) setCategories(data);
+  };
 
-      if (error) throw error;
-      if (data) {
-        setTemplate(data);
-        setFormData(data);
-      }
-    } catch (err) {
-      setMessage('Error loading template');
-      setMessageType('error');
-    } finally {
-      setLoading(false);
+  const fetchTemplate = async () => {
+    const { data, error } = await supabase.from('templates').select('*').eq('id', id).single();
+    if (data) {
+      setFormData(data);
+      setPreviews({
+        thumbnail: data.thumbnail || '',
+        img_1: data.img_1 || '',
+        img_2: data.img_2 || '',
+        img_3: data.img_3 || '',
+      });
     }
   };
 
-  const generateSlug = (text: string) => {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/[\s_-]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
+  const handleInputChange = (e: any) => {
+    const { name, value, type, checked } = e.target;
+    const val = type === 'checkbox' ? checked : value;
+    
+    setFormData(prev => ({ ...prev, [name]: val }));
 
     if (name === 'title') {
-      setFormData(prev => ({
-        ...prev,
-        title: value,
-        slug: generateSlug(value),
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: type === 'checkbox' ? checked : value,
-      }));
+      const slug = value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      setFormData(prev => ({ ...prev, slug }));
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name } = e.target;
+    const name = e.target.name;
     const file = e.target.files?.[0];
     if (file) {
       setFiles(prev => ({ ...prev, [name]: file }));
+      setPreviews(prev => ({ ...prev, [name]: URL.createObjectURL(file) }));
     }
   };
 
   const uploadFile = async (file: File, fieldName: string) => {
     const fileName = `${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage
-      .from('templates')
-      .upload(`${fieldName}/${fileName}`, file);
-
+    const { error } = await supabase.storage.from('templates').upload(`${fieldName}/${fileName}`, file);
     if (error) throw error;
-
-    const { data } = supabase.storage
-      .from('templates')
-      .getPublicUrl(`${fieldName}/${fileName}`);
-
+    const { data } = supabase.storage.from('templates').getPublicUrl(`${fieldName}/${fileName}`);
     return data.publicUrl;
   };
 
   const handleSave = async () => {
-    if (!formData.title || !formData.slug || !formData.category) {
-      setMessage('Please fill in all required fields');
+    if (!formData.title || !formData.category) {
+      setMessage('Title and Category are required');
       setMessageType('error');
       return;
     }
-
     setSaving(true);
     try {
-      const updateData = { ...formData };
-
-      for (const [fieldName, file] of Object.entries(files)) {
-        if (file) {
-          updateData[fieldName] = await uploadFile(file, fieldName);
-        }
+      const finalData = { ...formData };
+      for (const [key, file] of Object.entries(files)) {
+        if (file) finalData[key] = await uploadFile(file, key);
       }
 
-      if (id && id !== 'new') {
-        const { error } = await supabase
-          .from('templates')
-          .update(updateData)
-          .eq('id', id);
+      const { error } = (id && id !== 'new')
+        ? await supabase.from('templates').update(finalData).eq('id', id)
+        : await supabase.from('templates').insert([finalData]);
 
-        if (error) throw error;
-        setMessage('Template updated successfully');
-      } else {
-        const { error } = await supabase
-          .from('templates')
-          .insert([updateData]);
-
-        if (error) throw error;
-        setMessage('Template created successfully');
-      }
-
+      if (error) throw error;
+      setMessage('Success!');
       setMessageType('success');
-      setTimeout(() => navigate('/admin/templates'), 2000);
-    } catch (err) {
-      setMessage('Error saving template');
+      setTimeout(() => navigate('/admin/templates'), 1500);
+    } catch (err: any) {
+      setMessage(err.message);
       setMessageType('error');
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading) return <div className="p-10">Loading...</div>;
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-48 bg-green-900 text-white p-6">
-        <div className="mb-8">
-          <div className="text-2xl font-bold mb-2">TS</div>
-          <div className="text-sm">TrackySheets Admin</div>
-        </div>
-        <nav className="space-y-2">
-          <a href="/admin/templates" className="block px-4 py-2 rounded bg-white bg-opacity-10 border-l-4 border-green-100">Templates</a>
-          <a href="/admin/categories" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Categories</a>
-          <a href="/admin/settings" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Settings</a>
-          <a href="/admin/dashboard" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Dashboard</a>
+    <div className="flex min-h-screen bg-gray-100 text-left font-sans">
+      <aside className="w-48 bg-green-900 text-white p-6 shrink-0">
+        <div className="text-2xl font-bold mb-8 text-white">TS</div>
+        <nav className="space-y-3 uppercase text-xs font-bold">
+          <Link to="/admin/templates" className="block text-white no-underline opacity-100 border-l-4 border-green-300 pl-2">Templates</Link>
+          <Link to="/admin/categories" className="block text-white no-underline opacity-60 hover:opacity-100">Categories</Link>
+          <Link to="/admin/settings" className="block text-white no-underline opacity-60 hover:opacity-100">Settings</Link>
         </nav>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 p-8">
-        <div className="max-w-4xl">
-          <h1 className="text-3xl font-bold text-green-900 mb-6">{id && id !== 'new' ? 'Edit Template' : 'New Template'}</h1>
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-2xl font-bold text-green-900 mb-6 uppercase">Template Details</h1>
+          
+          {message && <div className={`p-4 mb-6 rounded ${messageType === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{message}</div>}
 
-          {message && (
-            <div className={`p-4 rounded mb-6 ${messageType === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-              {messageType === 'success' ? '✅' : '❌'} {message}
+          <div className="bg-white p-8 rounded shadow-sm border border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Title *</label>
+                <input name="title" value={formData.title} onChange={handleInputChange} className="w-full p-2 border rounded outline-none focus:ring-1 focus:ring-green-700" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Category *</label>
+                <select name="category" value={formData.category} onChange={handleInputChange} className="w-full p-2 border rounded outline-none">
+                  <option value="">Select Category</option>
+                  {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                </select>
+              </div>
             </div>
-          )}
 
-          <div className="bg-white rounded-lg shadow p-8">
-            <form className="space-y-6">
-              {/* Title */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Title *</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  placeholder="Template title"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
+            <div className="mb-6">
+              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Short Description</label>
+              <textarea name="short_description" value={formData.short_description} onChange={handleInputChange} rows={2} className="w-full p-2 border rounded outline-none" />
+            </div>
 
-              {/* Slug */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Slug *</label>
-                <input
-                  type="text"
-                  name="slug"
-                  value={formData.slug}
-                  onChange={handleInputChange}
-                  placeholder="auto-generated"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              {['thumbnail', 'img_1', 'img_2', 'img_3'].map(f => (
+                <div key={f}>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{f}</label>
+                  <input type="file" name={f} onChange={handleFileChange} className="text-[10px] w-full" />
+                  {previews[f] && <img src={previews[f]} className="mt-2 w-full h-20 object-cover rounded border" />}
+                </div>
+              ))}
+            </div>
 
-              {/* Category */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Category *</label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                >
-                  <option value="">Select a category</option>
-                  <option value="Finance">Finance</option>
-                  <option value="Business">Business</option>
-                  <option value="Personal">Personal</option>
-                </select>
-              </div>
-
-              {/* Short Description */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Short Description</label>
-                <textarea
-                  name="short_description"
-                  value={formData.short_description}
-                  onChange={handleInputChange}
-                  placeholder="Brief description"
-                  rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
-
-              {/* Long Description */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Long Description</label>
-                <textarea
-                  name="long_description"
-                  value={formData.long_description}
-                  onChange={handleInputChange}
-                  placeholder="Detailed description"
-                  rows={6}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
-
-              {/* Thumbnail Upload */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Thumbnail Image</label>
-                <input
-                  type="file"
-                  name="thumbnail"
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                />
-                {formData.thumbnail && <p className="text-sm text-gray-600 mt-2">Current: {formData.thumbnail}</p>}
-              </div>
-
-              {/* Carousel Images */}
-              <div className="grid grid-cols-3 gap-4">
-                {['img_1', 'img_2', 'img_3'].map((field) => (
-                  <div key={field}>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">Image {field.split('_')[1]}</label>
-                    <input
-                      type="file"
-                      name={field}
-                      onChange={handleFileChange}
-                      accept="image/*"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                    />
-                    {formData[field] && <p className="text-sm text-gray-600 mt-2">Current: {formData[field]}</p>}
-                  </div>
-                ))}
-              </div>
-
-              {/* Download URL */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Download URL</label>
-                <input
-                  type="url"
-                  name="download_url"
-                  value={formData.download_url}
-                  onChange={handleInputChange}
-                  placeholder="https://..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
-
-              {/* YouTube URL */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">YouTube URL</label>
-                <input
-                  type="url"
-                  name="youtube_url"
-                  value={formData.youtube_url}
-                  onChange={handleInputChange}
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
-
-              {/* SEO Title */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">SEO Title</label>
-                <input
-                  type="text"
-                  name="seo_title"
-                  value={formData.seo_title}
-                  onChange={handleInputChange}
-                  placeholder="SEO title"
-                  maxLength={60}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-                <p className="text-xs text-gray-500 mt-1">{formData.seo_title.length}/60</p>
-              </div>
-
-              {/* Meta Description */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Meta Description</label>
-                <textarea
-                  name="meta_description"
-                  value={formData.meta_description}
-                  onChange={handleInputChange}
-                  placeholder="Meta description"
-                  rows={2}
-                  maxLength={160}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-                <p className="text-xs text-gray-500 mt-1">{formData.meta_description.length}/160</p>
-              </div>
-
-              {/* Featured */}
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="featured"
-                  checked={formData.featured}
-                  onChange={handleInputChange}
-                  className="w-4 h-4 text-green-700 rounded focus:ring-2 focus:ring-green-700"
-                />
-                <label className="ml-2 text-sm font-bold text-gray-700">Featured</label>
-              </div>
-
-              {/* Status */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Status</label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                >
-                  <option value="draft">Draft</option>
-                  <option value="published">Published</option>
-                </select>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-4 pt-6 border-t">
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="bg-green-700 hover:bg-green-800 disabled:bg-gray-400 text-white font-bold py-2 px-6 rounded-lg transition"
-                >
-                  {saving ? '💾 Saving...' : '💾 Save Template'}
-                </button>
-                <button
-                  type="button"
-                  onClick={( ) => navigate('/admin/templates')}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg transition"
-                >
-                  ↩️ Cancel
-                </button>
-              </div>
-            </form>
+            <div className="flex gap-4">
+              <button onClick={handleSave} disabled={saving} className="bg-green-700 text-white px-8 py-2 rounded font-bold uppercase text-xs shadow-md">
+                {saving ? 'Saving...' : 'Save Template'}
+              </button>
+              <Link to="/admin/templates" className="bg-gray-200 text-gray-600 px-8 py-2 rounded font-bold uppercase text-xs no-underline">Cancel</Link>
+            </div>
           </div>
         </div>
       </main>
