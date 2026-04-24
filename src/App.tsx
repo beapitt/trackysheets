@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminTemplates from "./pages/AdminTemplates";
+import AdminCategories from "./pages/AdminCategories";
+import Settings from "./pages/Settings";
 import TemplateDetail from "./pages/TemplateDetail";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -20,10 +23,14 @@ export default function App() {
         {/* Admin Dashboard */}
         <Route path="/admin" element={<AdminDashboard />} />
         
-        {/* Fallback per le sottopagine non ancora create */}
-        <Route path="/admin/settings" element={<AdminDashboard />} />
-        <Route path="/admin/templates" element={<AdminDashboard />} />
-        <Route path="/admin/categories" element={<AdminDashboard />} />
+        {/* Admin Subpages - Now correctly linked */}
+        <Route path="/admin/templates" element={<AdminTemplates />} />
+        <Route path="/admin/categories" element={<AdminCategories />} />
+        <Route path="/admin/settings" element={<Settings />} />
+        
+        {/* Placeholders for remaining sections */}
+        <Route path="/admin/ads" element={<div className="p-10 text-left font-sans">Ad Slots section coming soon...</div>} />
+        <Route path="/admin/legal" element={<div className="p-10 text-left font-sans">Legal & SEO section coming soon...</div>} />
       </Routes>
     </Router>
   );
