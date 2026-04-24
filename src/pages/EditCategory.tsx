@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { supabase } from "../supabase";
+import { supabase } from "../supabase"; // Usa il tuo file con le chiavi inserite
 
 export default function EditCategory() {
   const { id } = useParams();
@@ -11,7 +11,7 @@ export default function EditCategory() {
   
   const [formData, setFormData] = useState({
     name: '', slug: '', seo_title: '', meta_description: '',
-    placement: 'sidebar' as 'sidebar' | 'top' | 'both', sort_order: 1,
+    placement: 'sidebar', sort_order: 1,
   });
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function EditCategory() {
     try {
       const { data, error } = await supabase.from('categories').select('*').eq('id', id).single();
       if (error) throw error;
-      setFormData(data);
+      if (data) setFormData(data);
     } catch (err) {
       setMessage('❌ Error loading category');
     } finally {
@@ -31,7 +31,8 @@ export default function EditCategory() {
     }
   }
 
-  const handleSave = async () => {
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
     setSaving(true);
     try {
       const { error } = id && id !== 'new'
@@ -62,28 +63,33 @@ export default function EditCategory() {
       </aside>
 
       <main className="flex-1 p-8">
-        <div className="bg-white p-8 rounded-lg shadow-sm max-w-2xl space-y-6">
-          <h1 className="text-xl font-bold uppercase text-[#2D5A27] border-b pb-2">Category Detail</h1>
+        <div className="bg-white p-8 rounded-lg shadow-sm max-w-2xl space-y-6 border border-gray-200">
+          <h1 className="text-xl font-bold uppercase text-[#2D5A27] border-b pb-2">
+            {id && id !== 'new' ? 'Edit Category' : 'Add New Category'}
+          </h1>
           
-          {message && <div className="p-3 bg-green-50 text-green-700 rounded font-bold text-xs">{message}</div>}
+          {message && <div className={`p-3 rounded font-bold text-xs ${message.includes('✅') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>{message}</div>}
 
-          <div className="space-y-4">
+          <form onSubmit={handleSave} className="space-y-4 text-left">
             <div>
               <label className="block text-[11px] font-bold text-gray-500 uppercase">Category Name *</label>
-              <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2 border rounded outline-none focus:ring-1 focus:ring-green-600" />
+              <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2 border rounded outline-none focus:ring-1 focus:ring-green-600" />
             </div>
             <div>
               <label className="block text-[11px] font-bold text-gray-500 uppercase">Slug *</label>
-              <input type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded outline-none focus:ring-1 focus:ring-green-600" />
+              <input required type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded outline-none focus:ring-1 focus:ring-green-600" />
             </div>
-          </div>
-
-          <div className="pt-4 flex gap-4">
-            <button onClick={handleSave} disabled={saving} className="bg-[#2D5A27] text-white px-8 py-2 rounded font-bold uppercase text-xs">
-              {saving ? 'Saving...' : '💾 Save'}
-            </button>
-            <Link to="/admin/categories" className="bg-gray-200 text-gray-700 px-8 py-2 rounded font-bold no-underline uppercase text-xs">Cancel</Link>
-          </div>
+            <div>
+              <label className="block text-[11px] font-bold text-gray-500 uppercase">SEO Title</label>
+              <input type="text" value={formData.seo_title} onChange={e => setFormData({...formData, seo_title: e.target.value})} className="w-full p-2 border rounded outline-none focus:ring-1 focus:ring-green-600" />
+            </div>
+            <div className="pt-4 flex gap-4">
+              <button type="submit" disabled={saving} className="bg-[#2D5A27] text-white px-8 py-2 rounded font-bold uppercase text-xs">
+                {saving ? 'Saving...' : '💾 Save Category'}
+              </button>
+              <Link to="/admin/categories" className="bg-gray-200 text-gray-700 px-8 py-2 rounded font-bold no-underline uppercase text-xs">Cancel</Link>
+            </div>
+          </form>
         </div>
       </main>
     </div>
