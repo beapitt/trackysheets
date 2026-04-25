@@ -1,36 +1,85 @@
+import '../index.css';
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
+import Navbar from '../layout/Navbar';
+import Sidebar from '../layout/Sidebar';
+import Footer from '../components/Footer';
+import CookieBanner from '../components/CookieBanner';
 
-export default function CookieBanner() {
-  const [isVisible, setIsVisible] = useState(false);
+export default function Home() {
+  const [settings, setSettings] = useState<any>(null);
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const consent = localStorage.getItem('cookie-consent');
-    if (!consent) {
-      setIsVisible(true);
-    }
+    const fetchData = async () => {
+      try {
+        const { data: s } = await supabase.from('settings').select('*').limit(1).single();
+        if (s) setSettings(s);
+        const { data: t } = await supabase.from('templates').select('*').eq('status', 'published').order('created_at', { ascending: false });
+        if (t) setTemplates(t);
+      } catch (err) {
+        console.error('Error fetching Home data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
-  const acceptCookies = () => {
-    localStorage.setItem('cookie-consent', 'true');
-    setIsVisible(false);
-  };
-
-  if (!isVisible) return null;
+  if (loading) return (
+    <div className="min-h-screen bg-gray-50 font-sans flex items-center justify-center text-gray-400 italic">
+      Loading TrackySheets...
+    </div>
+  );
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#14532d] text-white p-4 z-[100] shadow-lg border-t border-green-700 font-sans">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-left">
-        <div className="text-sm opacity-90 leading-relaxed m-0">
-          This website uses cookies to ensure you get the best experience. By continuing, you agree to our 
-          <a href="/privacy" className="text-white underline ml-1 hover:text-green-300">Privacy Policy</a>
-        </div>
-        <button 
-          onClick={acceptCookies}
-          className="bg-[#facc15] hover:bg-yellow-500 text-gray-900 font-bold py-2 px-6 rounded text-xs uppercase tracking-widest transition flex-shrink-0 border-none cursor-pointer"
-        >
-          Accept
-        </button>
+    <div className="min-h-screen bg-[#f9fafb] font-sans flex flex-col">
+      <Navbar />
+      <div className="max-w-7xl mx-auto flex flex-1 w-full">
+        {/* MAIN CONTENT - SINISTRA */}
+        <main className="flex-1 p-8 bg-white shadow-inner text-left border-r border-gray-100">
+          <section className="mb-12">
+            <h1 className="text-[32px] font-bold text-[#14532d] leading-tight mb-4 uppercase">
+              {settings?.hero_title || 'Professional Spreadsheet Templates'}
+            </h1>
+            <p className="text-[#1a8856] text-[11px] font-bold uppercase tracking-[0.2em] mb-6">
+              Free Google Sheets Tools & Planners
+            </p>
+            <div className="text-gray-700 text-[15px] space-y-4 leading-relaxed max-w-4xl">
+              <p className="font-medium text-gray-900">{settings?.hero_subtitle}</p>
+              <p>Every tool in our library is built to be powerful, user-friendly, and <strong>100% free to download</strong>. Our templates are fully optimized for <strong>Google Sheets</strong>.</p>
+            </div>
+          </section>
+
+          <div className="bg-[#14532d] text-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] mb-8">
+            All Templates
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {templates.map(item => (
+              <Link key={item.id} to={`/template/${item.slug}`} className="group no-underline block">
+                <div className="aspect-video bg-gray-100 rounded-sm overflow-hidden border border-gray-200 shadow-sm group-hover:shadow-md transition-shadow">
+                  {item.thumbnail ? (
+                    <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-300 font-bold uppercase text-[10px]">No Preview</div>
+                  )}
+                </div>
+                <h3 className="mt-4 font-bold text-gray-800 group-hover:text-[#1a8856] transition text-[16px] leading-snug">
+                  {item.title}
+                </h3>
+              </Link>
+            ))}
+          </div>
+        </main>
+
+        {/* SIDEBAR - DESTRA */}
+        <Sidebar />
       </div>
+      <Footer />
+      <CookieBanner />
     </div>
   );
 }
