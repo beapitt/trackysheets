@@ -1,218 +1,144 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-
-interface Settings {
-  id: string;
-  site_name: string;
-  site_description: string;
-  admin_email: string;
-  pinterest_url: string;
-  youtube_url: string;
-  homepage_description: string;
-}
+import { supabase } from '../../lib/supabase';
 
 export default function Settings() {
-  const [settings, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState<'success' | 'error'>('success');
-
-  const [formData, setFormData] = useState({
-    site_name: '',
-    site_description: '',
-    admin_email: '',
+  const [settings, setSettings] = useState({
+    hero_title: '',
+    hero_subtitle: '',
     pinterest_url: '',
     youtube_url: '',
-    homepage_description: '',
+    featured_video_id: '',
+    ga_id: '',
+    ad_slot_1: '',
+    ad_slot_2: '',
+    ad_slot_3: '',
+    privacy_policy: '',
+    terms_of_use: '',
+    disclaimer: ''
   });
 
   useEffect(() => {
     fetchSettings();
   }, []);
 
-  const fetchSettings = async () => {
+  async function fetchSettings() {
     try {
-      const { data, error } = await supabase
-        .from('settings')
-        .select('*')
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-
-      if (data) {
-        setSettings(data);
-        setFormData(data);
-      }
-    } catch (err) {
-      setMessage('Error loading settings');
-      setMessageType('error');
+      const { data, error } = await supabase.from('settings').select('*').single();
+      if (error) throw error;
+      if (data) setSettings(data);
+    } catch (error) {
+      console.error('Error loading settings:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
     try {
-      if (settings) {
-        const { error } = await supabase
-          .from('settings')
-          .update(formData)
-          .eq('id', settings.id);
-
-        if (error) throw error;
-        setMessage('Settings updated successfully');
-      } else {
-        const { error } = await supabase
-          .from('settings')
-          .insert([formData]);
-
-        if (error) throw error;
-        setMessage('Settings created successfully');
-      }
-
-      setMessageType('success');
-    } catch (err) {
-      setMessage('Error saving settings');
-      setMessageType('error');
+      const { error } = await supabase.from('settings').update(settings).eq('id', (settings as any).id);
+      if (error) throw error;
+      setMessage('Settings updated successfully!');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      alert('Error updating settings');
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
-  };
+  }
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading && !settings.hero_title) return <div className="p-8">Loading Settings...</div>;
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-48 bg-green-900 text-white p-6">
-        <div className="mb-8">
-          <div className="text-2xl font-bold mb-2">TS</div>
-          <div className="text-sm">TrackySheets Admin</div>
-        </div>
-        <nav className="space-y-2">
-          <a href="/admin/templates" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Templates</a>
-          <a href="/admin/categories" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Categories</a>
-          <a href="/admin/settings" className="block px-4 py-2 rounded bg-white bg-opacity-10 border-l-4 border-green-100">Settings</a>
-          <a href="/admin/dashboard" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Dashboard</a>
-        </nav>
-      </aside>
+    <div className="max-w-4xl mx-auto p-8 font-sans text-left">
+      <h1 className="text-2xl font-bold text-gray-800 mb-8 uppercase tracking-tight">Site Settings</h1>
+      
+      {message && <div className="bg-green-100 text-green-700 p-4 rounded mb-6 font-bold">{message}</div>}
 
-      {/* Main Content */}
-      <main className="flex-1 p-8">
-        <div className="max-w-4xl">
-          <h1 className="text-3xl font-bold text-green-900 mb-6">Site Settings</h1>
-
-          {message && (
-            <div className={`p-4 rounded mb-6 ${messageType === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-              {messageType === 'success' ? '✅' : '❌'} {message}
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Hero Section */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h2 className="text-sm font-bold text-[#14532d] uppercase tracking-widest mb-4 border-b pb-2">Hero Section</h2>
+          <div className="grid gap-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Hero Title</label>
+              <input type="text" className="w-full p-2 border rounded" value={settings.hero_title} onChange={e => setSettings({...settings, hero_title: e.target.value})} />
             </div>
-          )}
-
-          <div className="bg-white rounded-lg shadow p-8">
-            <form className="space-y-6">
-              {/* Site Name */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Site Name</label>
-                <input
-                  type="text"
-                  name="site_name"
-                  value={formData.site_name}
-                  onChange={handleInputChange}
-                  placeholder="TrackySheets"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
-
-              {/* Site Description */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Site Description</label>
-                <textarea
-                  name="site_description"
-                  value={formData.site_description}
-                  onChange={handleInputChange}
-                  placeholder="Brief description of your site"
-                  rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
-
-              {/* Homepage Description */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Homepage Description</label>
-                <textarea
-                  name="homepage_description"
-                  value={formData.homepage_description}
-                  onChange={handleInputChange}
-                  placeholder="Description for homepage hero section"
-                  rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
-
-              {/* Admin Email */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Admin Email</label>
-                <input
-                  type="email"
-                  name="admin_email"
-                  value={formData.admin_email}
-                  onChange={handleInputChange}
-                  placeholder="admin@example.com"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
-
-              {/* Pinterest URL */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Pinterest URL</label>
-                <input
-                  type="url"
-                  name="pinterest_url"
-                  value={formData.pinterest_url}
-                  onChange={handleInputChange}
-                  placeholder="https://pinterest.com/..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
-
-              {/* YouTube URL */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">YouTube URL</label>
-                <input
-                  type="url"
-                  name="youtube_url"
-                  value={formData.youtube_url}
-                  onChange={handleInputChange}
-                  placeholder="https://youtube.com/..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-4 pt-6 border-t">
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="bg-green-700 hover:bg-green-800 disabled:bg-gray-400 text-white font-bold py-2 px-6 rounded-lg transition"
-                >
-                  {saving ? '💾 Saving...' : '💾 Save Settings'}
-                </button>
-              </div>
-            </form>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Hero Subtitle</label>
+              <textarea className="w-full p-2 border rounded h-24" value={settings.hero_subtitle} onChange={e => setSettings({...settings, hero_subtitle: e.target.value})} />
+            </div>
           </div>
         </div>
-      </main>
+
+        {/* Social & Video */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h2 className="text-sm font-bold text-[#14532d] uppercase tracking-widest mb-4 border-b pb-2">Social & Video</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Pinterest URL</label>
+              <input type="text" className="w-full p-2 border rounded" value={settings.pinterest_url} onChange={e => setSettings({...settings, pinterest_url: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">YouTube Channel URL</label>
+              <input type="text" className="w-full p-2 border rounded" value={settings.youtube_url} onChange={e => setSettings({...settings, youtube_url: e.target.value})} />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Featured Video ID (YouTube)</label>
+              <input type="text" className="w-full p-2 border rounded" placeholder="e.g. dQw4w9WgXcQ" value={settings.featured_video_id} onChange={e => setSettings({...settings, featured_video_id: e.target.value})} />
+            </div>
+          </div>
+        </div>
+
+        {/* ADS & Analytics */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h2 className="text-sm font-bold text-[#14532d] uppercase tracking-widest mb-4 border-b pb-2">Ads & Analytics</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Google Analytics ID</label>
+              <input type="text" className="w-full p-2 border rounded" value={settings.ga_id} onChange={e => setSettings({...settings, ga_id: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Ad Slot 1 (Top)</label>
+              <textarea className="w-full p-2 border rounded h-20 font-mono text-xs" value={settings.ad_slot_1} onChange={e => setSettings({...settings, ad_slot_1: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Ad Slot 2 (Middle)</label>
+              <textarea className="w-full p-2 border rounded h-20 font-mono text-xs" value={settings.ad_slot_2} onChange={e => setSettings({...settings, ad_slot_2: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Ad Slot 3 (Bottom)</label>
+              <textarea className="w-full p-2 border rounded h-20 font-mono text-xs" value={settings.ad_slot_3} onChange={e => setSettings({...settings, ad_slot_3: e.target.value})} />
+            </div>
+          </div>
+        </div>
+
+        {/* Legal Sections */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h2 className="text-sm font-bold text-[#14532d] uppercase tracking-widest mb-4 border-b pb-2">Legal Content</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Privacy Policy</label>
+              <textarea className="w-full p-2 border rounded h-32" value={settings.privacy_policy} onChange={e => setSettings({...settings, privacy_policy: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Terms of Use</label>
+              <textarea className="w-full p-2 border rounded h-32" value={settings.terms_of_use} onChange={e => setSettings({...settings, terms_of_use: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Disclaimer</label>
+              <textarea className="w-full p-2 border rounded h-32" value={settings.disclaimer} onChange={e => setSettings({...settings, disclaimer: e.target.value})} />
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" disabled={loading} className="w-full bg-[#14532d] text-white font-bold py-4 rounded shadow-md hover:bg-green-800 transition uppercase tracking-widest">
+          {loading ? 'Saving...' : 'Save All Settings'}
+        </button>
+      </form>
     </div>
-   );
+  );
 }
