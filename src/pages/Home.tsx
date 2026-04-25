@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import Navbar from '../layout/Navbar';
 import Sidebar from '../layout/Sidebar';
+import Footer from '../components/Footer';
+import CookieBanner from '../components/CookieBanner';
 
 export default function Home() {
   const [settings, setSettings] = useState<any>(null);
@@ -29,25 +31,28 @@ export default function Home() {
 
   if (loading) return (
     <div className="min-h-screen bg-gray-50 font-sans flex items-center justify-center">
-      <div className="text-gray-400 italic">Loading TrackySheets content...</div>
+      <div className="text-gray-400 italic">Loading TrackySheets...</div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#f9fafb] font-sans text-left">
+    <div className="min-h-screen bg-[#f9fafb] font-sans flex flex-col">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto flex min-h-screen">
-        <Sidebar />
-
-        <main className="flex-1 p-8 bg-white border-l border-gray-200 shadow-inner">
+      {/* Container Centrale */}
+      <div className="max-w-7xl mx-auto flex flex-1 w-full">
+        
+        {/* MAIN CONTENT - Ora a SINISTRA */}
+        <main className="flex-1 p-8 bg-white shadow-inner text-left">
           
+          {/* Spazio Ad Slot 1 (si vede solo se compilato su Supabase) */}
           {settings?.ad_slot_1 && (
             <div className="bg-gray-50 border border-dashed border-gray-300 p-4 mb-8 text-center text-[11px] text-gray-400 uppercase tracking-widest">
               {settings.ad_slot_1}
             </div>
           )}
 
+          {/* Hero Section */}
           <section className="mb-12 border-b border-gray-100 pb-8">
             <h1 className="text-[32px] font-bold text-[#14532d] leading-tight mb-4">
               {settings?.hero_title || 'Professional Spreadsheet Templates'}
@@ -67,8 +72,9 @@ export default function Home() {
               </p>
             </div>
 
+            {/* Social Follow */}
             <div className="flex items-center gap-4 mt-8 pt-4 border-t border-gray-50">
-              <span className="text-[11px] font-bold text-gray-400 uppercase">Follow Us:</span>
+              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Follow Us:</span>
               {settings?.pinterest_url && (
                 <a href={settings.pinterest_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-red-600 transition text-lg no-underline">📌</a>
               )}
@@ -78,16 +84,22 @@ export default function Home() {
             </div>
           </section>
 
+          {/* Templates Section Header */}
           <div className="bg-[#14532d] text-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] mb-8">
             All Templates
           </div>
 
+          {/* Griglia Template */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {templates.map(item => (
               <Link key={item.id} to={`/template/${item.slug}`} className="group no-underline block">
                 <div className="aspect-video bg-gray-100 rounded-sm overflow-hidden border border-gray-200 shadow-sm group-hover:shadow-md transition-shadow">
                   {item.thumbnail ? (
-                    <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img 
+                      src={item.thumbnail} 
+                      alt={item.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-300 font-bold uppercase text-[10px]">No Preview</div>
                   )}
@@ -102,25 +114,20 @@ export default function Home() {
             ))}
           </div>
 
+          {/* Ad Slot 3 */}
           {settings?.ad_slot_3 && (
             <div className="bg-gray-50 border border-dashed border-gray-300 p-8 mt-16 text-center text-[11px] text-gray-400 uppercase tracking-widest">
               {settings.ad_slot_3}
             </div>
           )}
         </main>
+
+        {/* SIDEBAR - Ora a DESTRA */}
+        <Sidebar />
       </div>
 
-      <footer className="bg-white border-t border-gray-200 py-10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-[12px] text-gray-400 font-medium">
-            © {new Date().getFullYear()} {settings?.site_name || 'TrackySheets'}. All rights reserved.
-          </div>
-          <div className="flex gap-6">
-            <Link to="/privacy" className="text-[11px] font-bold text-gray-500 no-underline hover:text-gray-900 uppercase">Privacy</Link>
-            <Link to="/terms" className="text-[11px] font-bold text-gray-500 no-underline hover:text-gray-900 uppercase">Terms</Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
+      <CookieBanner />
     </div>
   );
 }
