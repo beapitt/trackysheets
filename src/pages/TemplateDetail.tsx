@@ -9,49 +9,96 @@ export default function TemplateDetail() {
   const { slug } = useParams();
   const [template, setTemplate] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeImg, setActiveImg] = useState<string>('');
 
   useEffect(() => {
     async function fetchTemplate() {
       const { data } = await supabase.from('templates').select('*').eq('slug', slug).single();
-      if (data) setTemplate(data);
+      if (data) {
+        setTemplate(data);
+        setActiveImg(data.thumbnail);
+      }
       setLoading(false);
     }
     fetchTemplate();
   }, [slug]);
 
-  if (loading) return <div className="p-20 text-center font-sans italic text-gray-400">Loading template...</div>;
+  if (loading) return <div className="p-20 text-center font-sans italic text-gray-400">Loading...</div>;
   if (!template) return <div className="p-20 text-center font-sans">Template not found.</div>;
 
+  const images = [template.thumbnail, template.img_1, template.img_2, template.img_3].filter(Boolean);
+
   return (
-    <div className="min-h-screen bg-[#f9fafb] font-sans flex flex-col">
+    <div className="min-h-screen bg-white font-sans flex flex-col">
       <Navbar />
-      <div className="max-w-7xl mx-auto flex flex-1 w-full">
-        <main className="flex-1 p-8 bg-white border-r border-gray-100 text-left">
-          <div className="mb-4 text-[11px] text-gray-400 font-bold uppercase tracking-widest">
-            Home / {template.category} / {template.title}
-          </div>
-          <h1 className="text-3xl font-bold text-[#14532d] mb-2 uppercase tracking-tight">{template.title}</h1>
-          <p className="text-[#1a8856] text-xs font-bold uppercase tracking-widest mb-8">{template.category}</p>
+      <div className="max-w-7xl mx-auto flex flex-1 w-full border-x border-gray-50 text-left">
+        <main className="flex-1 p-8">
           
-          <div className="aspect-video w-full bg-gray-100 rounded shadow-inner overflow-hidden mb-10 border border-gray-200">
-            <img src={template.thumbnail} alt={template.title} className="w-full h-full object-cover" />
+          {/* 1. Titolo e Short Description (Sopra) */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-[#14532d] mb-4 tracking-tight leading-tight">
+              {template.title}
+            </h1>
+            <div className="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">
+              {template.short_description}
+            </div>
           </div>
 
-          <div className="prose max-w-none text-gray-700 leading-relaxed mb-12">
-             <h2 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2 uppercase tracking-wide">Description</h2>
-             <p className="whitespace-pre-wrap text-[15px]">{template.short_description}</p>
-             <div className="mt-6 text-gray-600 italic">{template.long_description}</div>
+          {/* 2. Immagine Principale (Carousel) */}
+          <div className="mb-4 aspect-video bg-gray-50 rounded border border-gray-200 overflow-hidden shadow-sm">
+            <img src={activeImg} alt={template.title} className="w-full h-full object-cover transition-all duration-300" />
           </div>
 
-          <div className="bg-green-50 p-10 rounded-lg border border-green-100 flex flex-col items-center gap-6 shadow-sm">
-            <h3 className="text-[#14532d] font-bold text-lg uppercase tracking-tight">Free Download</h3>
-            <a href={template.download_url} target="_blank" rel="noopener noreferrer" 
-               className="bg-[#1a8856] hover:bg-[#14532d] text-white px-12 py-5 rounded font-bold text-sm uppercase tracking-[0.2em] no-underline shadow-lg transition-all">
-               📥 Download for Google Sheets
+          {/* Miniature sotto l'immagine */}
+          {images.length > 1 && (
+            <div className="flex gap-3 mb-8">
+              {images.map((img, idx) => (
+                <button 
+                  key={idx} 
+                  onClick={() => setActiveImg(img)}
+                  className={`w-24 h-16 rounded border-2 transition-all overflow-hidden ${activeImg === img ? 'border-[#1a8856] shadow-md' : 'border-gray-200 hover:border-gray-400'}`}
+                >
+                  <img src={img} className="w-full h-full object-cover" alt="Preview" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* 3. Pulsante Download (Ridimensionato e professionale) */}
+          <div className="mb-12 flex justify-start">
+            <a 
+              href={template.download_url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="bg-[#1a8856] hover:bg-[#14532d] text-white px-8 py-3 rounded font-bold text-sm uppercase tracking-widest no-underline shadow-sm transition-all flex items-center gap-2"
+            >
+              <span>↓</span> Download for Google Sheets
             </a>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">No registration required • 100% Free</p>
           </div>
+
+          {/* 4. Long Description (Sotto) */}
+          {template.long_description && (
+            <div className="prose max-w-none border-t border-gray-100 pt-8 text-gray-600 leading-relaxed text-[15px]">
+              <div dangerouslySetInnerHTML={{ __html: template.long_description }} />
+            </div>
+          )}
+
+          {/* YouTube Video (Opzionale, se presente) */}
+          {template.youtube_url && (
+            <div className="mt-12 pt-8 border-t border-gray-100">
+              <div className="aspect-video bg-black rounded overflow-hidden shadow-sm">
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  src={`https://www.youtube.com/embed/${template.youtube_url.split('v=')[1]}`} 
+                  frameBorder="0" 
+                  allowFullScreen 
+                />
+              </div>
+            </div>
+          )}
         </main>
+
         <Sidebar />
       </div>
       <Footer />
