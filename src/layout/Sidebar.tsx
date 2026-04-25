@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+
 export default function Sidebar() {
   const [categories, setCategories] = useState<any[]>([]);
   const [video, setVideo] = useState<string | null>(null);
@@ -21,7 +22,7 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <aside className="w-64 flex-shrink-0 border-r border-gray-200 bg-white min-h-screen font-sans text-left">
+    <aside className="w-64 flex-shrink-0 border-l border-gray-200 bg-white min-h-screen font-sans text-left">
       {/* Category Header */}
       <div className="bg-[#14532d] text-white px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.15em]">
         Template Categories
@@ -41,7 +42,7 @@ export default function Sidebar() {
             </Link>
           ))
         ) : (
-          <div className="p-4 text-[12px] text-gray-400 italic">No categories found</div>
+          <div className="p-4 text-[12px] text-gray-400 italic text-center">No categories found</div>
         )}
       </nav>
 
@@ -62,7 +63,7 @@ export default function Sidebar() {
               />
             </div>
             <p className="text-[10px] text-gray-400 text-center mt-2 font-bold uppercase tracking-widest">
-              Spreadsheet Tutorial
+              Tutorial
             </p>
           </div>
         </div>
