@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Home from './pages/Home';
 import TemplateDetail from './pages/TemplateDetail';
-import Login from './pages/Login'; // <--- Aggiunto
+import Login from './pages/Login'; 
 import AdminDashboard from './pages/AdminDashboard';
 import AdminTemplates from './pages/AdminTemplates';
 import EditTemplate from './pages/EditTemplate';
@@ -17,10 +17,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/template/:slug" element={<TemplateDetail />} />
-        
-        {/* Rotta per il Login */}
         <Route path="/login" element={<Login />} /> 
-
+        
         {/* Rotte Admin */}
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/templates" element={<AdminTemplates />} />
@@ -31,7 +29,7 @@ export default function App() {
         <Route path="/admin/categories/:id/edit" element={<EditCategory />} />
         <Route path="/admin/settings" element={<Settings />} />
 
-        {/* Se la pagina non esiste, torna in Home */}
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
