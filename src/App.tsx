@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Home from './pages/Home';
 import TemplateDetail from './pages/TemplateDetail';
+import CategoryPage from './pages/CategoryPage';
 import Login from './pages/Login'; 
 import AdminDashboard from './pages/AdminDashboard';
 import AdminTemplates from './pages/AdminTemplates';
@@ -17,9 +18,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/template/:slug" element={<TemplateDetail />} />
+        <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/login" element={<Login />} /> 
         
-        {/* Rotte Admin */}
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/templates" element={<AdminTemplates />} />
         <Route path="/admin/templates/new" element={<EditTemplate />} />
@@ -29,7 +30,6 @@ export default function App() {
         <Route path="/admin/categories/:id/edit" element={<EditCategory />} />
         <Route path="/admin/settings" element={<Settings />} />
 
-        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
