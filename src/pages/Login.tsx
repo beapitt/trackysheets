@@ -26,7 +26,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-[#f9fafb] font-sans">
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border border-gray-100">
         <div className="text-center mb-8">
-           <div className="inline-block bg-[#14532d] text-white px-3 py-1 rounded font-bold text-2xl mb-2 shadow-sm">TS</div>
+           <div className="inline-block bg-[#14532d] text-white px-3 py-1 rounded font-bold text-2xl mb-2">TS</div>
            <h1 className="text-xl font-bold text-gray-800 uppercase tracking-tight">Admin Access</h1>
         </div>
         <form onSubmit={handleLogin} className="space-y-4 text-left">
