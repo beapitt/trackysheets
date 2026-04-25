@@ -39,22 +39,20 @@ export default function Home() {
     <div className="min-h-screen bg-[#f9fafb] font-sans flex flex-col">
       <Navbar />
       
-      {/* Container Centrale */}
       <div className="max-w-7xl mx-auto flex flex-1 w-full">
-        
-        {/* MAIN CONTENT - Ora a SINISTRA */}
-        <main className="flex-1 p-8 bg-white shadow-inner text-left">
+        {/* MAIN CONTENT - SINISTRA */}
+        <main className="flex-1 p-8 bg-white shadow-inner text-left border-r border-gray-100">
           
-          {/* Spazio Ad Slot 1 (si vede solo se compilato su Supabase) */}
+          {/* Ad Slot 1 (Top) */}
           {settings?.ad_slot_1 && (
-            <div className="bg-gray-50 border border-dashed border-gray-300 p-4 mb-8 text-center text-[11px] text-gray-400 uppercase tracking-widest">
-              {settings.ad_slot_1}
+            <div className="mb-8 overflow-hidden flex justify-center">
+              <div dangerouslySetInnerHTML={{ __html: settings.ad_slot_1 }} />
             </div>
           )}
 
           {/* Hero Section */}
           <section className="mb-12 border-b border-gray-100 pb-8">
-            <h1 className="text-[32px] font-bold text-[#14532d] leading-tight mb-4">
+            <h1 className="text-[32px] font-bold text-[#14532d] leading-tight mb-4 uppercase tracking-tight">
               {settings?.hero_title || 'Professional Spreadsheet Templates'}
             </h1>
             <p className="text-[#1a8856] text-[11px] font-bold uppercase tracking-[0.2em] mb-6">
@@ -71,20 +69,16 @@ export default function Home() {
                 fully optimized for <strong>Google Sheets</strong>.
               </p>
             </div>
-
-            {/* Social Follow */}
-            <div className="flex items-center gap-4 mt-8 pt-4 border-t border-gray-50">
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Follow Us:</span>
-              {settings?.pinterest_url && (
-                <a href={settings.pinterest_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-red-600 transition text-lg no-underline">📌</a>
-              )}
-              {settings?.youtube_url && (
-                <a href={settings.youtube_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-red-600 transition text-lg no-underline">▶️</a>
-              )}
-            </div>
           </section>
 
-          {/* Templates Section Header */}
+          {/* Ad Slot 2 (Middle) */}
+          {settings?.ad_slot_2 && (
+            <div className="mb-12 overflow-hidden flex justify-center">
+              <div dangerouslySetInnerHTML={{ __html: settings.ad_slot_2 }} />
+            </div>
+          )}
+
+          {/* Templates Grid Header */}
           <div className="bg-[#14532d] text-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] mb-8">
             All Templates
           </div>
@@ -93,7 +87,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {templates.map(item => (
               <Link key={item.id} to={`/template/${item.slug}`} className="group no-underline block">
-                <div className="aspect-video bg-gray-100 rounded-sm overflow-hidden border border-gray-200 shadow-sm group-hover:shadow-md transition-shadow">
+                <div className="aspect-video bg-gray-100 rounded-sm overflow-hidden border border-gray-200 shadow-sm group-hover:shadow-md transition-all duration-300">
                   {item.thumbnail ? (
                     <img 
                       src={item.thumbnail} 
@@ -108,21 +102,21 @@ export default function Home() {
                   {item.title}
                 </h3>
                 <div className="mt-1 text-[10px] text-gray-400 uppercase font-bold tracking-wider">
-                  Category: {item.category}
+                  {item.category}
                 </div>
               </Link>
             ))}
           </div>
 
-          {/* Ad Slot 3 */}
+          {/* Ad Slot 3 (Bottom) */}
           {settings?.ad_slot_3 && (
-            <div className="bg-gray-50 border border-dashed border-gray-300 p-8 mt-16 text-center text-[11px] text-gray-400 uppercase tracking-widest">
-              {settings.ad_slot_3}
+            <div className="mt-16 overflow-hidden flex justify-center border-t border-gray-100 pt-8">
+              <div dangerouslySetInnerHTML={{ __html: settings.ad_slot_3 }} />
             </div>
           )}
         </main>
 
-        {/* SIDEBAR - Ora a DESTRA */}
+        {/* SIDEBAR - DESTRA */}
         <Sidebar />
       </div>
 
