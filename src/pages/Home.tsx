@@ -2,188 +2,138 @@ import '../index.css';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-
-interface Settings {
-  id: string;
-  site_name: string;
-  site_description: string;
-  admin_email: string;
-  pinterest_url: string;
-  youtube_url: string;
-  ga_id: string;
-  hero_title: string;
-  hero_subtitle: string;
-  featured_video_id: string;
-  ad_slot_1: string;
-  ad_slot_2: string;
-  ad_slot_3: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  image_url: string;
-}
-
-interface Template {
-  id: string;
-  title: string;
-  slug: string;
-  category: string;
-  thumbnail: string;
-  status: string;
-}
+import Navbar from '../components/layout/Navbar';
+import Sidebar from '../components/layout/Sidebar';
 
 export default function Home() {
-  const [settings, setSettings] = useState<Settings | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [templates, setTemplates] = useState<Template[]>([]);
+  const [settings, setSettings] = useState<any>(null);
+  const [templates, setTemplates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data: s } = await supabase.from('settings').select('*').limit(1).single();
+        if (s) setSettings(s);
+        
+        const { data: t } = await supabase.from('templates').select('*').eq('status', 'published').order('created_at', { ascending: false });
+        if (t) setTemplates(t);
+      } catch (err) {
+        console.error('Error fetching Home data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const { data: settingsData } = await supabase.from('settings').select('*').limit(1).single();
-      if (settingsData) setSettings(settingsData);
-
-      const { data: categoriesData } = await supabase.from('categories').select('*').order('name');
-      if (categoriesData) setCategories(categoriesData);
-
-      const { data: templatesData } = await supabase.from('templates').select('*').eq('status', 'published').order('created_at', { ascending: false });
-      if (templatesData) setTemplates(templatesData);
-    } catch (err) {
-      console.error('Error fetching data:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const convertYouTubeUrl = (videoId: string) => {
-    if (!videoId) return '';
-    return `https://www.youtube.com/embed/${videoId}`;
-  };
-
   if (loading) return (
-    <div className="flex items-center justify-center h-screen bg-gray-50 font-sans">
-      <div className="text-2xl font-bold text-green-900">Loading TrackySheets...</div>
+    <div className="min-h-screen bg-gray-50 font-sans">
+      <Navbar />
+      <div className="flex items-center justify-center h-64 text-gray-400 italic">
+        Loading TrackySheets content...
+      </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-white font-sans text-left">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 no-underline">
-            <div className="text-2xl font-bold text-green-900">TS</div>
-            <span className="text-lg font-bold text-gray-900">{settings?.site_name || 'TrackySheets'}</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-8">
-            <Link to="/" className="text-gray-700 hover:text-green-900 font-medium no-underline">Home</Link>
-            <Link to="/templates" className="text-gray-700 hover:text-green-900 font-medium no-underline">Templates</Link>
-            <Link to="/about" className="text-gray-700 hover:text-green-900 font-medium no-underline">About</Link>
-            <Link to="/contact" className="text-gray-700 hover:text-green-900 font-medium no-underline">Contact</Link>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#f9fafb] font-sans text-left">
+      <Navbar />
+      
+      <div className="max-w-7xl mx-auto flex min-h-screen">
+        {/* Sidebar - Fixed width */}
+        <Sidebar />
 
-      {/* Hero */}
-      <section className="bg-green-900 text-white py-20 px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl font-bold mb-6">{settings?.hero_title || 'Free Spreadsheet Templates'}</h1>
-          <p className="text-xl text-green-100 max-w-3xl mx-auto">{settings?.hero_subtitle}</p>
-        </div>
-      </section>
+        {/* Main Content Area */}
+        <main className="flex-1 p-8 bg-white border-l border-gray-200 shadow-inner">
+          
+          {/* Ad Slot 1 - Top of Main */}
+          {settings?.ad_slot_1 && (
+            <div className="bg-gray-50 border border-dashed border-gray-300 p-4 mb-8 text-center text-[11px] text-gray-400 uppercase tracking-widest">
+              {settings.ad_slot_1}
+            </div>
+          )}
 
-      {/* Main Grid */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Ad Slot 1 */}
-        {settings?.ad_slot_1 && (
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-8 text-center text-xs text-gray-400">
-            {settings.ad_slot_1}
+          {/* Hero Section - Text Focused like Vertex42 */}
+          <section className="mb-12 border-b border-gray-100 pb-8">
+            <h1 className="text-[32px] font-bold text-[#14532d] leading-tight mb-4">
+              {settings?.hero_title || 'Professional Spreadsheet Templates'}
+            </h1>
+            <p className="text-[#1a8856] text-[11px] font-bold uppercase tracking-[0.2em] mb-6">
+              Free Google Sheets Tools & Planners
+            </p>
+            
+            <div className="text-gray-700 text-[15px] space-y-4 leading-relaxed max-w-4xl">
+              <p className="font-medium text-gray-900">
+                {settings?.hero_subtitle || 'High-quality spreadsheets designed to simplify your life.'}
+              </p>
+              <p>
+                Every tool in our library is built to be powerful, user-friendly, and <strong>100% free to download</strong>. 
+                Whether you need a complex rental property analyzer or a simple monthly budget, our templates are 
+                fully optimized for <strong>Google Sheets</strong>.
+              </p>
+            </div>
+
+            {/* Social Follow from Settings */}
+            <div className="flex items-center gap-4 mt-8 pt-4 border-t border-gray-50">
+              <span className="text-[11px] font-bold text-gray-400 uppercase">Follow Us:</span>
+              {settings?.pinterest_url && (
+                <a href={settings.pinterest_url} target="_blank" className="text-gray-400 hover:text-red-600 transition text-lg no-underline">📌</a>
+              )}
+              {settings?.youtube_url && (
+                <a href={settings.youtube_url} target="_blank" className="text-gray-400 hover:text-red-600 transition text-lg no-underline">▶️</a>
+              )}
+            </div>
+          </section>
+
+          {/* Templates Section Header */}
+          <div className="bg-[#14532d] text-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] mb-8">
+            All Templates
           </div>
-        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <aside className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              <h2 className="text-lg font-bold text-green-900 mb-6 uppercase tracking-widest">Categories</h2>
-              <nav className="space-y-2">
-                {categories.map(cat => (
-                  <Link key={cat.id} to={`/category/${cat.slug}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-green-50 no-underline group transition">
-                    {cat.image_url ? (
-                      <img src={cat.image_url} alt="" className="w-6 h-6 object-cover rounded" />
-                    ) : (
-                      <div className="w-6 h-6 bg-green-100 rounded flex items-center justify-center text-[10px] font-bold text-green-700">TS</div>
-                    )}
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-green-900">{cat.name}</span>
-                  </Link>
-                ))}
-              </nav>
-            </div>
-
-            {/* Featured Video */}
-            {settings?.featured_video_id && (
-              <div className="rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div className="aspect-video bg-black">
-                  <iframe width="100%" height="100%" src={convertYouTubeUrl(settings.featured_video_id)} frameBorder="0" allowFullScreen />
+          {/* Templates Grid - 2 columns like original */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {templates.map(item => (
+              <Link key={item.id} to={`/template/${item.slug}`} className="group no-underline block">
+                <div className="aspect-video bg-gray-100 rounded-sm overflow-hidden border border-gray-200 shadow-sm group-hover:shadow-md transition-shadow">
+                  {item.thumbnail ? (
+                    <img 
+                      src={item.thumbnail} 
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-300 font-bold uppercase text-[10px]">No Preview</div>
+                  )}
                 </div>
-                <div className="p-3 bg-gray-50 text-center border-t">
-                  <p className="text-[10px] font-bold uppercase text-gray-400">Featured Tutorial</p>
+                <h3 className="mt-4 font-bold text-gray-800 group-hover:text-[#1a8856] transition text-[16px] leading-snug">
+                  {item.title}
+                </h3>
+                <div className="mt-1 text-[10px] text-gray-400 uppercase font-bold tracking-wider">
+                  Category: {item.category}
                 </div>
-              </div>
-            )}
-          </aside>
+              </Link>
+            ))}
+          </div>
 
-          {/* Templates Grid */}
-          <main className="lg:col-span-3">
-            <h2 className="text-2xl font-bold text-green-900 mb-8 uppercase tracking-tight">Latest Templates</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {templates.map(template => (
-                <Link key={template.id} to={`/template/${template.slug}`} className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden no-underline hover:shadow-md transition">
-                  <div className="aspect-video bg-gray-100 overflow-hidden">
-                    {template.thumbnail ? (
-                      <img src={template.thumbnail} alt={template.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-300 text-[10px] uppercase font-bold">No Preview</div>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-bold text-gray-900 text-sm mb-3 line-clamp-2 group-hover:text-green-700 transition">{template.title}</h3>
-                    <span className="inline-block text-[10px] font-bold text-green-700 bg-green-50 px-2 py-1 rounded uppercase tracking-wider">{template.category}</span>
-                  </div>
-                </Link>
-              ))}
+          {/* Ad Slot 3 - Bottom */}
+          {settings?.ad_slot_3 && (
+            <div className="bg-gray-50 border border-dashed border-gray-300 p-8 mt-16 text-center text-[11px] text-gray-400 uppercase tracking-widest">
+              {settings.ad_slot_3}
             </div>
-          </main>
-        </div>
+          )}
+        </main>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-green-900 text-white py-16 px-6 mt-20 border-t-8 border-green-800">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div>
-            <h3 className="text-xl font-bold mb-4 uppercase tracking-tighter">{settings?.site_name}</h3>
-            <p className="text-green-100 text-sm leading-relaxed">{settings?.site_description}</p>
+      {/* Basic Footer */}
+      <footer className="bg-white border-t border-gray-200 py-10">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-[12px] text-gray-400 font-medium">
+            © {new Date().getFullYear()} {settings?.site_name || 'TrackySheets'}. All rights reserved.
           </div>
-          <div>
-            <h4 className="font-bold mb-6 text-xs uppercase tracking-widest text-green-400">Social</h4>
-            <div className="flex flex-col gap-3">
-              {settings?.pinterest_url && <a href={settings.pinterest_url} target="_blank" className="text-green-100 no-underline hover:text-white text-sm">Pinterest</a>}
-              {settings?.youtube_url && <a href={settings.youtube_url} target="_blank" className="text-green-100 no-underline hover:text-white text-sm">YouTube</a>}
-            </div>
-          </div>
-          <div>
-            <h4 className="font-bold mb-6 text-xs uppercase tracking-widest text-green-400">Legal</h4>
-            <div className="flex flex-col gap-3">
-              <Link to="/privacy" className="text-green-100 no-underline hover:text-white text-sm">Privacy Policy</Link>
-              <Link to="/terms" className="text-green-100 no-underline hover:text-white text-sm">Terms of Service</Link>
-            </div>
+          <div className="flex gap-6">
+            <Link to="/privacy" className="text-[11px] font-bold text-gray-500 no-underline hover:text-gray-900 uppercase">Privacy</Link>
+            <Link to="/terms" className="text-[11px] font-bold text-gray-500 no-underline hover:text-gray-900 uppercase">Terms</Link>
           </div>
         </div>
       </footer>
