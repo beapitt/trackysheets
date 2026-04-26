@@ -34,14 +34,15 @@ export default function TemplateDetail() {
       <div className="max-w-7xl mx-auto flex flex-1 w-full border-x border-gray-50 text-left">
         <main className="flex-1 p-8">
           
-          {/* 1. Titolo e Short Description (Sopra) */}
+          {/* 1. Titolo e Short Description (Sopra) - ORA CON SUPPORTO GRASSETTO */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-[#14532d] mb-4 tracking-tight leading-tight">
               {template.title}
             </h1>
-            <div className="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">
-              {template.short_description}
-            </div>
+            <div 
+              className="text-gray-700 text-lg leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: template.short_description }}
+            />
           </div>
 
           {/* 2. Immagine Principale (Carousel) */}
@@ -64,7 +65,7 @@ export default function TemplateDetail() {
             </div>
           )}
 
-          {/* 3. Pulsante Download (Ridimensionato e professionale) */}
+          {/* 3. Pulsante Download */}
           <div className="mb-12 flex justify-start">
             <a 
               href={template.download_url} 
@@ -76,30 +77,16 @@ export default function TemplateDetail() {
             </a>
           </div>
 
-          {/* 4. Long Description (Sotto) */}
+          {/* 4. Long Description (Sotto) - ORA CON FORMATTAZIONE PULITA */}
           {template.long_description && (
             <div className="prose max-w-none border-t border-gray-100 pt-8 text-gray-600 leading-relaxed text-[15px]">
               <div dangerouslySetInnerHTML={{ __html: template.long_description }} />
             </div>
           )}
-
-          {/* YouTube Video (Opzionale, se presente) */}
-          {template.youtube_url && (
-            <div className="mt-12 pt-8 border-t border-gray-100">
-              <div className="aspect-video bg-black rounded overflow-hidden shadow-sm">
-                <iframe 
-                  width="100%" 
-                  height="100%" 
-                  src={`https://www.youtube.com/embed/${template.youtube_url.split('v=')[1]}`} 
-                  frameBorder="0" 
-                  allowFullScreen 
-                />
-              </div>
-            </div>
-          )}
         </main>
 
-        <Sidebar />
+        {/* Passiamo il video alla Sidebar così può mostrarlo lì invece che in fondo */}
+        <Sidebar videoId={template.youtube_url} />
       </div>
       <Footer />
     </div>
