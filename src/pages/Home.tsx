@@ -1,93 +1,131 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import Navbar from '../layout/Navbar';
 import Sidebar from '../layout/Sidebar';
 import Footer from '../components/Footer';
-import CookieBanner from '../components/CookieBanner';
+import TemplateCard from '../components/TemplateCard';
 
 export default function Home() {
-  const [settings, setSettings] = useState<any>(null);
   const [templates, setTemplates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      // Carica i settings del sito
-      const { data: s } = await supabase.from('settings').select('*').single();
-      // Carica solo i template pubblicati, i più recenti per primi
-      const { data: t } = await supabase.from('templates')
+    async function fetchTemplates() {
+      const { data } = await supabase
+        .from('templates')
         .select('*')
-        .eq('status', 'published')
         .order('created_at', { ascending: false });
-
-      if (s) setSettings(s);
-      if (t) setTemplates(t);
+      if (data) setTemplates(data);
       setLoading(false);
     }
-    fetchData();
+    fetchTemplates();
   }, []);
 
-  if (loading) return <div className="p-20 text-center font-sans italic text-gray-400">Loading...</div>;
+  const featuredTemplate = templates[0]; // Il più recente diventa il "Featured"
+  const recentTemplates = templates.slice(1); // Gli altri vanno nella griglia
 
   return (
     <div className="min-h-screen bg-white font-sans flex flex-col">
       <Navbar />
-      
-      <div className="max-w-7xl mx-auto flex flex-1 w-full border-x border-gray-50">
-        <main className="flex-1 p-8 text-left border-r border-gray-50">
+
+      <div className="max-w-7xl mx-auto flex flex-1 w-full border-x border-gray-50 text-left items-start">
+        <main className="flex-1 p-8">
           
-          {/* Editorial Header (Vertex42 Style) */}
-          <section className="mb-12 border-b border-gray-100 pb-10">
-            <h1 className="text-3xl font-bold text-[#14532d] mb-6 tracking-tight">
-              Spreadsheet Templates, Calculators, and Calendars
+          {/* 1. HERO STATS SECTION */}
+          <section className="mb-12">
+            <h1 className="text-4xl font-black text-[#14532d] mb-6 tracking-tight">
+              Free Google Sheets Templates <br/>
+              <span className="text-gray-400 font-medium text-2xl">Professional. Simple. Ready to use.</span>
             </h1>
-            <div className="text-gray-600 text-[16px] leading-relaxed max-w-4xl space-y-4">
-              <p>
-                <strong>TrackySheets</strong> provides professionally designed <strong>spreadsheet templates</strong> for business, personal, home, and educational use. 
-              </p>
-              <p>
-                Our collection of user-friendly tools includes some of the most powerful and popular trackers you can find. 
-                All templates are <strong>optimized for Google Sheets</strong> and available for download.
-              </p>
+            
+            <div className="grid grid-cols-3 gap-4 border-y border-gray-100 py-6">
+              <div className="text-center border-r border-gray-100">
+                <span className="block text-2xl font-black text-[#1a8856]">50+</span>
+                <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Templates</span>
+              </div>
+              <div className="text-center border-r border-gray-100">
+                <span className="block text-2xl font-black text-[#1a8856]">100%</span>
+                <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Free Access</span>
+              </div>
+              <div className="text-center">
+                <span className="block text-2xl font-black text-[#1a8856]">NO</span>
+                <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Registration</span>
+              </div>
             </div>
           </section>
 
-          {/* Green Bar Title - Stile Manus */}
-          <div className="bg-[#1a8856] py-3 px-6 mb-10 rounded shadow-sm">
-            <h2 className="text-white text-sm font-black uppercase tracking-[0.25em] m-0">
-              Newly Released Templates
-            </h2>
-          </div>
-
-          {/* Templates Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {templates.map(item => (
-              <Link key={item.id} to={`/template/${item.slug}`} className="group no-underline block">
-                <div className="aspect-video bg-gray-50 rounded border border-gray-100 overflow-hidden shadow-sm group-hover:shadow-md transition-all duration-300">
-                  <img 
-                    src={item.thumbnail} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                  />
+          {/* 2. FEATURED TEMPLATE (WIDE CARD) */}
+          {featuredTemplate && (
+            <section className="mb-16">
+              <div className="bg-gray-50 rounded-2xl p-1 border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row gap-8 items-center">
+                <div className="w-full md:w-1/2 aspect-video overflow-hidden rounded-xl">
+                  <img src={featuredTemplate.thumbnail} className="w-full h-full object-cover" alt="Featured" />
                 </div>
-                <h3 className="mt-5 font-bold text-gray-800 group-hover:text-[#1a8856] transition text-xl leading-tight tracking-tight">
-                  {item.title}
-                </h3>
-                {/* Piccola descrizione preview opzionale */}
-                <p className="mt-2 text-gray-500 text-sm line-clamp-2">
-                   {item.seo_title || 'Professional Google Sheets template'}
-                </p>
-              </Link>
-            ))}
-          </div>
+                <div className="w-full md:w-1/2 pr-8 pb-4 md:pb-0">
+                  <span className="text-[#1a8856] text-[10px] font-black uppercase tracking-[0.2em] mb-2 block">Featured Template</span>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">{featuredTemplate.title}</h2>
+                  <div 
+                    className="text-gray-600 text-sm mb-6 line-clamp-3"
+                    dangerouslySetInnerHTML={{ __html: featuredTemplate.short_description }}
+                  />
+                  <a href={`/template/${featuredTemplate.slug}`} className="text-[#1a8856] font-bold text-sm uppercase tracking-widest border-b-2 border-[#1a8856] pb-1 hover:text-[#14532d] transition-all">
+                    Get this template →
+                  </a>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* 3. RECENT TEMPLATES GRID */}
+          <section>
+            <div className="flex justify-between items-end mb-8 border-b border-gray-100 pb-4">
+              <h3 className="text-xl font-bold text-gray-900">Latest Releases</h3>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">New updates every week</span>
+            </div>
+
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {[1, 2, 3, 4].map(n => (
+                  <div key={n} className="h-64 bg-gray-50 animate-pulse rounded-xl"></div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                {recentTemplates.map(t => (
+                  <TemplateCard key={t.id} template={t} />
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* 4. HOW IT WORKS (Claude Suggestion) */}
+          <section className="mt-20 pt-12 border-t border-gray-50">
+            <div className="grid grid-cols-3 gap-8">
+              <div className="text-left">
+                <span className="text-3xl font-black text-gray-100 block mb-2">01</span>
+                <h4 className="font-bold text-gray-800 mb-2">Choose</h4>
+                <p className="text-xs text-gray-500 leading-relaxed">Select a professional template from our curated library.</p>
+              </div>
+              <div className="text-left">
+                <span className="text-3xl font-black text-gray-100 block mb-2">02</span>
+                <h4 className="font-bold text-gray-800 mb-2">Copy</h4>
+                <p className="text-xs text-gray-500 leading-relaxed">One click to copy the file directly to your Google Drive.</p>
+              </div>
+              <div className="text-left">
+                <span className="text-3xl font-black text-gray-100 block mb-2">03</span>
+                <h4 className="font-bold text-gray-800 mb-2">Personalize</h4>
+                <p className="text-xs text-gray-500 leading-relaxed">Start using it immediately with your own data. For free.</p>
+              </div>
+            </div>
+          </section>
+
         </main>
 
+        {/* Right Sidebar remains consistent */}
         <Sidebar />
       </div>
 
       <Footer />
-      <CookieBanner />
     </div>
   );
 }
