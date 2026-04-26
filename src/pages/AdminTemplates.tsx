@@ -7,7 +7,6 @@ export default function AdminTemplates() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingTemplate, setEditingTemplate] = useState<any>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -23,7 +22,7 @@ export default function AdminTemplates() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('templates')
       .upsert(editingTemplate);
 
@@ -36,7 +35,7 @@ export default function AdminTemplates() {
     }
   };
 
-  if (loading) return <div className="p-10 italic text-gray-500">Loading templates...</div>;
+  if (loading) return <div className="p-10 italic text-gray-500">Loading...</div>;
 
   return (
     <div className="p-8 font-sans bg-gray-50 min-h-screen">
@@ -55,7 +54,7 @@ export default function AdminTemplates() {
         </div>
 
         {editingTemplate ? (
-          <form onSubmit={handleSave} className="space-y-8 bg-white p-8 rounded-xl shadow-xl border border-gray-100 animate-in fade-in duration-500">
+          <form onSubmit={handleSave} className="space-y-8 bg-white p-8 rounded-xl shadow-xl border border-gray-100">
             <div className="flex justify-between items-center border-b pb-4">
               <h2 className="text-xl font-bold text-gray-800">Edit Template</h2>
               <button type="button" onClick={() => setEditingTemplate(null)} className="text-gray-400 hover:text-red-500 font-bold">✕ Close</button>
@@ -67,7 +66,7 @@ export default function AdminTemplates() {
                 <label className="block text-[10px] font-black text-gray-400 uppercase mb-2">Title</label>
                 <input
                   type="text"
-                  value={editingTemplate.title}
+                  value={editingTemplate.title || ''}
                   onChange={(e) => setEditingTemplate({...editingTemplate, title: e.target.value})}
                   className="w-full p-3 border border-gray-200 rounded-lg outline-none focus:border-[#1a8856]"
                   required
@@ -77,7 +76,7 @@ export default function AdminTemplates() {
                 <label className="block text-[10px] font-black text-gray-400 uppercase mb-2">Slug (URL)</label>
                 <input
                   type="text"
-                  value={editingTemplate.slug}
+                  value={editingTemplate.slug || ''}
                   onChange={(e) => setEditingTemplate({...editingTemplate, slug: e.target.value})}
                   className="w-full p-3 border border-gray-200 rounded-lg outline-none focus:border-[#1a8856]"
                   required
@@ -85,99 +84,148 @@ export default function AdminTemplates() {
               </div>
             </div>
 
+            {/* FILE & MEDIA SECTION */}
+            <div className="p-6 bg-blue-50/30 rounded-xl border border-blue-100 space-y-6">
+              <div>
+                <label className="block text-[10px] font-black text-[#1e40af] uppercase tracking-widest mb-2">Download URL (Google Drive Link)</label>
+                <input
+                  type="text"
+                  value={editingTemplate.download_url || ''}
+                  onChange={(e) => setEditingTemplate({...editingTemplate, download_url: e.target.value})}
+                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                  placeholder="https://drive.google.com/..."
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-black text-[#1e40af] uppercase mb-2">Main Thumbnail URL</label>
+                  <input
+                    type="text"
+                    value={editingTemplate.thumbnail || ''}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, thumbnail: e.target.value})}
+                    className="w-full p-3 border border-gray-200 rounded-lg outline-none"
+                    placeholder="URL Image"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-[#1e40af] uppercase mb-2">Screenshot 1 URL</label>
+                  <input
+                    type="text"
+                    value={editingTemplate.img_1 || ''}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, img_1: e.target.value})}
+                    className="w-full p-3 border border-gray-200 rounded-lg outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-[#1e40af] uppercase mb-2">Screenshot 2 URL</label>
+                  <input
+                    type="text"
+                    value={editingTemplate.img_2 || ''}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, img_2: e.target.value})}
+                    className="w-full p-3 border border-gray-200 rounded-lg outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-[#1e40af] uppercase mb-2">Screenshot 3 URL</label>
+                  <input
+                    type="text"
+                    value={editingTemplate.img_3 || ''}
+                    onChange={(e) => setEditingTemplate({...editingTemplate, img_3: e.target.value})}
+                    className="w-full p-3 border border-gray-200 rounded-lg outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* SEO & VIDEO SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-green-50/30 rounded-xl border border-green-100">
               <div>
-                <label className="block text-[10px] font-black text-[#14532d] uppercase tracking-[0.15em] mb-2">SEO Title (Google)</label>
+                <label className="block text-[10px] font-black text-[#14532d] uppercase mb-2">SEO Title (Google)</label>
                 <input
                   type="text"
                   value={editingTemplate.seo_title || ''}
                   onChange={(e) => setEditingTemplate({...editingTemplate, seo_title: e.target.value})}
-                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a8856] outline-none shadow-sm"
-                  placeholder="Optimized title for search results"
+                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a8856] outline-none"
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-black text-[#14532d] uppercase tracking-[0.15em] mb-2">YouTube Video ID</label>
+                <label className="block text-[10px] font-black text-[#14532d] uppercase mb-2">YouTube Video ID</label>
                 <input
                   type="text"
                   value={editingTemplate.youtube_url || ''}
                   onChange={(e) => setEditingTemplate({...editingTemplate, youtube_url: e.target.value})}
-                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a8856] outline-none shadow-sm"
-                  placeholder="Example: dQw4w9WgXcQ"
+                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a8856] outline-none"
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-[10px] font-black text-[#14532d] uppercase tracking-[0.15em] mb-2">Meta Description (SEO)</label>
+                <label className="block text-[10px] font-black text-[#14532d] uppercase mb-2">Meta Description (SEO)</label>
                 <textarea
                   value={editingTemplate.meta_description || ''}
                   onChange={(e) => setEditingTemplate({...editingTemplate, meta_description: e.target.value})}
-                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a8856] outline-none h-20 shadow-sm"
-                  placeholder="Brief summary for Google search snippets..."
+                  className="w-full p-3 border border-gray-200 rounded-lg h-20 outline-none"
                 />
               </div>
             </div>
 
-            {/* TECHNICAL DATA (SOFTWARE SCHEMA) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50 rounded-xl border border-gray-200">
+            {/* TECHNICAL & DESCRIPTIONS */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50 rounded-xl">
               <div>
-                <label className="block text-[10px] font-black text-gray-500 uppercase mb-2">Price (0 for Free)</label>
+                <label className="block text-[10px] font-black text-gray-500 uppercase mb-2">Price (0=Free)</label>
                 <input
                   type="number"
                   value={editingTemplate.price ?? 0}
                   onChange={(e) => setEditingTemplate({...editingTemplate, price: parseFloat(e.target.value)})}
-                  className="w-full p-3 border border-gray-200 rounded-lg outline-none"
+                  className="w-full p-3 border border-gray-200 rounded-lg"
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-black text-gray-500 uppercase mb-2">Operating System</label>
+                <label className="block text-[10px] font-black text-gray-500 uppercase mb-2">OS</label>
                 <input
                   type="text"
                   value={editingTemplate.software_os || 'Google Sheets'}
                   onChange={(e) => setEditingTemplate({...editingTemplate, software_os: e.target.value})}
-                  className="w-full p-3 border border-gray-200 rounded-lg outline-none"
+                  className="w-full p-3 border border-gray-200 rounded-lg"
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-black text-gray-500 uppercase mb-2">File Format</label>
+                <label className="block text-[10px] font-black text-gray-500 uppercase mb-2">Format</label>
                 <input
                   type="text"
                   value={editingTemplate.file_format || 'Google Sheets Spreadsheet'}
                   onChange={(e) => setEditingTemplate({...editingTemplate, file_format: e.target.value})}
-                  className="w-full p-3 border border-gray-200 rounded-lg outline-none"
+                  className="w-full p-3 border border-gray-200 rounded-lg"
                 />
               </div>
             </div>
 
-            {/* DESCRIPTIONS WITH HTML SUPPORT */}
             <div className="space-y-6">
               <div>
-                <label className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-black text-[#1a8856] uppercase tracking-widest">Short Description (Top)</span>
-                  <span className="text-[10px] text-gray-400 italic">Use &lt;b&gt;text&lt;/b&gt; for bold</span>
+                <label className="flex justify-between mb-2 italic">
+                  <span className="text-[10px] font-black text-[#1a8856] uppercase">Short Description (Above Images)</span>
+                  <span className="text-[10px] text-gray-400">Use &lt;b&gt;text&lt;/b&gt; for bold</span>
                 </label>
                 <textarea
                   value={editingTemplate.short_description || ''}
                   onChange={(e) => setEditingTemplate({...editingTemplate, short_description: e.target.value})}
-                  className="w-full p-4 border border-gray-200 rounded-lg h-32 outline-none focus:border-[#1a8856] shadow-inner"
+                  className="w-full p-4 border border-gray-200 rounded-lg h-32 outline-none shadow-inner"
                 />
               </div>
               <div>
-                <label className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-black text-[#1a8856] uppercase tracking-widest">Long Description (Bottom)</span>
-                  <span className="text-[10px] text-gray-400 italic">Use &lt;b&gt;text&lt;/b&gt; for bold</span>
+                <label className="flex justify-between mb-2 italic">
+                  <span className="text-[10px] font-black text-[#1a8856] uppercase">Long Description (Bottom)</span>
+                  <span className="text-[10px] text-gray-400">Use &lt;b&gt;text&lt;/b&gt; for bold</span>
                 </label>
                 <textarea
                   value={editingTemplate.long_description || ''}
                   onChange={(e) => setEditingTemplate({...editingTemplate, long_description: e.target.value})}
-                  className="w-full p-4 border border-gray-200 rounded-lg h-64 outline-none focus:border-[#1a8856] shadow-inner font-mono text-sm"
+                  className="w-full p-4 border border-gray-200 rounded-lg h-64 outline-none font-mono text-sm"
                 />
               </div>
             </div>
 
             <div className="flex gap-4 pt-4 border-t">
               <button type="submit" className="bg-[#1a8856] text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-[#14532d] transition-all">Save Changes</button>
-              <button type="button" onClick={() => setEditingTemplate(null)} className="bg-gray-100 text-gray-500 px-8 py-3 rounded-lg font-bold hover:bg-gray-200 transition-all">Cancel</button>
+              <button type="button" onClick={() => setEditingTemplate(null)} className="bg-gray-100 text-gray-500 px-8 py-3 rounded-lg font-bold">Cancel</button>
             </div>
           </form>
         ) : (
