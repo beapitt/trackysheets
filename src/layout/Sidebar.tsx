@@ -14,7 +14,7 @@ interface SidebarProps {
 
 export default function Sidebar({ videoId, templateData }: SidebarProps) {
   const [categories, setCategories] = useState<any[]>([]);
-  const { slug } = useParams(); // Per capire in quale categoria ci troviamo
+  const { slug } = useParams(); // Identifica la categoria corrente dall'URL
 
   useEffect(() => {
     async function fetchCategories() {
@@ -24,7 +24,6 @@ export default function Sidebar({ videoId, templateData }: SidebarProps) {
     fetchCategories();
   }, []);
 
-  // Formattazione data semplice
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Recent';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -35,10 +34,10 @@ export default function Sidebar({ videoId, templateData }: SidebarProps) {
 
   return (
     <aside className="w-80 flex-shrink-0 font-sans py-8 pr-8 border-r border-gray-50 bg-white">
-      {/* Container Sticky: segue l'utente durante lo scroll */}
+      {/* Container Sticky: segue lo scroll dell'utente */}
       <div className="sticky top-6 space-y-10">
         
-        {/* 1. VIDEO TUTORIAL (IN ALTO) */}
+        {/* 1. VIDEO TUTORIAL (TOP POSITION) */}
         {videoId && (
           <div className="rounded-xl overflow-hidden shadow-md border border-gray-100 bg-gray-50 p-1">
             <div className="aspect-video rounded-lg overflow-hidden">
@@ -54,34 +53,34 @@ export default function Sidebar({ videoId, templateData }: SidebarProps) {
           </div>
         )}
 
-        {/* 2. METADATA BOX (TECHNICAL INFO) */}
+        {/* 2. TECHNICAL DETAILS BOX */}
         {templateData && (
-          <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
+          <div className="bg-gray-50 rounded-xl p-5 border border-gray-100 shadow-sm">
             <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Technical Details</h3>
             <div className="space-y-3">
-              <div className="flex justify-between text-xs">
-                <span className="text-gray-500">Software:</span>
+              <div className="flex justify-between text-[13px]">
+                <span className="text-gray-500 font-medium">Software:</span>
                 <span className="font-bold text-gray-800">{templateData.software_os || 'Google Sheets'}</span>
               </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-gray-500">Format:</span>
+              <div className="flex justify-between text-[13px]">
+                <span className="text-gray-500 font-medium">Format:</span>
                 <span className="font-bold text-gray-800">{templateData.file_format || 'Spreadsheet'}</span>
               </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-gray-500">Last Update:</span>
+              <div className="flex justify-between text-[13px]">
+                <span className="text-gray-500 font-medium">Updated:</span>
                 <span className="font-bold text-gray-800">{formatDate(templateData.created_at)}</span>
               </div>
-              <div className="flex justify-between text-xs border-t border-gray-200 pt-2">
-                <span className="text-gray-500">License:</span>
+              <div className="flex justify-between text-[13px] border-t border-gray-200 pt-3 mt-1">
+                <span className="text-gray-500 font-medium">License:</span>
                 <span className="font-bold text-[#1a8856] uppercase">Free</span>
               </div>
             </div>
           </div>
         )}
 
-        {/* 3. CATEGORIES WITH GREEN BAR */}
+        {/* 3. CATEGORIES WITH ACTIVE INDICATOR */}
         <div>
-          <div className="bg-[#14532d] py-2 px-4 mb-4 rounded shadow-sm">
+          <div className="bg-[#14532d] py-2 px-4 mb-3 rounded shadow-sm">
             <h3 className="text-white text-[10px] font-black uppercase tracking-[0.2em] m-0">
               Categories
             </h3>
@@ -93,27 +92,28 @@ export default function Sidebar({ videoId, templateData }: SidebarProps) {
                 <Link 
                   key={cat.id} 
                   to={`/category/${cat.slug}`} 
-                  className={`text-[13px] no-underline py-2 px-3 rounded transition-all flex items-center ${
+                  className={`text-[13px] no-underline py-2.5 px-4 rounded transition-all flex items-center justify-between relative ${
                     isActive 
-                    ? 'bg-gray-100 text-[#1a8856] font-black border-l-4 border-[#1a8856]' 
+                    ? 'bg-gray-100 text-[#1a8856] font-black border-l-4 border-[#1a8856] shadow-sm' 
                     : 'text-gray-600 hover:bg-gray-50 hover:text-[#1a8856] font-semibold'
                   }`}
                 >
-                  {cat.name}
+                  <span>{cat.name}</span>
+                  {isActive && <span className="text-lg">›</span>}
                 </Link>
               );
             })}
           </nav>
         </div>
 
-        {/* 4. FOLLOW US ON (BIG ICONS) */}
+        {/* 4. SOCIAL SECTION (BIG ICONS) */}
         <div>
           <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-5">Follow us on</h3>
-          <div className="flex gap-6 items-center">
-            <a href="https://pinterest.com" target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
+          <div className="flex gap-6 items-center pl-2">
+            <a href="https://pinterest.com" target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform duration-300">
               <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png" className="w-8 h-8" alt="Pinterest" />
             </a>
-            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
+            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform duration-300">
               <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" className="w-16 h-auto" alt="YouTube" />
             </a>
           </div>
