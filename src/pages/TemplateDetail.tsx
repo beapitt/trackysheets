@@ -37,20 +37,24 @@ export default function TemplateDetail() {
 
   return (
     <div className="min-h-screen bg-white font-sans flex flex-col">
-      {/* Dynamic Styles for Clean Formatting */}
+      {/* Dynamic Styles for Vertex42 Professional Formatting */}
       <style>{`
         .custom-content p { margin-bottom: 1.25rem; line-height: 1.6; }
         .custom-content ul { margin-bottom: 1.25rem; padding-left: 1.5rem; list-style-type: disc; }
         .custom-content li { margin-bottom: 0.5rem; }
         .custom-content b, .custom-content strong { color: #111; font-weight: 700; }
         .custom-content { color: #4b5563; font-size: 15px; }
+        
+        /* Fix for potential layout issues with sticky sidebar */
+        .main-container { align-items: flex-start; }
       `}</style>
 
       <Navbar />
-      <div className="max-w-7xl mx-auto flex flex-1 w-full border-x border-gray-50 text-left">
+      
+      <div className="max-w-7xl mx-auto flex flex-1 w-full border-x border-gray-50 text-left main-container">
         <main className="flex-1 p-8">
           
-          {/* Title and Short Description */}
+          {/* Header Section */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-[#14532d] mb-4 tracking-tight leading-tight">
               {template.title}
@@ -61,7 +65,7 @@ export default function TemplateDetail() {
             />
           </div>
 
-          {/* Main Image Display */}
+          {/* Carousel / Image Section */}
           <div className="mb-4 aspect-video bg-gray-50 rounded border border-gray-200 overflow-hidden shadow-sm">
             <img 
               src={activeImg} 
@@ -70,7 +74,7 @@ export default function TemplateDetail() {
             />
           </div>
 
-          {/* Thumbnail Gallery */}
+          {/* Miniature Gallery */}
           {images.length > 1 && (
             <div className="flex gap-3 mb-8">
               {images.map((img, idx) => (
@@ -87,8 +91,8 @@ export default function TemplateDetail() {
             </div>
           )}
 
-          {/* Download Button */}
-          <div className="mb-12 flex justify-start">
+          {/* Download Action Area */}
+          <div className="mb-12 flex flex-col gap-6 items-start">
             <a 
               href={template.download_url} 
               target="_blank" 
@@ -97,9 +101,16 @@ export default function TemplateDetail() {
             >
               <span className="text-xl">↓</span> Download for Google Sheets
             </a>
+            
+            {/* Quick Feature Badges (Recommended by Claude) */}
+            <div className="flex flex-wrap gap-4 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+              <span className="flex items-center gap-1"><span className="text-[#1a8856]">✓</span> No Macros</span>
+              <span className="flex items-center gap-1"><span className="text-[#1a8856]">✓</span> Safe & Secure</span>
+              <span className="flex items-center gap-1"><span className="text-[#1a8856]">✓</span> 100% Free</span>
+            </div>
           </div>
 
-          {/* Long Description (Clean Formatting Section) */}
+          {/* Main Content Area */}
           {template.long_description && (
             <div className="border-t border-gray-100 pt-8 mt-8">
               <div 
@@ -110,9 +121,13 @@ export default function TemplateDetail() {
           )}
         </main>
 
-        {/* Sidebar */}
-        <Sidebar videoId={getYouTubeId(template.youtube_url)} />
+        {/* Updated Sidebar: Now passing templateData for technical specs */}
+        <Sidebar 
+          videoId={getYouTubeId(template.youtube_url)} 
+          templateData={template} 
+        />
       </div>
+
       <Footer />
     </div>
   );
