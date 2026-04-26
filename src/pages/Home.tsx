@@ -13,8 +13,14 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
+      // Carica i settings del sito
       const { data: s } = await supabase.from('settings').select('*').single();
-      const { data: t } = await supabase.from('templates').select('*').eq('status', 'published').order('created_at', { ascending: false });
+      // Carica solo i template pubblicati, i più recenti per primi
+      const { data: t } = await supabase.from('templates')
+        .select('*')
+        .eq('status', 'published')
+        .order('created_at', { ascending: false });
+
       if (s) setSettings(s);
       if (t) setTemplates(t);
       setLoading(false);
@@ -28,10 +34,10 @@ export default function Home() {
     <div className="min-h-screen bg-white font-sans flex flex-col">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto flex flex-1 w-full">
+      <div className="max-w-7xl mx-auto flex flex-1 w-full border-x border-gray-50">
         <main className="flex-1 p-8 text-left border-r border-gray-50">
           
-          {/* Header Editoriale stile Vertex42 */}
+          {/* Editorial Header (Vertex42 Style) */}
           <section className="mb-12 border-b border-gray-100 pb-10">
             <h1 className="text-3xl font-bold text-[#14532d] mb-6 tracking-tight">
               Spreadsheet Templates, Calculators, and Calendars
@@ -42,28 +48,36 @@ export default function Home() {
               </p>
               <p>
                 Our collection of user-friendly tools includes some of the most powerful and popular trackers you can find. 
-                All templates are <strong>optimized for Google Sheets</strong> and available for <strong>free download</strong>.
+                All templates are <strong>optimized for Google Sheets</strong> and available for download.
               </p>
             </div>
           </section>
 
-          {/* Grid Header */}
-          <div className="mb-8">
-            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-gray-400 border-l-4 border-[#1a8856] pl-3">
-              Latest Free Templates
+          {/* Green Bar Title - Stile Manus */}
+          <div className="bg-[#1a8856] py-3 px-6 mb-10 rounded shadow-sm">
+            <h2 className="text-white text-sm font-black uppercase tracking-[0.25em] m-0">
+              Newly Released Templates
             </h2>
           </div>
 
           {/* Templates Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {templates.map(item => (
               <Link key={item.id} to={`/template/${item.slug}`} className="group no-underline block">
-                <div className="aspect-video bg-gray-50 rounded border border-gray-100 overflow-hidden shadow-sm group-hover:shadow-md transition-all">
-                  <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="aspect-video bg-gray-50 rounded border border-gray-100 overflow-hidden shadow-sm group-hover:shadow-md transition-all duration-300">
+                  <img 
+                    src={item.thumbnail} 
+                    alt={item.title} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                  />
                 </div>
-                <h3 className="mt-4 font-bold text-gray-800 group-hover:text-[#1a8856] transition text-lg leading-tight">
+                <h3 className="mt-5 font-bold text-gray-800 group-hover:text-[#1a8856] transition text-xl leading-tight tracking-tight">
                   {item.title}
                 </h3>
+                {/* Piccola descrizione preview opzionale */}
+                <p className="mt-2 text-gray-500 text-sm line-clamp-2">
+                   {item.seo_title || 'Professional Google Sheets template'}
+                </p>
               </Link>
             ))}
           </div>
