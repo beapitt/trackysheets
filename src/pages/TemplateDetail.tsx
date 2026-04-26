@@ -28,7 +28,6 @@ export default function TemplateDetail() {
 
   const images = [template.thumbnail, template.img_1, template.img_2, template.img_3].filter(Boolean);
 
-  // Funzione per estrarre l'ID video se viene incollato l'URL intero
   const getYouTubeId = (url: string) => {
     if (!url) return null;
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -38,24 +37,37 @@ export default function TemplateDetail() {
 
   return (
     <div className="min-h-screen bg-white font-sans flex flex-col">
+      {/* Dynamic Styles for Clean Formatting */}
+      <style>{`
+        .custom-content p { margin-bottom: 1.25rem; line-height: 1.6; }
+        .custom-content ul { margin-bottom: 1.25rem; padding-left: 1.5rem; list-style-type: disc; }
+        .custom-content li { margin-bottom: 0.5rem; }
+        .custom-content b, .custom-content strong { color: #111; font-weight: 700; }
+        .custom-content { color: #4b5563; font-size: 15px; }
+      `}</style>
+
       <Navbar />
       <div className="max-w-7xl mx-auto flex flex-1 w-full border-x border-gray-50 text-left">
         <main className="flex-1 p-8">
           
-          {/* Title and Short Description with HTML/Bold Support */}
+          {/* Title and Short Description */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-[#14532d] mb-4 tracking-tight leading-tight">
               {template.title}
             </h1>
             <div 
-              className="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap"
+              className="custom-content text-lg"
               dangerouslySetInnerHTML={{ __html: template.short_description }}
             />
           </div>
 
           {/* Main Image Display */}
           <div className="mb-4 aspect-video bg-gray-50 rounded border border-gray-200 overflow-hidden shadow-sm">
-            <img src={activeImg} alt={template.title} className="w-full h-full object-cover transition-all duration-300" />
+            <img 
+              src={activeImg} 
+              alt={template.title} 
+              className="w-full h-full object-cover transition-all duration-300" 
+            />
           </div>
 
           {/* Thumbnail Gallery */}
@@ -65,7 +77,9 @@ export default function TemplateDetail() {
                 <button 
                   key={idx} 
                   onClick={() => setActiveImg(img)}
-                  className={`w-24 h-16 rounded border-2 transition-all overflow-hidden ${activeImg === img ? 'border-[#1a8856] shadow-md' : 'border-gray-200 hover:border-gray-400'}`}
+                  className={`w-24 h-16 rounded border-2 transition-all overflow-hidden ${
+                    activeImg === img ? 'border-[#1a8856] shadow-md' : 'border-gray-200 hover:border-gray-400'
+                  }`}
                 >
                   <img src={img} className="w-full h-full object-cover" alt="Preview" />
                 </button>
@@ -79,21 +93,24 @@ export default function TemplateDetail() {
               href={template.download_url} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="bg-[#1a8856] hover:bg-[#14532d] text-white px-8 py-3 rounded font-bold text-sm uppercase tracking-widest no-underline shadow-sm transition-all flex items-center gap-2"
+              className="bg-[#1a8856] hover:bg-[#14532d] text-white px-8 py-4 rounded font-bold text-sm uppercase tracking-widest no-underline shadow-sm transition-all flex items-center gap-3"
             >
-              <span className="text-lg">↓</span> Download for Google Sheets
+              <span className="text-xl">↓</span> Download for Google Sheets
             </a>
           </div>
 
-          {/* Long Description with HTML/Bold Support */}
+          {/* Long Description (Clean Formatting Section) */}
           {template.long_description && (
-            <div className="prose max-w-none border-t border-gray-100 pt-8 text-gray-600 leading-relaxed text-[15px] whitespace-pre-wrap">
-              <div dangerouslySetInnerHTML={{ __html: template.long_description }} />
+            <div className="border-t border-gray-100 pt-8 mt-8">
+              <div 
+                className="custom-content"
+                dangerouslySetInnerHTML={{ __html: template.long_description }} 
+              />
             </div>
           )}
         </main>
 
-        {/* Sidebar receiving the clean YouTube ID */}
+        {/* Sidebar */}
         <Sidebar videoId={getYouTubeId(template.youtube_url)} />
       </div>
       <Footer />
