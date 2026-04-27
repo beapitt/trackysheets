@@ -44,6 +44,19 @@ export default function TemplateDetail() {
 
   const gallery = [template.thumbnail, template.img_1, template.img_2, template.img_3].filter(Boolean)
 
+  // Funzione per trasformare testo o JSON in una lista pulita
+  const parseList = (data: any) => {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (typeof data === 'string') {
+      return data.split('\n').map(item => item.trim()).filter(item => item !== '');
+    }
+    return [];
+  };
+
+  const featuresList = parseList(template.features);
+  const howToUseList = parseList(template.how_to_use);
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -100,32 +113,32 @@ export default function TemplateDetail() {
           </div>
 
           <div className="max-w-3xl">
-            {/* Long Description - NOTA: ho usato template.long_description */}
+            {/* Long Description */}
             <div className="border-l-[4px] border-[#C0DD97] pl-8 mb-20">
               <p className="text-[20px] font-light text-gray-600 leading-relaxed">
                 {template.long_description}
               </p>
             </div>
 
-            {/* What's Included - NOTA: ho usato template.features */}
+            {/* What's Included */}
             <div className="mb-28">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300 mb-8">What's included</h3>
               <div className="grid md:grid-cols-3 gap-4">
-                {template.features?.map((f: any, i: number) => (
+                {featuresList.map((f: any, i: number) => (
                   <div key={i} className="bg-warm-cream p-5 rounded-2xl border border-gray-100/50">
-                    <div className="text-2xl mb-3">{f.icon}</div>
-                    <h4 className="text-[12px] font-black uppercase mb-1 text-gray-900">{f.title}</h4>
-                    <p className="text-[11px] text-gray-500 leading-relaxed">{f.description}</p>
+                    <div className="text-2xl mb-3">{f.icon || '✨'}</div>
+                    <h4 className="text-[12px] font-black uppercase mb-1 text-gray-900">{f.title || 'Feature'}</h4>
+                    <p className="text-[11px] text-gray-500 leading-relaxed">{typeof f === 'string' ? f : f.description}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* How to Use - NOTA: ho usato template.how_to_use */}
+            {/* How to Use - Step Numerati */}
             <div className="bg-warm-cream rounded-[40px] p-12 mb-24 border border-gray-100/50">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10 text-center">How to use this template</h3>
               <div className="space-y-8">
-                {template.how_to_use?.map((step: string, i: number) => (
+                {howToUseList.map((step: string, i: number) => (
                   <div key={i} className="flex items-start gap-6">
                     <div className="w-7 h-7 flex items-center justify-center rounded-full bg-brand-green text-white text-[10px] font-black shrink-0 shadow-md">
                       {i + 1}
