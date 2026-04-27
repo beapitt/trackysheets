@@ -3,4 +3,4 @@ export default {
     tailwindcss: {},
     autoprefixer: {},
   },
-};
+}; // <--- QUESTO PUNTO E VIRGOLA È L'ERRORE
