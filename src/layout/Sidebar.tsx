@@ -1,83 +1,80 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-interface SidebarProps {
-  videoId?: string;
-  templateData?: any;
-}
+const ALL_CATEGORIES = [
+  { name: "Finance", count: 12 },
+  { name: "Budgeting", count: 8 },
+  { name: "Productivity", count: 15 },
+  { name: "Calendars", count: 5 },
+  { name: "Business", count: 10 },
+];
 
-export default function Sidebar({ videoId, templateData }: SidebarProps) {
-  const [categories, setCategories] = useState<any[]>([]);
-  const { slug } = useParams();
+export default function Sidebar({ videoId }: { videoId?: string }) {
+  const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    async function fetchCategories() {
-      const { data } = await supabase.from('categories').select('*').order('name');
-      if (data) setCategories(data);
-    }
-    fetchCategories();
-  }, []);
-
-  // Video ID di default per la Home se non ne viene passato uno specifico
-  const currentVideoId = videoId || "TENAbUa-R-w"; 
+  const filteredCategories = ALL_CATEGORIES.filter(cat =>
+    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <aside className="w-80 flex-shrink-0 font-sans py-8 pr-8 border-r border-gray-50 bg-white">
-      <div className="sticky top-6 space-y-10">
-        
-        {/* VIDEO TUTORIAL */}
-        <div className="rounded-xl overflow-hidden shadow-md border border-gray-100 bg-gray-50 p-1">
-          <div className="aspect-video rounded-lg overflow-hidden">
-            <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${currentVideoId}`} frameBorder="0" allowFullScreen />
-          </div>
-          <p className="text-[10px] font-bold text-[#1a8856] uppercase tracking-widest text-center py-2 m-0">Video Tutorial</p>
-        </div>
-
-        {/* CATEGORIES HEADER - NO ITALIC */}
+    <aside className="w-64 flex flex-col gap-8 sticky top-24 self-start">
+      
+      {/* ── VIDEO TUTORIAL ── */}
+      {videoId && (
         <div>
-          <div className="bg-[#14532d] py-2 px-4 mb-4 rounded shadow-sm">
-            <h3 className="text-white text-[10px] font-black uppercase tracking-[0.2em] m-0">Categories</h3>
+          <div className="bg-[#1F5C3E] text-white text-[10px] font-black tracking-[0.15em] px-3 py-2 rounded-t uppercase">
+            Video Tutorial
           </div>
-          
-          {/* SEARCH BOX RIFINITA (Claude Style) */}
-          <div className="mb-4 relative px-1">
-            <input 
-              type="text" 
-              placeholder="Filter categories..." 
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[11px] outline-none focus:border-[#1a8856] transition-all shadow-sm pl-8" 
+          <div className="aspect-video bg-black rounded-b overflow-hidden border border-gray-100">
+            <iframe
+              src={`https://www.youtube.com/embed/${videoId}`}
+              className="w-full h-full"
+              allowFullScreen
             />
-            <span className="absolute left-3.5 top-3 text-gray-400">🔍</span>
           </div>
-
-          <nav className="flex flex-col gap-1">
-            {categories.map(cat => {
-              const isActive = slug === cat.slug;
-              return (
-                <Link 
-                  key={cat.id} 
-                  to={`/category/${cat.slug}`} 
-                  className={`text-[12px] no-underline py-2.5 px-4 rounded-lg transition-all flex items-center justify-between ${
-                    isActive 
-                    ? 'bg-[#1a8856] text-white font-black shadow-md' 
-                    : 'text-gray-500 hover:bg-[#f0fdf4] hover:text-[#1a8856] font-semibold'
-                  }`}
-                >
-                  <span>{cat.name}</span>
-                  <span className={`text-[9px] ${isActive ? 'text-green-100' : 'text-gray-300'}`}>12</span>
-                </Link>
-              );
-            })}
-          </nav>
         </div>
+      )}
 
-        {/* FOLLOW US ON - SISTEMATO */}
-        <div>
-          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-5 pl-1">Follow us on</h3>
-          <div className="flex gap-6 items-center pl-2">
-            <a href="#" className="hover:opacity-70 transition-opacity"><img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png" className="w-7 h-7" alt="Pinterest" /></a>
-            <a href="#" className="hover:opacity-70 transition-opacity"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" className="w-14 h-auto" alt="YouTube" /></a>
-          </div>
+      {/* ── INTERACTIVE CATEGORIES ── */}
+      <div>
+        <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4 px-1">Categories</h4>
+        <div className="relative mb-4">
+          <input
+            type="text"
+            placeholder="Filter categories..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-gray-50 border border-gray-100 rounded-md py-2 pl-8 pr-3 text-xs outline-none focus:border-[#C0DD97] transition-all"
+          />
+          <span className="absolute left-2.5 top-2.5 text-gray-400 text-[10px]">🔍</span>
+        </div>
+        
+        <nav className="flex flex-col gap-1">
+          {filteredCategories.map((cat) => (
+            <Link
+              key={cat.name}
+              to={`/category/${cat.name.toLowerCase()}`}
+              className="flex items-center justify-between px-3 py-2 rounded-md text-xs font-bold text-gray-600 hover:bg-[#EAF3DE] hover:text-[#1F5C3E] transition-all no-underline"
+            >
+              {cat.name}
+              <span className="text-[9px] bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-full">{cat.count}</span>
+            </Link>
+          ))}
+        </nav>
+      </div>
+
+      {/* ── SOCIAL BADGES (Claude Style) ── */}
+      <div className="pt-4 border-t border-gray-50">
+        <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4 px-1">Follow Us</h4>
+        <div className="flex flex-col gap-2">
+          <a href="#" className="flex items-center gap-3 p-2 rounded-lg border border-gray-100 hover:bg-gray-50 transition-all no-underline">
+            <span className="w-6 h-6 flex items-center justify-center bg-[#E60023] text-white rounded text-[10px] font-bold">P</span>
+            <span className="text-[11px] font-bold text-gray-700">Pinterest</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 p-2 rounded-lg border border-gray-100 hover:bg-gray-50 transition-all no-underline">
+            <span className="w-6 h-6 flex items-center justify-center bg-[#FF0000] text-white rounded text-[10px] font-bold">Y</span>
+            <span className="text-[11px] font-bold text-gray-700">YouTube</span>
+          </a>
         </div>
       </div>
     </aside>
