@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import Navbar from '../layout/Navbar';
 import Sidebar from '../layout/Sidebar';
@@ -9,125 +9,155 @@ export default function TemplateDetail() {
   const { slug } = useParams();
   const [template, setTemplate] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [activeImg, setActiveImg] = useState<string>('');
+  const [selectedImg, setSelectedImg] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchTemplate() {
-      const { data } = await supabase.from('templates').select('*').eq('slug', slug).single();
+      const { data, error } = await supabase
+        .from('templates')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+
       if (data) {
         setTemplate(data);
-        setActiveImg(data.thumbnail);
+        setSelectedImg(data.thumbnail);
       }
       setLoading(false);
     }
     fetchTemplate();
   }, [slug]);
 
-  if (loading) return <div className="p-20 text-center font-sans italic text-gray-400">Loading template...</div>;
-  if (!template) return <div className="p-20 text-center font-sans">Template not found.</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (!template) return <div className="min-h-screen flex items-center justify-center">Template not found.</div>;
 
-  const images = [template.thumbnail, template.img_1, template.img_2, template.img_3].filter(Boolean);
-
-  const getYouTubeId = (url: string) => {
-    if (!url) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : url;
-  };
+  // Uniamo le tue immagini esistenti in un array per la galleria
+  const gallery = [template.thumbnail, template.img_1, template.img_2, template.img_3].filter(Boolean);
 
   return (
     <div className="min-h-screen bg-white font-sans flex flex-col">
-      {/* Dynamic Styles for Vertex42 Professional Formatting */}
-      <style>{`
-        .custom-content p { margin-bottom: 1.25rem; line-height: 1.6; }
-        .custom-content ul { margin-bottom: 1.25rem; padding-left: 1.5rem; list-style-type: disc; }
-        .custom-content li { margin-bottom: 0.5rem; }
-        .custom-content b, .custom-content strong { color: #111; font-weight: 700; }
-        .custom-content { color: #4b5563; font-size: 15px; }
-        
-        /* Fix for potential layout issues with sticky sidebar */
-        .main-container { align-items: flex-start; }
-      `}</style>
-
       <Navbar />
-      
-      <div className="max-w-7xl mx-auto flex flex-1 w-full border-x border-gray-50 text-left main-container">
-        <main className="flex-1 p-8">
+
+      <div className="max-w-7xl mx-auto flex flex-1 w-full border-x border-gray-50 text-left items-start">
+        <main className="flex-1 p-8 border-r border-gray-50">
           
-          {/* Header Section */}
+          {/* HEADER PRODOTTO */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-[#14532d] mb-4 tracking-tight leading-tight">
-              {template.title}
-            </h1>
-            <div 
-              className="custom-content text-lg"
-              dangerouslySetInnerHTML={{ __html: template.short_description }}
-            />
+            <nav className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4 flex gap-2">
+              <Link to="/" className="hover:text-[#1F5C3E]">Home</Link>
+              <span>/</span>
+              <span className="text-gray-300">{template.title}</span>
+            </nav>
+            <h1 className="text-3xl font-black text-gray-900 leading-tight mb-2">{template.title}</h1>
           </div>
 
-          {/* Carousel / Image Section */}
-          <div className="mb-4 aspect-video bg-gray-50 rounded border border-gray-200 overflow-hidden shadow-sm">
-            <img 
-              src={activeImg} 
-              alt={template.title} 
-              className="w-full h-full object-cover transition-all duration-300" 
-            />
-          </div>
-
-          {/* Miniature Gallery */}
-          {images.length > 1 && (
-            <div className="flex gap-3 mb-8">
-              {images.map((img, idx) => (
-                <button 
-                  key={idx} 
-                  onClick={() => setActiveImg(img)}
-                  className={`w-24 h-16 rounded border-2 transition-all overflow-hidden ${
-                    activeImg === img ? 'border-[#1a8856] shadow-md' : 'border-gray-200 hover:border-gray-400'
-                  }`}
-                >
-                  <img src={img} className="w-full h-full object-cover" alt="Preview" />
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Download Action Area */}
-          <div className="mb-12 flex flex-col gap-6 items-start">
-            <a 
-              href={template.download_url} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="bg-[#1a8856] hover:bg-[#14532d] text-white px-8 py-4 rounded font-bold text-sm uppercase tracking-widest no-underline shadow-sm transition-all flex items-center gap-3"
-            >
-              <span className="text-xl">↓</span> Download for Google Sheets
-            </a>
+          {/* SEZIONE TOP: Immagine e Box Dati Tecnici */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
             
-            {/* Quick Feature Badges (Recommended by Claude) */}
-            <div className="flex flex-wrap gap-4 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-              <span className="flex items-center gap-1"><span className="text-[#1a8856]">✓</span> No Macros</span>
-              <span className="flex items-center gap-1"><span className="text-[#1a8856]">✓</span> Safe & Secure</span>
-              <span className="flex items-center gap-1"><span className="text-[#1a8856]">✓</span> 100% Free</span>
+            {/* Galleria Immagini (8 Colonne) */}
+            <div className="lg:col-span-8">
+              <div className="aspect-video bg-gray-50 rounded-xl overflow-hidden border border-gray-100 mb-4 cursor-zoom-in group relative" onClick={() => window.open(selectedImg || '', '_blank')}>
+                <img src={selectedImg || ''} className="w-full h-full object-cover" alt={template.title} />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all flex items-center justify-center">
+                   <span className="bg-white/90 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm text-xs font-bold">🔍 Click to zoom</span>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {gallery.map((img, i) => (
+                  <button 
+                    key={i} 
+                    onClick={() => setSelectedImg(img)}
+                    className={`w-20 aspect-video rounded border-2 transition-all overflow-hidden shrink-0 ${selectedImg === img ? 'border-[#1F5C3E]' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                  >
+                    <img src={img} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Dati Tecnici & Download (4 Colonne) */}
+            <div className="lg:col-span-4 flex flex-col gap-6">
+              <div className="bg-[#EAF3DE] rounded-xl p-6 border border-[#C0DD97]/30">
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-[#27500A] mb-4">Technical Specs</h4>
+                <ul className="space-y-4 m-0 p-0 list-none">
+                  <li className="flex justify-between border-b border-[#27500A]/5 pb-2">
+                    <span className="text-[11px] font-bold text-gray-500 uppercase">Software</span>
+                    <span className="text-[11px] font-black text-[#1F5C3E]">{template.software || 'Google Sheets'}</span>
+                  </li>
+                  <li className="flex justify-between border-b border-[#27500A]/5 pb-2">
+                    <span className="text-[11px] font-bold text-gray-500 uppercase">Difficulty</span>
+                    <span className="text-[11px] font-black text-[#1F5C3E]">{template.difficulty || 'Beginner'}</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="text-[11px] font-bold text-gray-500 uppercase">License</span>
+                    <span className="text-[11px] font-black text-[#1F5C3E]">{template.license || 'Free'}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <a 
+                href={template.download_url} 
+                target="_blank" 
+                rel="noreferrer"
+                className="w-full bg-[#1F5C3E] text-white py-4 rounded-xl font-black uppercase text-xs tracking-[0.2em] shadow-lg hover:bg-[#27500A] transition-all text-center no-underline"
+              >
+                Get Template →
+              </a>
+              
+              {template.suitability && (
+                <div className="p-4 border-l-2 border-[#C0DD97]">
+                  <h5 className="text-[10px] font-black uppercase text-gray-400 mb-2">Best for:</h5>
+                  <p className="text-xs text-gray-500 leading-relaxed italic">{template.suitability}</p>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Main Content Area */}
-          {template.long_description && (
-            <div className="border-t border-gray-100 pt-8 mt-8">
-              <div 
-                className="custom-content"
-                dangerouslySetInnerHTML={{ __html: template.long_description }} 
-              />
+          {/* DESCRIZIONE E CARATTERISTICHE */}
+          <section className="border-t border-gray-100 pt-12">
+            <div className="max-w-3xl">
+              <h2 className="text-2xl font-bold mb-6">Description</h2>
+              <div className="prose prose-sm text-gray-600 mb-12">
+                {template.description}
+              </div>
+
+              {/* Box Caratteristiche (Features) */}
+              {template.features && Array.isArray(template.features) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                  {template.features.map((f: any, i: number) => (
+                    <div key={i} className="p-5 rounded-xl border border-gray-100 bg-gray-50">
+                      <span className="text-2xl mb-3 block">{f.icon}</span>
+                      <h4 className="font-bold text-gray-900 mb-1 text-sm">{f.title}</h4>
+                      <p className="text-xs text-gray-500 leading-relaxed">{f.description}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Guida all'uso (How to use) */}
+              {template.how_to_use && Array.isArray(template.how_to_use) && (
+                <div className="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm">
+                  <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-[#EAF3DE] text-[#1F5C3E] rounded-full flex items-center justify-center text-[10px]">?</span>
+                    How to use this template
+                  </h3>
+                  <div className="space-y-6">
+                    {template.how_to_use.map((step: string, i: number) => (
+                      <div key={i} className="flex gap-4">
+                        <span className="font-black text-[#C0DD97] text-xl">0{i+1}</span>
+                        <p className="text-sm text-gray-600 pt-1 leading-relaxed">{step}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </section>
         </main>
 
-        {/* Updated Sidebar: Now passing templateData for technical specs */}
-        <Sidebar 
-          videoId={getYouTubeId(template.youtube_url)} 
-          templateData={template} 
-        />
+        <Sidebar videoId={template.video_id} />
       </div>
-
       <Footer />
     </div>
   );
