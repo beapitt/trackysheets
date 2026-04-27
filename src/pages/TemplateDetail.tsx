@@ -5,7 +5,7 @@ import Navbar from '../layout/Navbar'
 import Sidebar from '../layout/Sidebar'
 import Footer from '../components/Footer'
 
-// Official Google Drive Icon
+// Official Google Drive Icon SVG
 const GoogleDriveIcon = () => (
   <svg width="18" height="18" viewBox="0 0 87.3 78" className="mr-3">
     <path fill="#0066DA" d="M6.6 66.8l13.4-23.1H74L60.6 66.8z"/>
@@ -40,18 +40,32 @@ export default function TemplateDetail() {
     fetchTemplate()
   }, [slug])
 
-  if (loading) return <div className="p-20 text-center text-[10px] font-black uppercase tracking-widest text-gray-400">Loading</div>
-  if (!template) return <div className="p-20 text-center font-sans">Template not found</div>
+  if (loading) return (
+    <div className="p-20 text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+      Loading
+    </div>
+  )
+  
+  if (!template) return (
+    <div className="p-20 text-center font-sans text-gray-500">
+      Template not found
+    </div>
+  )
 
-  const gallery = [template.thumbnail, template.img_1, template.img_2, template.img_3].filter(Boolean)
+  const gallery = [
+    template.thumbnail,
+    template.img_1,
+    template.img_2,
+    template.img_3,
+  ].filter(Boolean)
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-[#C0DD97]">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 px-8">
         
-        {/* ── MAIN CONTENT (LEFT) ── */}
+        {/* ── MAIN CONTENT ── */}
         <main className="flex-1 pt-16">
           
           {/* Breadcrumbs */}
@@ -61,52 +75,84 @@ export default function TemplateDetail() {
             <span className="text-gray-400">{template.title}</span>
           </nav>
 
-          {/* Title - Forced Inter Black */}
+          {/* Page Title */}
           <h1 className="text-6xl font-black tracking-tighter leading-[0.9] mb-14 text-gray-900">
             {template.title}
           </h1>
 
-          {/* Gallery & Main Interaction */}
+          {/* Visual Showcase Section */}
           <div className="grid lg:grid-cols-12 gap-12 mb-24">
-            <div className="lg:col-span-12">
+            <div className="lg:col-span-7">
               <div className="aspect-video bg-[#f5f4ed] rounded-[32px] overflow-hidden mb-6 border border-gray-100/50 shadow-sm">
-                <img src={selectedImg || ''} className="w-full h-full object-cover" alt="" />
+                <img src={selectedImg || ''} className="w-full h-full object-cover" alt="Template Preview" />
               </div>
-              <div className="flex gap-3 overflow-x-auto pb-2">
+              <div className="flex gap-3">
                 {gallery.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setSelectedImg(img)}
-                    className={`w-24 aspect-video rounded-xl overflow-hidden transition-all duration-300 border-2 ${
-                      selectedImg === img ? 'border-[#1F5C3E] scale-95' : 'border-transparent opacity-30 hover:opacity-100'
+                    className={`w-24 aspect-video rounded-xl overflow-hidden border-2 transition-all duration-300 ${
+                      selectedImg === img ? 'border-[#1F5C3E]' : 'border-transparent opacity-30 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} className="w-full h-full object-cover" alt="Gallery thumbnail" />
+                    <img src={img} className="w-full h-full object-cover" alt="Thumbnail" />
                   </button>
                 ))}
               </div>
             </div>
+
+            {/* Sidebar-style CTA within main grid */}
+            <div className="lg:col-span-5 flex flex-col gap-6">
+              <div className="bg-[#f5f4ed] rounded-[32px] p-8 border border-gray-100 shadow-sm">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#1F5C3E] mb-6">
+                  Technical Specifications
+                </h4>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center border-b border-gray-200/50 pb-3">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Software</span>
+                    <span className="text-[11px] font-black text-[#1F5C3E]">{template.software || 'Google Sheets'}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Difficulty</span>
+                    <span className="text-[11px] font-black text-[#1F5C3E]">{template.difficulty || 'Beginner'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <a 
+                href={template.download_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-between w-full bg-[#1F5C3E] text-white px-8 py-6 rounded-2xl font-black uppercase text-[11px] tracking-widest no-underline shadow-xl shadow-green-900/10 hover:bg-[#27500A] hover:translate-y-[-2px] transition-all"
+              >
+                <div className="flex items-center">
+                  <GoogleDriveIcon />
+                  Get Template
+                </div>
+                <span className="text-lg">→</span>
+              </a>
+            </div>
           </div>
 
-          {/* Description Area */}
+          {/* ── DESCRIPTION AREA ── */}
           <div className="max-w-3xl">
             
-            {/* Intro - Light Weight 300 */}
+            {/* Introductory Hook */}
             <div className="border-l-[3px] border-[#C0DD97] pl-8 mb-20">
               <p className="text-[22px] font-light text-gray-500 leading-relaxed italic">
                 {template.short_description}
               </p>
             </div>
 
-            {/* What's included - Naked Icons Grid */}
+            {/* Features Grid (Naked Icons) */}
             <div className="mb-28">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300 mb-12">
                 What’s included
               </h3>
               <div className="grid md:grid-cols-3 gap-12">
                 {template.features?.map((f: any, i: number) => (
-                  <div key={i} className="group">
-                    <div className="text-5xl mb-6 grayscale group-hover:grayscale-0 transition-all duration-500">
+                  <div key={i}>
+                    <div className="text-5xl mb-6 grayscale hover:grayscale-0 transition-all duration-500 cursor-default">
                       {f.icon}
                     </div>
                     <h4 className="text-[13px] font-black uppercase tracking-tight mb-2 text-gray-900">
@@ -120,7 +166,7 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* How to use - Elegant Cream Box */}
+            {/* How to Use (Claude Style Cream Box) */}
             <div className="bg-[#f5f4ed] rounded-[40px] p-16 mb-24 border border-gray-100/50">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-12 text-center">
                 How to use this template
@@ -142,43 +188,9 @@ export default function TemplateDetail() {
           </div>
         </main>
 
-        {/* ── SIDEBAR & SPECS (RIGHT) ── */}
-        <aside className="w-full lg:w-80 pt-16 flex flex-col gap-8">
-          
-          {/* Download & Technical Info Card */}
-          <div className="sticky top-24 space-y-6">
-            
-            <div className="bg-[#f5f4ed] rounded-[32px] p-8 border border-gray-100 shadow-sm">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#1F5C3E] mb-6">Technical Specs</h4>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center border-b border-gray-200/50 pb-3">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Software</span>
-                  <span className="text-[11px] font-black text-[#1F5C3E]">{template.software || 'Google Sheets'}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Difficulty</span>
-                  <span className="text-[11px] font-black text-[#1F5C3E]">{template.difficulty || 'Beginner'}</span>
-                </div>
-              </div>
-            </div>
-
-            <a 
-              href={template.download_url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center justify-between w-full bg-[#1F5C3E] text-white px-8 py-6 rounded-2xl font-black uppercase text-[11px] tracking-widest no-underline shadow-xl shadow-green-900/20 hover:bg-[#27500A] hover:translate-y-[-2px] transition-all duration-300 group"
-            >
-              <div className="flex items-center">
-                <GoogleDriveIcon />
-                Get Template
-              </div>
-              <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
-            </a>
-
-            {/* Sidebar Categories component */}
-            <Sidebar />
-          </div>
-
+        {/* ── RIGHT SIDEBAR ── */}
+        <aside className="mt-16 lg:w-64">
+          <Sidebar />
         </aside>
 
       </div>
