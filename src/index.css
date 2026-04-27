@@ -2,34 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 1. Global Reset */
+:root {
+  --brand-green: #1F5C3E;
+  --warm-cream: #f5f4ed;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  background-color: #ffffff;
-  color: #1a1a1a;
+  @apply font-sans antialiased bg-white text-gray-900;
 }
 
-/* 2. Fix per i Titoli (Senza forzare il nero ovunque) */
-.font-black-title {
-  font-weight: 900 !important;
-  letter-spacing: -0.03em;
-}
-
-/* 3. Classi di utilità specifiche */
-.bg-warm-cream { background-color: #f5f4ed; }
-.text-brand-green { color: #1F5C3E; }
-
-/* Cerchietti numerati How-to-use */
-.step-circle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px;
-  height: 32px;
-  background-color: #1F5C3E;
-  color: #ffffff !important; /* Forza il bianco qui */
-  border-radius: 9999px;
-  font-weight: 900;
-  font-size: 13px;
+/* Ensure smooth transitions for gallery and buttons */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
 }
