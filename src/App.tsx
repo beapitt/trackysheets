@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
+// Page Imports - Names verified with GitHub case sensitivity
 import Home from './pages/Home';
 import TemplateDetail from './pages/TemplateDetail';
 import CategoryPage from './pages/CategoryPage';
@@ -11,16 +12,24 @@ import EditTemplate from './pages/EditTemplate';
 import AdminCategories from './pages/AdminCategories';
 import EditCategory from './pages/EditCategory';
 import Settings from './pages/Settings';
+import Disclaimer from './pages/Disclaimer';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/template/:slug" element={<TemplateDetail />} />
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/login" element={<Login />} /> 
+        <Route path="/disclaimer" element={<Disclaimer />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
         
+        {/* Admin Routes */}
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/templates" element={<AdminTemplates />} />
         <Route path="/admin/templates/new" element={<EditTemplate />} />
@@ -30,6 +39,7 @@ export default function App() {
         <Route path="/admin/categories/:id/edit" element={<EditCategory />} />
         <Route path="/admin/settings" element={<Settings />} />
 
+        {/* Fallback Redirect */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
