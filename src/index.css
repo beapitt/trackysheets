@@ -2,68 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── 1. GLOBAL TYPOGRAPHY SETTINGS ── */
-:root {
-  --brand-green: #1F5C3E;
-  --warm-cream: #f5f4ed;
-}
-
+/* 1. Global Reset */
 body {
-  font-family: 'Inter', sans-serif !important;
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   background-color: #ffffff;
   color: #1a1a1a;
 }
 
-/* Titles: Heavy, Bold, Professional (Black 900) */
-h1, h2, h3, .font-black {
-  font-family: 'Inter', sans-serif !important;
+/* 2. Fix per i Titoli (Senza forzare il nero ovunque) */
+.font-black-title {
   font-weight: 900 !important;
-  letter-spacing: -0.03em !important;
-  color: #1a1a1a;
+  letter-spacing: -0.03em;
 }
 
-/* Light text for descriptions (Weight 300 as requested) */
-.font-light-claude {
-  font-weight: 300 !important;
-}
+/* 3. Classi di utilità specifiche */
+.bg-warm-cream { background-color: #f5f4ed; }
+.text-brand-green { color: #1F5C3E; }
 
-/* ── 2. UI ELEMENTS (Claude Style) ── */
-
-/* Numbered Circles for "How to Use" */
+/* Cerchietti numerati How-to-use */
 .step-circle {
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: 32px;
   height: 32px;
-  background-color: var(--brand-green);
-  color: white;
+  background-color: #1F5C3E;
+  color: #ffffff !important; /* Forza il bianco qui */
   border-radius: 9999px;
   font-weight: 900;
   font-size: 13px;
-}
-
-/* SEO/Intro Box with border-left */
-.intro-border {
-  border-left: 3px solid #C0DD97;
-  padding-left: 1.5rem;
-}
-
-/* Utility for the cream background you captured */
-.bg-soft-cream {
-  background-color: var(--warm-cream) !important;
-}
-
-/* ── 3. CLEAN SCROLLBAR ── */
-.custom-sidebar-scroll::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-sidebar-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-sidebar-scroll::-webkit-scrollbar-thumb {
-  background: #e5e7eb;
-  border-radius: 10px;
 }
