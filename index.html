@@ -1,30 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --brand-green: #1F5C3E;
-  --warm-cream: #f5f4ed;
-}
-
-/* 1. Global Reset: Force Inter on EVERYTHING */
-* {
-  font-family: 'Inter', sans-serif !important;
-}
-
-body {
-  @apply antialiased bg-white text-gray-900;
-}
-
-/* 2. Fix the H1 specifically */
-h1 {
-  @apply font-black tracking-tighter leading-none !important;
-  font-family: 'Inter', sans-serif !important;
-}
-
-/* 3. Smooth transitions */
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-}
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracky Sheets</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
