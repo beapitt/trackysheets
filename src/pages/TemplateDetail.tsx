@@ -44,7 +44,6 @@ export default function TemplateDetail() {
 
   const gallery = [template.thumbnail, template.img_1, template.img_2, template.img_3].filter(Boolean)
 
-  // Funzione per trasformare testo o JSON in una lista pulita
   const parseList = (data: any) => {
     if (!data) return [];
     if (Array.isArray(data)) return data;
@@ -60,10 +59,8 @@ export default function TemplateDetail() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 px-8">
         <main className="flex-1 pt-16">
-          
           <nav className="text-[10px] font-black uppercase tracking-widest text-gray-300 mb-10">
             <Link to="/" className="hover:text-brand-green transition-colors">Home</Link>
             <span className="mx-2">/</span>
@@ -103,7 +100,6 @@ export default function TemplateDetail() {
                   </div>
                 </div>
               </div>
-
               <a href={template.download_url} target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-between w-full bg-brand-green text-white px-8 py-6 rounded-2xl font-black uppercase text-[11px] tracking-widest shadow-xl hover:translate-y-[-2px] transition-all">
                 <div className="flex items-center"><GoogleDriveIcon /> Get Template</div>
@@ -113,47 +109,45 @@ export default function TemplateDetail() {
           </div>
 
           <div className="max-w-3xl">
-            {/* Long Description */}
+            {/* DESCRIZIONE CORRETTA (Riconosce i tag HTML) */}
             <div className="border-l-[4px] border-[#C0DD97] pl-8 mb-20">
-              <p className="text-[20px] font-light text-gray-600 leading-relaxed">
-                {template.long_description}
-              </p>
+              <div 
+                className="text-[20px] font-light text-gray-600 leading-relaxed prose prose-green"
+                dangerouslySetInnerHTML={{ __html: template.long_description }} 
+              />
             </div>
 
-            {/* What's Included */}
+            {/* WHAT'S INCLUDED */}
             <div className="mb-28">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300 mb-8">What's included</h3>
               <div className="grid md:grid-cols-3 gap-4">
-                {featuresList.map((f: any, i: number) => (
+                {featuresList.length > 0 ? featuresList.map((f: any, i: number) => (
                   <div key={i} className="bg-warm-cream p-5 rounded-2xl border border-gray-100/50">
                     <div className="text-2xl mb-3">{f.icon || '✨'}</div>
                     <h4 className="text-[12px] font-black uppercase mb-1 text-gray-900">{f.title || 'Feature'}</h4>
                     <p className="text-[11px] text-gray-500 leading-relaxed">{typeof f === 'string' ? f : f.description}</p>
                   </div>
-                ))}
+                )) : <p className="text-gray-400 italic text-sm">No features listed.</p>}
               </div>
             </div>
 
-            {/* How to Use - Step Numerati */}
+            {/* HOW TO USE */}
             <div className="bg-warm-cream rounded-[40px] p-12 mb-24 border border-gray-100/50">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10 text-center">How to use this template</h3>
               <div className="space-y-8">
-                {howToUseList.map((step: string, i: number) => (
+                {howToUseList.length > 0 ? howToUseList.map((step: string, i: number) => (
                   <div key={i} className="flex items-start gap-6">
                     <div className="w-7 h-7 flex items-center justify-center rounded-full bg-brand-green text-white text-[10px] font-black shrink-0 shadow-md">
                       {i + 1}
                     </div>
                     <p className="text-[14px] text-gray-600 leading-relaxed pt-1">{step}</p>
                   </div>
-                ))}
+                )) : <p className="text-gray-400 italic text-sm text-center">No steps provided.</p>}
               </div>
             </div>
           </div>
         </main>
-
-        <aside className="mt-16 lg:w-64">
-          <Sidebar />
-        </aside>
+        <aside className="mt-16 lg:w-64"><Sidebar /></aside>
       </div>
       <Footer />
     </div>
