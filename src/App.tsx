@@ -14,31 +14,24 @@ import Settings from './pages/Settings';
 
 export default function App() {
   return (
-    <>
-      {/* TEST: Questa scritta deve apparire in alto nel sito */}
-      <div style={{ background: 'red', color: 'white', padding: '10px', textAlign: 'center', fontWeight: 'bold' }}>
-        TEST AGGIORNAMENTO: SE VEDI QUESTO, IL SITO SI STA AGGIORNANDO
-      </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/template/:slug" element={<TemplateDetail />} />
+        <Route path="/category/:slug" element={<CategoryPage />} />
+        <Route path="/login" element={<Login />} /> 
+        
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/templates" element={<AdminTemplates />} />
+        <Route path="/admin/templates/new" element={<EditTemplate />} />
+        <Route path="/admin/templates/:id/edit" element={<EditTemplate />} />
+        <Route path="/admin/categories" element={<AdminCategories />} />
+        <Route path="/admin/categories/new" element={<EditCategory />} />
+        <Route path="/admin/categories/:id/edit" element={<EditCategory />} />
+        <Route path="/admin/settings" element={<Settings />} />
 
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/template/:slug" element={<TemplateDetail />} />
-          <Route path="/category/:slug" element={<CategoryPage />} />
-          <Route path="/login" element={<Login />} /> 
-          
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/templates" element={<AdminTemplates />} />
-          <Route path="/admin/templates/new" element={<EditTemplate />} />
-          <Route path="/admin/templates/:id/edit" element={<EditTemplate />} />
-          <Route path="/admin/categories" element={<AdminCategories />} />
-          <Route path="/admin/categories/new" element={<EditCategory />} />
-          <Route path="/admin/categories/:id/edit" element={<EditCategory />} />
-          <Route path="/admin/settings" element={<Settings />} />
-
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
