@@ -51,7 +51,6 @@ export default function TemplateDetail() {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 px-8">
         <main className="flex-1 pt-16">
           
-          {/* Breadcrumbs */}
           <nav className="text-[10px] font-black uppercase tracking-widest text-gray-300 mb-10">
             <Link to="/" className="hover:text-brand-green transition-colors">Home</Link>
             <span className="mx-2">/</span>
@@ -92,7 +91,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              <a href={template.downloadUrl} target="_blank" rel="noopener noreferrer"
+              <a href={template.download_url} target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-between w-full bg-brand-green text-white px-8 py-6 rounded-2xl font-black uppercase text-[11px] tracking-widest shadow-xl hover:translate-y-[-2px] transition-all">
                 <div className="flex items-center"><GoogleDriveIcon /> Get Template</div>
                 <span className="text-lg">→</span>
@@ -101,14 +100,14 @@ export default function TemplateDetail() {
           </div>
 
           <div className="max-w-3xl">
-            {/* Long Description con bordo verde */}
+            {/* Long Description - NOTA: ho usato template.long_description */}
             <div className="border-l-[4px] border-[#C0DD97] pl-8 mb-20">
               <p className="text-[20px] font-light text-gray-600 leading-relaxed">
-                {template.longDescription}
+                {template.long_description}
               </p>
             </div>
 
-            {/* What's Included - Griglia Claude */}
+            {/* What's Included - NOTA: ho usato template.features */}
             <div className="mb-28">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300 mb-8">What's included</h3>
               <div className="grid md:grid-cols-3 gap-4">
@@ -122,11 +121,11 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* How to Use - Step Numerati */}
+            {/* How to Use - NOTA: ho usato template.how_to_use */}
             <div className="bg-warm-cream rounded-[40px] p-12 mb-24 border border-gray-100/50">
               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10 text-center">How to use this template</h3>
               <div className="space-y-8">
-                {template.howToUse?.map((step: string, i: number) => (
+                {template.how_to_use?.map((step: string, i: number) => (
                   <div key={i} className="flex items-start gap-6">
                     <div className="w-7 h-7 flex items-center justify-center rounded-full bg-brand-green text-white text-[10px] font-black shrink-0 shadow-md">
                       {i + 1}
