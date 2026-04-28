@@ -49,10 +49,8 @@ export default function TemplateDetail() {
     <div className="min-h-screen bg-white text-[#1a1a1a] font-sans">
       <Navbar />
 
-      {/* CONTAINER MASTER - Allineato a 1550px con px-12 per coincidere con la Navbar */}
       <div className="w-full max-w-[1550px] mx-auto px-12 py-8">
         
-        {/* BREADCRUMB - Stessa linea verticale di "Finance" nella Navbar */}
         <nav className="text-[11px] font-bold text-gray-400 mb-6 uppercase tracking-[0.1em]">
           <Link to="/" className="hover:text-[#1F5C3E] no-underline">Home</Link>
           <span className="mx-3 text-gray-200">/</span>
@@ -61,14 +59,12 @@ export default function TemplateDetail() {
 
         <div className="flex flex-col lg:flex-row gap-14 items-start">
           
-          {/* COLONNA CONTENUTO (72%) */}
           <main className="flex-[0.72] w-full">
             <h1 className="text-3xl md:text-4xl font-black tracking-tighter mb-10 leading-tight">
               {template.title}
             </h1>
 
             <div className="grid xl:grid-cols-12 gap-10 mb-20">
-              {/* GALLERY PANORAMICA */}
               <div className="xl:col-span-8">
                 <div className="aspect-[21/9] bg-[#f5f4ed] rounded-xl overflow-hidden mb-5 border border-gray-100">
                   <img src={selectedImg || ''} className="w-full h-full object-cover" alt="Preview" />
@@ -83,11 +79,11 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* BOX DATI E PULSANTE STILE CLAUDE */}
+              {/* BOX DATI E PULSANTE AGGIORNATO */}
               <div className="xl:col-span-4 flex flex-col">
-                <div className="bg-[#f5f4ed] rounded-xl p-6 border border-gray-100 mb-4">
+                <div className="bg-[#f5f4ed] rounded-xl p-6 border border-gray-100 mb-4 shadow-sm">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-5">Technical Specifications</h4>
-                  <div className="space-y-2 text-[12px]">
+                  <div className="space-y-3 text-[12px]">
                     {[
                       { label: 'Software', value: template.software || 'Google Sheets' },
                       { label: 'License', value: 'Personal Use Only' },
@@ -96,27 +92,27 @@ export default function TemplateDetail() {
                     ].map((item, idx) => (
                       <div key={idx} className="flex justify-between border-b border-gray-200/40 pb-2.5 last:border-0">
                         <span className="text-gray-500 font-bold">{item.label}</span>
-                        <span className="text-gray-900 font-black">{item.value}</span>
+                        {/* Valore in Grigio Antracite ben spaziato */}
+                        <span className="text-[#4b5563] font-black text-right">{item.value}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* IL PULSANTE CLAUDE STYLE */}
+                {/* PULSANTE CON FRECCIA A SINISTRA */}
                 <a href={template.download_url} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center w-full bg-[#1F5C3E] text-white py-4 rounded-xl font-bold uppercase text-[12px] tracking-[0.1em] shadow-lg hover:bg-black transition-all no-underline">
-                  Download for Google Sheets
+                  className="flex items-center justify-center gap-2 w-full bg-[#1F5C3E] text-white py-4 rounded-xl font-bold uppercase text-[12px] tracking-[0.1em] shadow-lg hover:bg-black transition-all no-underline">
+                  <span className="text-lg">↓</span> Download for Google Sheets
                 </a>
                 
-                {/* MICRO-RASSICURAZIONI SOTTO IL PULSANTE */}
-                <div className="mt-3 flex justify-center items-center gap-4 text-[10px] font-bold text-gray-400">
-                  <span className="flex items-center gap-1"><Check size={12} className="text-gray-300" /> NO REGISTRATION</span>
-                  <span className="flex items-center gap-1"><Check size={12} className="text-gray-300" /> SAFE & NO MACROS</span>
+                {/* MICRO-RASSICURAZIONI BOLD E GRIGIO SCURO */}
+                <div className="mt-4 flex justify-center items-center gap-4 text-[10.5px] font-extrabold text-[#4b5563] tracking-tight">
+                  <span className="flex items-center gap-1.5 whitespace-nowrap">✓ NO REGISTRATION</span>
+                  <span className="flex items-center gap-1.5 whitespace-nowrap">✓ SAFE & NO MACROS</span>
                 </div>
               </div>
             </div>
 
-            {/* DESCRIZIONE (NO ITALIC) */}
             <div className="max-w-[850px]">
               <div className="border-l-4 border-[#C0DD97] pl-10 mb-20">
                 <div 
@@ -125,7 +121,6 @@ export default function TemplateDetail() {
                 />
               </div>
 
-              {/* WHAT'S INCLUDED */}
               <div className="mb-20">
                 <h3 className="text-[12px] font-bold uppercase tracking-[0.3em] text-gray-800 mb-8">What's included</h3>
                 <div className="grid md:grid-cols-3 gap-5">
@@ -142,7 +137,6 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* HOW TO USE */}
               <div className="mb-24">
                 <h3 className="text-[12px] font-bold uppercase tracking-[0.3em] text-gray-800 mb-10">How to use this template</h3>
                 <div className="space-y-5">
@@ -159,7 +153,6 @@ export default function TemplateDetail() {
             </div>
           </main>
 
-          {/* SIDEBAR ALLARGATA (28%) */}
           <aside className="flex-[0.28] w-full sticky top-24 pt-4">
             <Sidebar />
           </aside>
