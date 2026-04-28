@@ -5,15 +5,24 @@ import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
 import { 
   LayoutGrid, Zap, BarChart3, Check, 
-  MonitorPlay, Search, ArrowRight 
+  Search, ArrowRight, X 
 } from 'lucide-react'
+
+// Icona Pinterest Originale
+const PinterestIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="#E60023">
+    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.947-.199-2.403.041-3.439.219-.937 1.406-5.965 1.406-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.22 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12.017 24 18.637 24 24 18.632 24 12.012 24 5.39 18.637 0 12.017 0z"/>
+  </svg>
+);
 
 export default function TemplateDetail() {
   const { slug } = useParams()
   const [template, setTemplate] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [selectedImg, setSelectedImg] = useState<string | null>(null)
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
   const [categories, setCategories] = useState<any[]>([])
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -52,18 +61,23 @@ export default function TemplateDetail() {
 
   const featuresList = parseList(template.features);
   
-  // Testi Step Allungati e Professionali
   const howToUseSteps = [
     "Click the download button to access the official Google Sheets template link and create your personal copy.",
     "Open the file in your Google account and follow the setup instructions to customize categories and initial settings.",
     "Start tracking your data daily to get real-time visual insights and automated financial reports instantly."
   ];
 
+  // Icone più spesse e visibili per What's included
   const featureIcons = [
-    <LayoutGrid size={20} strokeWidth={2.5} className="text-[#1F5C3E]" />, 
-    <Zap size={20} strokeWidth={2.5} className="text-[#1F5C3E]" />, 
-    <BarChart3 size={20} strokeWidth={2.5} className="text-[#1F5C3E]" />
+    <LayoutGrid size={22} strokeWidth={2.5} className="text-[#1F5C3E]" />, 
+    <Zap size={22} strokeWidth={2.5} className="text-[#1F5C3E]" />, 
+    <BarChart3 size={22} strokeWidth={2.5} className="text-[#1F5C3E]" />
   ];
+
+  // Filtro Categorie Interattivo
+  const filteredCategories = categories.filter(cat => 
+    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a] font-sans">
@@ -71,29 +85,34 @@ export default function TemplateDetail() {
 
       <div className="w-full max-w-[1550px] mx-auto px-12 py-8">
         
-        {/* BREADCRUMB */}
-        <nav className="text-[11px] font-bold text-gray-400 mb-4 uppercase tracking-[0.1em]">
+        {/* BREADCRUMB - Pulito e senza ripetizioni */}
+        <nav className="text-[11px] font-bold text-gray-400 mb-6 uppercase tracking-[0.1em]">
           <Link to="/" className="hover:text-[#1F5C3E] no-underline">Home</Link>
           <span className="mx-3 text-gray-200">/</span>
-          <span className="text-gray-600">{template.title}</span>
+          <span className="text-gray-600">Templates</span>
         </nav>
 
         <div className="flex flex-col lg:flex-row gap-14 items-start">
           
           {/* COLONNA SINISTRA (MAIN) */}
           <main className="flex-[0.74] w-full">
-            <div className="mb-8">
-                <h1 className="text-3xl md:text-4xl font-black tracking-tighter mb-2 leading-tight uppercase">
+            {/* TITOLO + SHORT DESCRIPTION (BOLD) */}
+            <div className="mb-10">
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter mb-3 leading-tight text-gray-900">
                   {template.title}
                 </h1>
-                <p className="text-xl text-gray-400 font-medium tracking-tight">
-                    {template.short_description}
+                <p className="text-xl text-gray-800 font-bold tracking-tight max-w-4xl">
+                    {template.short_description.replace(/<\/?[^>]+(>|$)/g, "")}
                 </p>
             </div>
 
-            <div className="grid xl:grid-cols-12 gap-10 mb-10">
+            <div className="grid xl:grid-cols-12 gap-10 mb-12">
+              {/* GALLERY CON LIGHTBOX */}
               <div className="xl:col-span-8">
-                <div className="aspect-[21/9] bg-[#f5f4ed] rounded-xl overflow-hidden mb-5 border border-gray-100 shadow-sm">
+                <div 
+                  className="aspect-[21/9] bg-[#f5f4ed] rounded-xl overflow-hidden mb-5 border border-gray-100 shadow-sm cursor-zoom-in"
+                  onClick={() => setLightboxImg(selectedImg)}
+                >
                   <img src={selectedImg || ''} className="w-full h-full object-cover" alt="Preview" />
                 </div>
                 <div className="flex gap-3">
@@ -106,11 +125,11 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* DOWNLOAD BOX */}
+              {/* DOWNLOAD BOX - Snello e Pulito */}
               <div className="xl:col-span-4 flex flex-col">
-                <div className="bg-[#f5f4ed] rounded-xl p-6 border border-gray-100 mb-4 shadow-sm">
+                <div className="bg-[#f5f4ed] rounded-xl p-6 border border-gray-100 mb-5 shadow-sm">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-5">Technical Specifications</h4>
-                  <div className="space-y-3 text-[12px]">
+                  <div className="space-y-3.5 text-[12px] font-medium text-gray-700">
                     {[
                       { label: 'Software', value: template.software || 'Google Sheets' },
                       { label: 'License', value: 'Personal Use Only' },
@@ -118,49 +137,50 @@ export default function TemplateDetail() {
                       { label: 'Access', value: 'No Login Required' }
                     ].map((item, idx) => (
                       <div key={idx} className="flex justify-between border-b border-gray-200/40 pb-2.5 last:border-0">
-                        <span className="text-gray-500 font-bold">{item.label}</span>
-                        <span className="text-[#4b5563] font-black text-right uppercase">{item.value}</span>
+                        <span className="text-gray-400 font-bold">{item.label}</span>
+                        <span className="text-gray-800 text-right">{item.value}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 <a href={template.download_url} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full bg-[#1F5C3E] text-white py-4 rounded-xl font-bold uppercase text-[12px] tracking-[0.1em] shadow-lg hover:bg-black transition-all no-underline">
+                  className="flex items-center justify-center gap-2 w-full bg-[#1F5C3E] text-white py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-[0.1em] shadow-lg hover:bg-black transition-all no-underline">
                   <span className="text-lg">↓</span> Download for Google Sheets
                 </a>
                 
-                <div className="mt-4 flex justify-center items-center gap-4 text-[10.5px] font-extrabold text-[#4b5563] tracking-tight">
-                  <span className="flex items-center gap-1.5 whitespace-nowrap uppercase">✓ No Registration</span>
-                  <span className="flex items-center gap-1.5 whitespace-nowrap uppercase">✓ Safe & No Macros</span>
+                {/* RASSICURAZIONI - No Tutto Maiuscolo, Più Discrete */}
+                <div className="mt-4 flex justify-center items-center gap-5 text-[11px] font-bold text-gray-500 tracking-tight">
+                  <span className="flex items-center gap-1.5 whitespace-nowrap"><Check size={14} className="text-gray-300" /> No Registration</span>
+                  <span className="flex items-center gap-1.5 whitespace-nowrap"><Check size={14} className="text-gray-300" /> Safe & No Macros</span>
                 </div>
               </div>
             </div>
 
-            {/* DESCRIPTION */}
-            <div className="max-w-full">
-              <div className="border-l-4 border-[#C0DD97] pl-10 mb-10">
-                <div className="text-[18px] text-gray-600 leading-snug font-normal prose prose-flat max-w-none">
+            {/* DESCRIPTION SECTION (COMPATTA) */}
+            <div className="max-w-[850px]">
+              <div className="border-l-4 border-[#C0DD97] pl-10 mb-16">
+                <div className="text-[18px] text-gray-600 leading-relaxed font-normal prose prose-flat max-w-none">
                     {template.long_description.split('\n').map((line: string, i: number) => {
                         if (line.includes(':')) {
                             const [boldPart, normalPart] = line.split(':');
-                            return <p key={i} className="mb-2"><strong className="text-gray-900 font-bold">{boldPart}:</strong>{normalPart}</p>
+                            return <p key={i} className="mb-2.5"><strong className="text-gray-900 font-bold">{boldPart}:</strong>{normalPart}</p>
                         }
-                        return <p key={i} className="mb-2">{line}</p>
+                        return <p key={i} className="mb-2.5">{line}</p>
                     })}
                 </div>
               </div>
 
-              {/* WHAT'S INCLUDED (BOX AFFUSOLATI) */}
-              <div className="mb-10">
+              {/* WHAT'S INCLUDED (BOX AFFUSOLATI - DATI SUPABASE ATTIVI) */}
+              <div className="mb-16">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">What's included</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                   {featuresList.map((f: string, i: number) => {
-                    const [title, desc] = f.includes(':') ? f.split(':') : ['Highlight', f];
+                    const [title, desc] = f.includes(':') ? f.split(':') : ['Feature', f];
                     return (
-                      <div key={i} className="bg-[#f5f4ed] px-5 py-4 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[110px]">
-                        <div className="mb-2">{featureIcons[i] || featureIcons[0]}</div>
-                        <h4 className="text-[12px] font-black uppercase mb-1 text-gray-900 tracking-tight">{title}</h4>
+                      <div key={i} className="bg-[#f5f4ed] px-5 py-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[110px]">
+                        <div className="mb-3">{featureIcons[i] || featureIcons[0]}</div>
+                        <h4 className="text-[13px] font-black uppercase mb-1.5 text-gray-900 tracking-tight leading-tight">{title}</h4>
                         <p className="text-[11px] text-gray-500 leading-tight font-medium">{desc}</p>
                       </div>
                     );
@@ -168,16 +188,16 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* HOW TO USE (STEP LUNGHI) */}
-              <div className="mb-16">
+              {/* HOW TO USE (STEP LUNGHI E COMPATTI) */}
+              <div className="mb-20 border-t border-gray-100 pt-10">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-8">How to use this template</h3>
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {howToUseSteps.map((step, i) => (
-                    <div key={i} className="flex items-start gap-5">
-                      <div className="w-7 h-7 flex items-center justify-center rounded-full bg-[#1F5C3E] text-white text-[11px] font-black shrink-0">
+                    <div key={i} className="flex items-start gap-6 max-w-3xl">
+                      <div className="w-7 h-7 flex items-center justify-center rounded-full bg-[#1F5C3E] text-white text-[11px] font-black shrink-0 mt-0.5">
                         {i + 1}
                       </div>
-                      <p className="text-[15px] text-gray-600 leading-tight pt-1 font-medium">{step}</p>
+                      <p className="text-[16px] text-gray-600 leading-snug font-medium">{step}</p>
                     </div>
                   ))}
                 </div>
@@ -185,72 +205,79 @@ export default function TemplateDetail() {
             </div>
           </main>
 
-          {/* SIDEBAR DESTRA (ORDINE CLAUDE) */}
-          <aside className="flex-[0.26] w-full sticky top-24 pt-4 flex flex-col gap-10">
+          {/* SIDEBAR DESTRA (EFFETTO CLAUDE COMPLETO) */}
+          <aside className="flex-[0.26] w-full sticky top-24 pt-4 flex flex-col gap-10 border-l border-gray-50 pl-8">
             
-            {/* 1. VIDEO TUTORIAL */}
+            {/* 1. VIDEO TUTORIAL (EFFETTO INTEGRATO) */}
             {template.youtube_url && (
-              <div>
-                <h4 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-[#374151] mb-4">
-                  <MonitorPlay size={16} /> Video Tutorial
-                </h4>
-                <div className="aspect-video bg-[#f5f4ed] rounded-xl overflow-hidden border border-gray-100 shadow-md">
+              <div className="relative group">
+                <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg relative z-0">
                    <iframe
                     width="100%" height="100%"
                     src={`https://www.youtube.com/embed/${template.youtube_url.split('v=')[1]}`}
                     title="YouTube video player" frameBorder="0" allowFullScreen
+                    className="relative z-0"
                   ></iframe>
                 </div>
+                 {/* Testo sovrapposto stile Claude */}
+                <h4 className="absolute top-2 left-2 flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-white bg-black/40 px-2.5 py-1.5 rounded z-10">
+                  Video Tutorial
+                </h4>
               </div>
             )}
 
             {/* 2. CATEGORIES SECTION */}
             <div className="flex flex-col gap-4">
-               <div className="bg-[#1F5C3E] text-white py-2 px-4 rounded-md">
+               <div className="bg-[#1F5C3E] text-white py-2.5 px-4 rounded-md">
                   <span className="text-[11px] font-black uppercase tracking-widest">Categories</span>
                </div>
                
-               {/* Search Bar */}
+               {/* Search Bar - Interattiva */}
                <div className="relative">
                   <input 
-                    type="text" placeholder="Search categories..." 
-                    className="w-full bg-[#f5f4ed] border-none rounded-lg py-2.5 pl-10 pr-4 text-xs font-bold text-gray-600 focus:ring-1 focus:ring-[#1F5C3E]"
+                    type="text" 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search categories..." 
+                    className="w-full bg-[#f5f4ed] border border-gray-100 rounded-lg py-2.5 pl-10 pr-4 text-xs font-bold text-gray-600 focus:ring-1 focus:ring-[#1F5C3E] focus:bg-white transition-all"
                   />
-                  <Search className="absolute left-3 top-2.5 text-gray-400" size={14} />
+                  <Search className="absolute left-3 top-3 text-gray-400" size={14} />
                </div>
 
-               {/* Categories List */}
-               <div className="flex flex-col gap-1 px-1">
-                  {categories.map((cat) => (
-                    <Link key={cat.id} to={`/category/${cat.slug}`} className="text-[12px] font-bold text-gray-500 hover:text-[#1F5C3E] no-underline py-1 border-b border-gray-50">
+               {/* Categories List - Filtrata */}
+               <div className="flex flex-col gap-1 px-1 max-h-60 overflow-y-auto prose prose-sm prose-flat">
+                  {filteredCategories.length > 0 ? filteredCategories.map((cat) => (
+                    <Link key={cat.id} to={`/category/${cat.slug}`} className="text-[12px] font-bold text-gray-500 hover:text-[#1F5C3E] no-underline py-1.5 border-b border-gray-50 transition-colors">
                       {cat.name}
                     </Link>
-                  ))}
+                  )) : (
+                    <span className="text-[12px] text-gray-400 p-2 text-center">No categories found.</span>
+                  )}
                </div>
             </div>
 
-            {/* 3. FOLLOW US ON (BOTTONI SOCIAL) */}
+            {/* 3. FOLLOW US ON (BOTTONI SOCIAL - UNIFORMI) */}
             <div className="flex flex-col gap-3">
                <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1">Follow us on</h4>
                
-               {/* Pinterest Button */}
+               {/* Pinterest Button - Testo Grigio */}
                <a href="https://pinterest.com" target="_blank" rel="noreferrer" 
-                 className="flex items-center justify-between w-full border border-gray-200 rounded-full px-4 py-2.5 hover:bg-gray-50 transition-colors no-underline">
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 bg-[#E60023] rounded-full flex items-center justify-center text-white text-[10px] font-black">P</div>
-                    <span className="text-[12px] font-black text-[#E60023]">Pinterest</span>
+                 className="flex items-center justify-between w-full border border-gray-200 rounded-full px-4 py-2.5 hover:bg-gray-50 transition-colors no-underline shadow-sm">
+                  <div className="flex items-center gap-2.5">
+                    <PinterestIcon />
+                    <span className="text-[12px] font-bold text-gray-800">Pinterest</span>
                   </div>
-                  <span className="text-[10px] font-black text-gray-400 uppercase">Follow <ArrowRight size={10} className="inline ml-1" /></span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Follow <ArrowRight size={10} className="inline ml-0.5" /></span>
                </a>
 
-               {/* YouTube Button */}
+               {/* YouTube Button - Testo Grigio */}
                <a href="https://youtube.com" target="_blank" rel="noreferrer" 
-                 className="flex items-center justify-between w-full border border-gray-200 rounded-full px-4 py-2.5 hover:bg-gray-50 transition-colors no-underline">
-                  <div className="flex items-center gap-2">
+                 className="flex items-center justify-between w-full border border-gray-200 rounded-full px-4 py-2.5 hover:bg-gray-50 transition-colors no-underline shadow-sm">
+                  <div className="flex items-center gap-2.5">
                     <div className="w-5 h-5 bg-[#FF0000] rounded-sm flex items-center justify-center text-white text-[8px]">▶</div>
-                    <span className="text-[12px] font-black text-gray-900">YouTube</span>
+                    <span className="text-[12px] font-bold text-gray-800">YouTube</span>
                   </div>
-                  <span className="text-[10px] font-black text-gray-400 uppercase">Subscribe <ArrowRight size={10} className="inline ml-1" /></span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Subscribe <ArrowRight size={10} className="inline ml-0.5" /></span>
                </a>
             </div>
           </aside>
@@ -258,6 +285,16 @@ export default function TemplateDetail() {
         </div>
       </div>
       <Footer />
+
+      {/* LIGHTBOX PER IMMAGINI */}
+      {lightboxImg && (
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-6 cursor-zoom-out" onClick={() => setLightboxImg(null)}>
+          <button className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors" onClick={() => setLightboxImg(null)}>
+            <X size={32} />
+          </button>
+          <img src={lightboxImg} className="max-w-full max-h-full rounded-lg shadow-2xl" alt="Enlarged view" />
+        </div>
+      )}
     </div>
   )
 }
