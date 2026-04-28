@@ -166,20 +166,20 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* BOX WHAT'S INCLUDED - TITOLI POTENZIATI (18PX EXTRA-BOLD) */}
+              {/* BOX WHAT'S INCLUDED - TITOLI CORRETTI (18PX SEMI-BOLD) */}
               <div className="mb-8 pr-0">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5">What's included</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                   {featuresList.map((f: string, i: number) => {
                     const hasSeparator = f.includes(':');
-                    // Se non c'è il separatore, usiamo l'intero testo come titolo
                     const title = hasSeparator ? f.split(':')[0] : f;
                     const desc = hasSeparator ? f.split(':')[1] : "";
                     
                     return (
                       <div key={i} className="bg-[#f5f4ed] px-5 py-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[130px]">
                         <div className="mb-3">{featureIcons[i] || featureIcons[0]}</div>
-                        <h4 className="text-[18px] font-black mb-1 text-[#454544] tracking-tight leading-tight">
+                        {/* Modificato da font-black a font-semibold */}
+                        <h4 className="text-[18px] font-semibold mb-1 text-[#454544] tracking-tight leading-tight">
                           {title}
                         </h4>
                         {desc && <p className="text-[11px] text-gray-500 leading-tight font-medium mt-1">{desc}</p>}
