@@ -90,21 +90,31 @@ export default function TemplateDetail() {
         <div className="flex flex-col lg:flex-row gap-14 items-start">
           
           <main className="flex-[0.74] w-full">
-            {/* TITOLO "CALMO" PREMIUM SAAS STYLE */}
-            <div className="mb-8">
+            
+            {/* BLOCCO TITOLO E DESCRIZIONE - CALIBRATO SAAS STYLE */}
+            <div className="mb-10">
                 <h1 
-                  className="text-3xl md:text-[32px] mb-3 leading-relaxed"
+                  className="leading-snug mb-1" 
                   style={{ 
-                    color: '#1a1a1a', 
+                    fontSize: '26px',
+                    color: '#1f2937', 
                     fontFamily: 'Inter, sans-serif',
-                    fontWeight: 600, // Semibold suggerito da Manus
+                    fontWeight: 500, 
                     letterSpacing: '-0.02em' 
                   }}
                 >
                   {template.title}
                 </h1>
-                <p className="text-[16px] text-gray-500 font-medium max-w-4xl leading-relaxed">
-                    {template.short_description?.replace(/<\/?[^>]+(>|$)/g, "")}
+                <p 
+                  className="leading-relaxed max-w-3xl"
+                  style={{ 
+                    fontSize: '13px',
+                    color: '#4b5563', 
+                    marginTop: '3px',
+                    fontWeight: 400
+                  }}
+                >
+                  {template.short_description?.replace(/<\/?[^>]+(>|$)/g, "")}
                 </p>
             </div>
 
@@ -169,7 +179,6 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* BOX WHAT'S INCLUDED - TITOLI SEMI-BOLD */}
               <div className="mb-8 pr-0">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5">What's included</h3>
                 <div className="grid md:grid-cols-3 gap-4">
