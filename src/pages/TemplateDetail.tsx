@@ -86,7 +86,7 @@ export default function TemplateDetail() {
         <div className="flex flex-col lg:flex-row gap-14 items-start">
           
           <main className="flex-[0.74] w-full">
-            {/* TITOLO + SHORT DESCRIPTION (DIMENSIONI RIDOTTE #454544) */}
+            {/* TITOLO (30PX) + SHORT DESCRIPTION (COLORE #454544) */}
             <div className="mb-8">
                 <h1 className="text-3xl md:text-[30px] font-black tracking-tighter mb-2 leading-tight text-[#454544]">
                   {template.title}
@@ -114,7 +114,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* SIDE BOX */}
+              {/* BOX DOWNLOAD E SPECIFICHE */}
               <div className="xl:col-span-4 flex flex-col">
                 <div className="bg-[#f5f4ed] rounded-xl p-5 border border-gray-100 mb-4 shadow-sm">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Technical Specifications</h4>
@@ -145,7 +145,7 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* DESCRIPTION SECTION */}
+            {/* DESCRIZIONE LUNGA ALLINEATA */}
             <div className="max-w-full">
               <div className="border-l-4 border-[#C0DD97] pl-6 mb-6">
                 <div className="text-[17px] text-gray-600 leading-snug font-normal prose prose-flat max-w-none">
@@ -159,7 +159,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* WHAT'S INCLUDED - TITOLI PIÙ GRANDI E BOLD */}
+              {/* BOX WHAT'S INCLUDED - TITOLI 15PX BOLD E COLORE #454544 */}
               <div className="mb-8 pr-0">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5">What's included</h3>
                 <div className="grid md:grid-cols-3 gap-4">
@@ -170,7 +170,11 @@ export default function TemplateDetail() {
                     return (
                       <div key={i} className="bg-[#f5f4ed] px-5 py-4 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[110px]">
                         <div className="mb-2">{featureIcons[i] || featureIcons[0]}</div>
-                        {title && <h4 className="text-[15px] font-black uppercase mb-1 text-[#454544] tracking-tight leading-tight">{title}</h4>}
+                        {title && (
+                          <h4 className="text-[15px] font-black mb-1 text-[#454544] tracking-tight leading-tight">
+                            {title}
+                          </h4>
+                        )}
                         <p className="text-[11px] text-gray-500 leading-tight font-medium">{desc}</p>
                       </div>
                     );
@@ -198,7 +202,7 @@ export default function TemplateDetail() {
           {/* SIDEBAR DESTRA */}
           <aside className="flex-[0.26] w-full sticky top-24 pt-4 flex flex-col gap-10 border-l border-gray-50 pl-8">
             
-            {/* VIDEO TUTORIAL */}
+            {/* VIDEO TUTORIAL (SMUSSATO) */}
             {template.youtube_url && (
               <div>
                 <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
@@ -266,7 +270,7 @@ export default function TemplateDetail() {
       </div>
       <Footer />
 
-      {/* LIGHTBOX */}
+      {/* LIGHTBOX IMMAGINI */}
       {lightboxImg && (
         <div className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-6 cursor-zoom-out" onClick={() => setLightboxImg(null)}>
           <button className="absolute top-6 right-6 text-white/70 hover:text-white" onClick={() => setLightboxImg(null)}>
