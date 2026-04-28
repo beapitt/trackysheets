@@ -85,22 +85,25 @@ export default function TemplateDetail() {
     <div className="min-h-screen bg-white text-[#1a1a1a] font-sans">
       <Navbar />
 
-      <div className="w-full max-w-[1550px] mx-auto px-12 py-8">
+      <div className="w-full max-w-[1550px] mx-auto px-12 py-10">
         
-        <nav className="text-[11px] font-bold text-gray-400 mb-6 uppercase tracking-[0.1em]">
-          <Link to="/" className="hover:text-[#1F5C3E] no-underline">Home</Link>
-          <span className="mx-3 text-gray-200">/</span>
-          <span className="text-gray-600">Templates</span>
-        </nav>
-
         <div className="flex flex-col lg:flex-row gap-14 items-start">
           
           <main className="flex-[0.74] w-full">
+            {/* TITOLO "CALMO" PREMIUM SAAS STYLE */}
             <div className="mb-8">
-                <h1 className="text-3xl md:text-[30px] font-black tracking-tighter mb-2 leading-tight text-[#454544]">
+                <h1 
+                  className="text-3xl md:text-[32px] mb-3 leading-relaxed"
+                  style={{ 
+                    color: '#1a1a1a', 
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600, // Semibold suggerito da Manus
+                    letterSpacing: '-0.02em' 
+                  }}
+                >
                   {template.title}
                 </h1>
-                <p className="text-[16px] text-[#454544] font-bold tracking-tight max-w-4xl leading-relaxed">
+                <p className="text-[16px] text-gray-500 font-medium max-w-4xl leading-relaxed">
                     {template.short_description?.replace(/<\/?[^>]+(>|$)/g, "")}
                 </p>
             </div>
@@ -166,7 +169,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* BOX WHAT'S INCLUDED - TITOLI CORRETTI (18PX SEMI-BOLD) */}
+              {/* BOX WHAT'S INCLUDED - TITOLI SEMI-BOLD */}
               <div className="mb-8 pr-0">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5">What's included</h3>
                 <div className="grid md:grid-cols-3 gap-4">
@@ -178,7 +181,6 @@ export default function TemplateDetail() {
                     return (
                       <div key={i} className="bg-[#f5f4ed] px-5 py-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[130px]">
                         <div className="mb-3">{featureIcons[i] || featureIcons[0]}</div>
-                        {/* Modificato da font-black a font-semibold */}
                         <h4 className="text-[18px] font-semibold mb-1 text-[#454544] tracking-tight leading-tight">
                           {title}
                         </h4>
