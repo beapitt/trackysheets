@@ -54,6 +54,16 @@ export default function TemplateDetail() {
     return [];
   };
 
+  // Funzione per gestire sia ID che URL intero del video
+  const getYouTubeID = (url: string) => {
+    if (!url) return null;
+    if (url.length === 11 && !url.includes('/') && !url.includes('.')) return url;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  const videoId = getYouTubeID(template.youtube_url);
   const featuresList = parseList(template.features);
   const howToUseSteps = [
     "Click the download button to access the official Google Sheets template link and create your personal copy.",
@@ -86,7 +96,6 @@ export default function TemplateDetail() {
         <div className="flex flex-col lg:flex-row gap-14 items-start">
           
           <main className="flex-[0.74] w-full">
-            {/* TITOLO (30PX) + SHORT DESCRIPTION (COLORE #454544) */}
             <div className="mb-8">
                 <h1 className="text-3xl md:text-[30px] font-black tracking-tighter mb-2 leading-tight text-[#454544]">
                   {template.title}
@@ -114,11 +123,10 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* BOX DOWNLOAD E SPECIFICHE */}
               <div className="xl:col-span-4 flex flex-col">
                 <div className="bg-[#f5f4ed] rounded-xl p-5 border border-gray-100 mb-4 shadow-sm">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Technical Specifications</h4>
-                  <div className="space-y-3 text-[12px] font-medium">
+                  <div className="space-y-3 text-[12px] font-medium text-gray-700">
                     {[
                       { label: 'Software', value: template.software || 'Google Sheets' },
                       { label: 'License', value: 'Personal Use Only' },
@@ -145,7 +153,6 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* DESCRIZIONE LUNGA ALLINEATA */}
             <div className="max-w-full">
               <div className="border-l-4 border-[#C0DD97] pl-6 mb-6">
                 <div className="text-[17px] text-gray-600 leading-snug font-normal prose prose-flat max-w-none">
@@ -159,7 +166,6 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* BOX WHAT'S INCLUDED - TITOLI 15PX BOLD E COLORE #454544 */}
               <div className="mb-8 pr-0">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5">What's included</h3>
                 <div className="grid md:grid-cols-3 gap-4">
@@ -170,11 +176,7 @@ export default function TemplateDetail() {
                     return (
                       <div key={i} className="bg-[#f5f4ed] px-5 py-4 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[110px]">
                         <div className="mb-2">{featureIcons[i] || featureIcons[0]}</div>
-                        {title && (
-                          <h4 className="text-[15px] font-black mb-1 text-[#454544] tracking-tight leading-tight">
-                            {title}
-                          </h4>
-                        )}
+                        {title && <h4 className="text-[15px] font-black mb-1 text-[#454544] tracking-tight leading-tight">{title}</h4>}
                         <p className="text-[11px] text-gray-500 leading-tight font-medium">{desc}</p>
                       </div>
                     );
@@ -182,7 +184,6 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* HOW TO USE */}
               <div className="mb-12 border-t border-gray-100 pt-6">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">How to use this template</h3>
                 <div className="space-y-4">
@@ -199,16 +200,13 @@ export default function TemplateDetail() {
             </div>
           </main>
 
-          {/* SIDEBAR DESTRA */}
           <aside className="flex-[0.26] w-full sticky top-24 pt-4 flex flex-col gap-10 border-l border-gray-50 pl-8">
-            
-            {/* VIDEO TUTORIAL (SMUSSATO) */}
-            {template.youtube_url && (
+            {videoId ? (
               <div>
                 <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
                    <iframe
                     width="100%" height="100%"
-                    src={`https://www.youtube.com/embed/${template.youtube_url.split('v=')[1]}`}
+                    src={`https://www.youtube.com/embed/${videoId}`}
                     title="YouTube video player" frameBorder="0" allowFullScreen
                   ></iframe>
                 </div>
@@ -216,14 +214,16 @@ export default function TemplateDetail() {
                   <MonitorPlay size={16} /> Video Tutorial
                 </h4>
               </div>
+            ) : (
+              <div className="aspect-video bg-[#f5f4ed] rounded-xl flex items-center justify-center border border-gray-100 text-gray-400 text-[10px] font-bold">
+                VIDEO TUTORIAL NOT AVAILABLE
+              </div>
             )}
 
-            {/* CATEGORIES */}
             <div className="flex flex-col gap-4">
                <div className="bg-[#1F5C3E] text-white py-2 px-4 rounded-md text-center">
                   <span className="text-[11px] font-black uppercase tracking-widest">Categories</span>
                </div>
-               
                <div className="relative">
                   <input 
                     type="text" 
@@ -234,7 +234,6 @@ export default function TemplateDetail() {
                   />
                   <Search className="absolute left-3 top-3 text-gray-400" size={14} />
                </div>
-
                <div className="flex flex-col gap-1 px-1">
                   {filteredCategories.map((cat) => (
                     <Link key={cat.id} to={`/category/${cat.slug}`} className="text-[12px] font-bold text-gray-500 hover:text-[#1F5C3E] no-underline py-1.5 border-b border-gray-50">
@@ -244,10 +243,8 @@ export default function TemplateDetail() {
                </div>
             </div>
 
-            {/* SOCIAL */}
             <div className="flex flex-col gap-3">
                <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1">Follow us on</h4>
-               
                <a href="#" className="flex items-center justify-between w-full border border-gray-200 rounded-full px-4 py-2 hover:bg-gray-50 transition-colors no-underline">
                   <div className="flex items-center gap-2.5">
                     <PinterestIcon />
@@ -255,7 +252,6 @@ export default function TemplateDetail() {
                   </div>
                   <span className="text-[10px] font-black text-gray-400 uppercase">Follow <ArrowRight size={10} className="inline ml-0.5" /></span>
                </a>
-
                <a href="#" className="flex items-center justify-between w-full border border-gray-200 rounded-full px-4 py-2 hover:bg-gray-50 transition-colors no-underline">
                   <div className="flex items-center gap-2.5">
                     <div className="w-5 h-5 bg-[#FF0000] rounded-sm flex items-center justify-center text-white text-[8px]">▶</div>
@@ -265,12 +261,10 @@ export default function TemplateDetail() {
                </a>
             </div>
           </aside>
-
         </div>
       </div>
       <Footer />
 
-      {/* LIGHTBOX IMMAGINI */}
       {lightboxImg && (
         <div className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-6 cursor-zoom-out" onClick={() => setLightboxImg(null)}>
           <button className="absolute top-6 right-6 text-white/70 hover:text-white" onClick={() => setLightboxImg(null)}>
