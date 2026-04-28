@@ -54,7 +54,6 @@ export default function TemplateDetail() {
     return [];
   };
 
-  // Funzione per gestire sia ID che URL intero del video
   const getYouTubeID = (url: string) => {
     if (!url) return null;
     if (url.length === 11 && !url.includes('/') && !url.includes('.')) return url;
@@ -65,6 +64,7 @@ export default function TemplateDetail() {
 
   const videoId = getYouTubeID(template.youtube_url);
   const featuresList = parseList(template.features);
+  
   const howToUseSteps = [
     "Click the download button to access the official Google Sheets template link and create your personal copy.",
     "Open the file in your Google account and follow the setup instructions to customize categories and initial settings.",
@@ -166,18 +166,23 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
+              {/* BOX WHAT'S INCLUDED - TITOLI POTENZIATI (18PX EXTRA-BOLD) */}
               <div className="mb-8 pr-0">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5">What's included</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                   {featuresList.map((f: string, i: number) => {
                     const hasSeparator = f.includes(':');
-                    const title = hasSeparator ? f.split(':')[0] : '';
-                    const desc = hasSeparator ? f.split(':')[1] : f;
+                    // Se non c'è il separatore, usiamo l'intero testo come titolo
+                    const title = hasSeparator ? f.split(':')[0] : f;
+                    const desc = hasSeparator ? f.split(':')[1] : "";
+                    
                     return (
-                      <div key={i} className="bg-[#f5f4ed] px-5 py-4 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[110px]">
-                        <div className="mb-2">{featureIcons[i] || featureIcons[0]}</div>
-                        {title && <h4 className="text-[15px] font-black mb-1 text-[#454544] tracking-tight leading-tight">{title}</h4>}
-                        <p className="text-[11px] text-gray-500 leading-tight font-medium">{desc}</p>
+                      <div key={i} className="bg-[#f5f4ed] px-5 py-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[130px]">
+                        <div className="mb-3">{featureIcons[i] || featureIcons[0]}</div>
+                        <h4 className="text-[18px] font-black mb-1 text-[#454544] tracking-tight leading-tight">
+                          {title}
+                        </h4>
+                        {desc && <p className="text-[11px] text-gray-500 leading-tight font-medium mt-1">{desc}</p>}
                       </div>
                     );
                   })}
