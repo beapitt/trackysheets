@@ -37,7 +37,7 @@ export default function TemplateDetail() {
     fetchData()
   }, [slug])
 
-  if (loading) return <div className="p-20 text-center font-bold text-gray-300 uppercase tracking-widest text-xs">Loading...</div>
+  if (loading) return <div className="p-20 text-center font-bold text-gray-300 uppercase tracking-widest text-[10px]">Loading...</div>
   if (!template) return <div className="p-20 text-center font-sans text-gray-500">Template not found</div>
 
   const gallery = [template.thumbnail, template.img_1, template.img_2, template.img_3].filter(Boolean)
@@ -55,7 +55,6 @@ export default function TemplateDetail() {
   };
 
   const featuresList = parseList(template.features);
-  
   const howToUseSteps = [
     "Click the download button to access the official Google Sheets template link and create your personal copy.",
     "Open the file in your Google account and follow the setup instructions to customize categories and initial settings.",
@@ -87,9 +86,9 @@ export default function TemplateDetail() {
         <div className="flex flex-col lg:flex-row gap-14 items-start">
           
           <main className="flex-[0.74] w-full">
-            {/* TITOLO + SHORT DESCRIPTION (COLORE #454544) */}
+            {/* TITOLO + SHORT DESCRIPTION (DIMENSIONI RIDOTTE #454544) */}
             <div className="mb-8">
-                <h1 className="text-3xl md:text-[34px] font-black tracking-tighter mb-2 leading-tight text-[#454544]">
+                <h1 className="text-3xl md:text-[30px] font-black tracking-tighter mb-2 leading-tight text-[#454544]">
                   {template.title}
                 </h1>
                 <p className="text-[16px] text-[#454544] font-bold tracking-tight max-w-4xl leading-relaxed">
@@ -115,7 +114,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* DOWNLOAD BOX */}
+              {/* SIDE BOX */}
               <div className="xl:col-span-4 flex flex-col">
                 <div className="bg-[#f5f4ed] rounded-xl p-5 border border-gray-100 mb-4 shadow-sm">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Technical Specifications</h4>
@@ -146,7 +145,7 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* DESCRIPTION SECTION (ALLINEATA) */}
+            {/* DESCRIPTION SECTION */}
             <div className="max-w-full">
               <div className="border-l-4 border-[#C0DD97] pl-6 mb-6">
                 <div className="text-[17px] text-gray-600 leading-snug font-normal prose prose-flat max-w-none">
@@ -160,7 +159,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* WHAT'S INCLUDED (ALLINEATI AL DOWNLOAD BOX) */}
+              {/* WHAT'S INCLUDED - TITOLI PIÙ GRANDI E BOLD */}
               <div className="mb-8 pr-0">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5">What's included</h3>
                 <div className="grid md:grid-cols-3 gap-4">
@@ -171,7 +170,7 @@ export default function TemplateDetail() {
                     return (
                       <div key={i} className="bg-[#f5f4ed] px-5 py-4 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[110px]">
                         <div className="mb-2">{featureIcons[i] || featureIcons[0]}</div>
-                        {title && <h4 className="text-[12px] font-black uppercase mb-1 text-gray-900 tracking-tight leading-tight">{title}</h4>}
+                        {title && <h4 className="text-[15px] font-black uppercase mb-1 text-[#454544] tracking-tight leading-tight">{title}</h4>}
                         <p className="text-[11px] text-gray-500 leading-tight font-medium">{desc}</p>
                       </div>
                     );
@@ -217,7 +216,7 @@ export default function TemplateDetail() {
 
             {/* CATEGORIES */}
             <div className="flex flex-col gap-4">
-               <div className="bg-[#1F5C3E] text-white py-2 px-4 rounded-md">
+               <div className="bg-[#1F5C3E] text-white py-2 px-4 rounded-md text-center">
                   <span className="text-[11px] font-black uppercase tracking-widest">Categories</span>
                </div>
                
