@@ -24,8 +24,8 @@ export default function Navbar() {
       style={{ backgroundColor: "#1F5C3E" }}
       className="w-full sticky top-0 z-50 shadow-lg"
     >
-      {/* ─── Riga principale: Logo + Search ─── */}
-      <div className="mx-auto max-w-7xl px-6 flex items-center justify-between h-14">
+      {/* ─── Riga principale: Logo + Search (Portata a 1400px) ─── */}
+      <div className="mx-auto max-w-[1400px] px-6 md:px-12 flex items-center justify-between h-14">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 shrink-0 no-underline">
           <span
@@ -39,7 +39,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Search Bar Integrata (Claude Style) */}
+        {/* Search Bar Integrata */}
         <div className="flex-1 max-w-md mx-8 relative">
           <input
             type="text"
@@ -52,13 +52,12 @@ export default function Navbar() {
           <span className="absolute left-3 top-2 text-white/40 text-xs">🔍</span>
         </div>
 
-        {/* Spazio per eventuali icone a destra (opzionale) */}
         <div className="w-10"></div>
       </div>
 
-      {/* ─── Riga secondaria: Navigazione ─── */}
+      {/* ─── Riga secondaria: Navigazione (Portata a 1400px) ─── */}
       <div className="w-full border-t border-white/5 bg-black/5">
-        <div className="mx-auto max-w-7xl px-6 flex items-center h-10 gap-8">
+        <div className="mx-auto max-w-[1400px] px-6 md:px-12 flex items-center h-10 gap-8">
           {NAV_LINKS.map((link) => {
             const isActive = location.pathname === link.href;
             return (
