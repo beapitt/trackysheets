@@ -17,23 +17,23 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <aside className="w-64 flex flex-col p-6 sticky top-24 self-start bg-white" style={{ marginTop: '40px' }}>
+    <aside className="w-full flex flex-col sticky top-10 self-start">
       
       {/* ── CATEGORIES BOX ── */}
       <div className="mb-10">
         <div 
-          className="text-white px-4 py-3 font-black text-[10px] uppercase tracking-[0.2em] rounded-sm mb-6"
+          className="text-white px-5 py-3 font-bold text-[11px] uppercase tracking-[0.2em] rounded-sm mb-4"
           style={{ backgroundColor: '#1F5C3E', fontFamily: "'Inter', sans-serif" }}
         >
-          Categories
+          All Templates
         </div>
         
-        <nav className="flex flex-col gap-1">
+        <nav className="flex flex-col">
           {categories.map(cat => (
             <Link 
               key={cat.id} 
               to={`/category/${cat.slug}`} 
-              className="text-[12px] font-bold text-gray-600 hover:text-[#1F5C3E] py-2 px-2 hover:bg-[#f5f4ed] rounded-md no-underline transition-all"
+              className="text-[13px] font-bold text-gray-500 hover:text-[#1F5C3E] py-2.5 px-2 hover:bg-[#f5f4ed] rounded-md no-underline transition-all border-b border-gray-50 last:border-0"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               {cat.name}
@@ -44,14 +44,14 @@ export default function Sidebar() {
 
       {/* ── VIDEO BOX ── */}
       {settings?.featured_video_id && (
-        <div className="mb-10 pt-4 border-t border-gray-50">
+        <div className="mb-10">
           <div 
-            className="text-white px-4 py-3 font-black text-[10px] uppercase tracking-[0.2em] rounded-sm mb-4 italic"
+            className="text-white px-5 py-3 font-bold text-[11px] uppercase tracking-[0.2em] rounded-sm mb-4 italic"
             style={{ backgroundColor: '#1F5C3E', fontFamily: "'Inter', sans-serif" }}
           >
             Tutorial
           </div>
-          <div className="aspect-video bg-[#f5f4ed] rounded-lg overflow-hidden border border-gray-100 shadow-sm">
+          <div className="aspect-video bg-[#f5f4ed] rounded-xl overflow-hidden border border-gray-100 shadow-sm">
             <iframe 
               width="100%" 
               height="100%" 
