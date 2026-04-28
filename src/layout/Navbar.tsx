@@ -22,11 +22,12 @@ export default function Navbar() {
   return (
     <header
       style={{ backgroundColor: "#1F5C3E" }}
-      className="w-full sticky top-0 z-50 shadow-lg"
+      className="w-full sticky top-0 z-50 shadow-md"
     >
-      {/* ─── Riga principale: Logo + Search (Portata a 1400px) ─── */}
-      <div className="mx-auto max-w-[1400px] px-6 md:px-12 flex items-center justify-between h-14">
-        {/* Logo */}
+      {/* Container allargato a 1550px - Rimuove l'oceano laterale */}
+      <div className="mx-auto max-w-[1550px] px-4 md:px-8 flex items-center justify-between h-16">
+        
+        {/* Logo - Spostato più a sinistra nel nuovo layout */}
         <Link to="/" className="flex items-center gap-2.5 shrink-0 no-underline">
           <span
             className="flex items-center justify-center w-8 h-8 rounded text-[10px] font-black"
@@ -34,30 +35,31 @@ export default function Navbar() {
           >
             TS
           </span>
-          <span className="text-white font-black tracking-tighter text-xl">
+          <span className="text-white font-bold tracking-tight text-xl">
             TrackySheets
           </span>
         </Link>
 
-        {/* Search Bar Integrata */}
-        <div className="flex-1 max-w-md mx-8 relative">
+        {/* Search Bar - Più ampia e moderna */}
+        <div className="flex-1 max-w-lg mx-10 relative">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={handleSearch}
             placeholder="Search templates..."
-            className="w-full bg-black/10 border border-white/10 rounded-md py-1.5 pl-9 pr-4 text-sm text-white placeholder:text-white/40 outline-none focus:bg-black/20 focus:border-white/30 transition-all"
+            className="w-full bg-white/10 border border-white/5 rounded-full py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/40 outline-none focus:bg-white/20 transition-all"
           />
-          <span className="absolute left-3 top-2 text-white/40 text-xs">🔍</span>
+          <span className="absolute left-4 top-2.5 opacity-40 text-xs">🔍</span>
         </div>
 
-        <div className="w-10"></div>
+        {/* Spazio bilanciamento destra */}
+        <div className="hidden md:block w-32"></div>
       </div>
 
-      {/* ─── Riga secondaria: Navigazione (Portata a 1400px) ─── */}
+      {/* Riga Navigazione Secondaria */}
       <div className="w-full border-t border-white/5 bg-black/5">
-        <div className="mx-auto max-w-[1400px] px-6 md:px-12 flex items-center h-10 gap-8">
+        <div className="mx-auto max-w-[1550px] px-4 md:px-8 flex items-center h-10 gap-8">
           {NAV_LINKS.map((link) => {
             const isActive = location.pathname === link.href;
             return (
