@@ -55,6 +55,7 @@ export default function TemplateDetail() {
   };
 
   const featuresList = parseList(template.features);
+  
   const howToUseSteps = [
     "Click the download button to access the official Google Sheets template link and create your personal copy.",
     "Open the file in your Google account and follow the setup instructions to customize categories and initial settings.",
@@ -77,7 +78,6 @@ export default function TemplateDetail() {
 
       <div className="w-full max-w-[1550px] mx-auto px-12 py-8">
         
-        {/* BREADCRUMB - Pulito */}
         <nav className="text-[11px] font-bold text-gray-400 mb-6 uppercase tracking-[0.1em]">
           <Link to="/" className="hover:text-[#1F5C3E] no-underline">Home</Link>
           <span className="mx-3 text-gray-200">/</span>
@@ -89,10 +89,10 @@ export default function TemplateDetail() {
           <main className="flex-[0.74] w-full">
             {/* TITOLO + SHORT DESCRIPTION (COLORE #454544) */}
             <div className="mb-8">
-                <h1 className="text-3xl md:text-[38px] font-black tracking-tighter mb-2 leading-tight text-[#454544]">
+                <h1 className="text-3xl md:text-[34px] font-black tracking-tighter mb-2 leading-tight text-[#454544]">
                   {template.title}
                 </h1>
-                <p className="text-[17px] text-[#454544] font-bold tracking-tight max-w-4xl leading-snug">
+                <p className="text-[16px] text-[#454544] font-bold tracking-tight max-w-4xl leading-relaxed">
                     {template.short_description?.replace(/<\/?[^>]+(>|$)/g, "")}
                 </p>
             </div>
@@ -115,7 +115,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* DOWNLOAD BOX - Snello */}
+              {/* DOWNLOAD BOX */}
               <div className="xl:col-span-4 flex flex-col">
                 <div className="bg-[#f5f4ed] rounded-xl p-5 border border-gray-100 mb-4 shadow-sm">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Technical Specifications</h4>
@@ -139,17 +139,17 @@ export default function TemplateDetail() {
                   <span className="text-lg">↓</span> Download for Google Sheets
                 </a>
                 
-                <div className="mt-4 flex justify-center items-center gap-5 text-[11px] font-bold text-gray-400 tracking-tight">
+                <div className="mt-4 flex justify-center items-center gap-5 text-[11px] font-bold text-gray-400 tracking-tight uppercase">
                   <span className="flex items-center gap-1.5 whitespace-nowrap"><Check size={14} className="text-gray-300" /> No Registration</span>
                   <span className="flex items-center gap-1.5 whitespace-nowrap"><Check size={14} className="text-gray-300" /> Safe & No Macros</span>
                 </div>
               </div>
             </div>
 
-            {/* DESCRIPTION SECTION (ALLINEATA ALLA LINEA VERDE) */}
-            <div className="max-w-[850px]">
-              <div className="border-l-4 border-[#C0DD97] pl-6 mb-8">
-                <div className="text-[18px] text-gray-600 leading-snug font-normal prose prose-flat max-w-none">
+            {/* DESCRIPTION SECTION (ALLINEATA) */}
+            <div className="max-w-full">
+              <div className="border-l-4 border-[#C0DD97] pl-6 mb-6">
+                <div className="text-[17px] text-gray-600 leading-snug font-normal prose prose-flat max-w-none">
                     {template.long_description?.split('\n').map((line: string, i: number) => {
                         if (line.includes(':')) {
                             const [boldPart, normalPart] = line.split(':');
@@ -160,16 +160,18 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* WHAT'S INCLUDED - SPAZIO RIDOTTO */}
-              <div className="mb-8">
+              {/* WHAT'S INCLUDED (ALLINEATI AL DOWNLOAD BOX) */}
+              <div className="mb-8 pr-0">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5">What's included</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                   {featuresList.map((f: string, i: number) => {
-                    const [title, desc] = f.includes(':') ? f.split(':') : ['Feature', f];
+                    const hasSeparator = f.includes(':');
+                    const title = hasSeparator ? f.split(':')[0] : '';
+                    const desc = hasSeparator ? f.split(':')[1] : f;
                     return (
                       <div key={i} className="bg-[#f5f4ed] px-5 py-4 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[110px]">
                         <div className="mb-2">{featureIcons[i] || featureIcons[0]}</div>
-                        <h4 className="text-[12px] font-black uppercase mb-1 text-gray-900 tracking-tight leading-tight">{title}</h4>
+                        {title && <h4 className="text-[12px] font-black uppercase mb-1 text-gray-900 tracking-tight leading-tight">{title}</h4>}
                         <p className="text-[11px] text-gray-500 leading-tight font-medium">{desc}</p>
                       </div>
                     );
@@ -177,12 +179,12 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* HOW TO USE - SPAZIO RIDOTTO */}
-              <div className="mb-12 border-t border-gray-100 pt-8">
+              {/* HOW TO USE */}
+              <div className="mb-12 border-t border-gray-100 pt-6">
                 <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">How to use this template</h3>
                 <div className="space-y-4">
                   {howToUseSteps.map((step, i) => (
-                    <div key={i} className="flex items-start gap-6 max-w-3xl">
+                    <div key={i} className="flex items-start gap-6 max-w-4xl">
                       <div className="w-7 h-7 flex items-center justify-center rounded-full bg-[#1F5C3E] text-white text-[11px] font-black shrink-0 mt-0.5">
                         {i + 1}
                       </div>
@@ -197,7 +199,7 @@ export default function TemplateDetail() {
           {/* SIDEBAR DESTRA */}
           <aside className="flex-[0.26] w-full sticky top-24 pt-4 flex flex-col gap-10 border-l border-gray-50 pl-8">
             
-            {/* VIDEO TUTORIAL (STILE CLAUDE) */}
+            {/* VIDEO TUTORIAL */}
             {template.youtube_url && (
               <div>
                 <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
@@ -239,7 +241,7 @@ export default function TemplateDetail() {
                </div>
             </div>
 
-            {/* FOLLOW US (SOCIAL UNIFORMI) */}
+            {/* SOCIAL */}
             <div className="flex flex-col gap-3">
                <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1">Follow us on</h4>
                
