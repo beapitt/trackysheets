@@ -8,12 +8,13 @@
 }
 
 body {
-  /* NON aggiungere overflow-hidden qui, altrimenti lo sticky muore */
   @apply antialiased bg-white text-gray-900;
   font-family: 'Inter', system-ui, sans-serif;
+  /* Assicuriamoci che non ci siano blocchi allo scroll globale */
+  overflow-x: hidden; 
 }
 
-/* Rimosse le dimensioni fisse e gli !important per lasciare il controllo alle pagine */
+/* Rimosse le dimensioni fisse !important per dare il controllo alla Home */
 h1, h2, h3, h4 {
   @apply tracking-tight;
 }
