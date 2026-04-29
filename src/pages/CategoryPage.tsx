@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
+import CategoryPills from '../components/CategoryPills'
 import { Search, MonitorPlay, ArrowRight } from 'lucide-react'
 
 const PinterestIcon = () => (
@@ -57,8 +58,6 @@ export default function CategoryPage() {
   };
 
   const videoId = settings?.youtube_url ? getYouTubeID(settings.youtube_url) : null;
-
-  // Logica di filtro interattiva per la sidebar
   const filteredCategories = categories.filter(cat => 
     cat.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -66,30 +65,35 @@ export default function CategoryPage() {
   if (loading) return null;
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-white font-sans text-left">
       <Navbar />
 
-      <div className="w-full max-w-[1550px] mx-auto px-12 py-10">
-        <div className="flex flex-row items-start gap-12">
+      {/* Pillole mobile caricate correttamente con tutte le categorie */}
+      <CategoryPills categories={categories} activeSlug={slug} />
+
+      <div className="w-full max-w-[1550px] mx-auto px-6 md:px-12 py-10 text-left">
+        {/* Layout: colonna su mobile, riga su desktop */}
+        <div className="flex flex-col lg:flex-row items-start gap-12 text-left">
           
-          <main className="flex-1 min-w-0">
-            <header className="mb-8">
-              <p className="text-[11px] font-bold tracking-widest uppercase text-[#1F5C3E] mb-2">
+          <main className="flex-1 min-w-0 text-left w-full">
+            <header className="mb-8 text-left">
+              <p className="text-[11px] font-bold tracking-widest uppercase text-[#1F5C3E] mb-2 text-left">
                 Templates / {category?.name || slug}
               </p>
-              <h1 className="text-[28px] font-bold text-[#1f2937] leading-tight uppercase">
+              <h1 className="text-[28px] font-bold text-[#1f2937] leading-tight uppercase text-left">
                 {category?.name || slug}
               </h1>
             </header>
 
             {templates.length > 0 ? (
-              <div className="grid grid-cols-2 gap-8">
+              /* Griglia Adattiva: 1 colonna mobile, 2 desktop */
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
                 {templates.map((template) => (
-                  <Link key={template.id} to={`/template/${template.slug}`} className="group no-underline block">
+                  <Link key={template.id} to={`/template/${template.slug}`} className="group no-underline block text-left">
                     <div className="aspect-[16/10] bg-[#f5f4ed] rounded-xl overflow-hidden mb-4 border border-gray-100 shadow-sm group-hover:shadow-md transition-all">
                       <img src={template.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" alt={template.title} />
                     </div>
-                    <h3 className="text-[14px] font-bold text-gray-900 mb-1 group-hover:text-[#1F5C3E]">{template.title}</h3>
+                    <h3 className="text-[14px] font-bold text-gray-900 mb-1 group-hover:text-[#1F5C3E] text-left">{template.title}</h3>
                     <div className="flex justify-between items-center">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{template.software || 'Google Sheets'}</span>
                       <span className="text-[10px] font-bold text-[#1F5C3E]">FREE →</span>
@@ -104,32 +108,28 @@ export default function CategoryPage() {
             )}
           </main>
 
-          {/* SIDEBAR UNIFORMATA */}
+          {/* Sidebar originale mantenuta ma resa responsive (va sotto su mobile) */}
           <aside 
-            className="w-[320px] flex-shrink-0 flex flex-col gap-8"
+            className="w-full lg:w-[320px] flex-shrink-0 flex flex-col gap-8 text-left"
             style={{ position: 'sticky', top: '130px', alignSelf: 'flex-start' }}
           >
-            {/* VIDEO BOX */}
             {videoId && (
-              <div>
+              <div className="text-left">
                 <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-xl mb-3">
                    <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allowFullScreen></iframe>
                 </div>
-                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 text-left">
                   <MonitorPlay size={14} /> Video Guide
                 </div>
               </div>
             )}
 
-            {/* CATEGORIES SECTION */}
-            <div className="flex flex-col gap-4">
-               {/* Titolo allineato a sinistra */}
+            <div className="flex flex-col gap-4 text-left">
                <div className="bg-[#1F5C3E] text-white py-3 px-5 rounded-lg font-bold text-[11px] uppercase tracking-widest text-left">
-                  Categories
+                 Categories
                </div>
 
-               {/* Barra di ricerca interattiva */}
-               <div className="relative">
+               <div className="relative text-left">
                   <input 
                     type="text" 
                     placeholder="Search categories..." 
@@ -140,8 +140,7 @@ export default function CategoryPage() {
                   <Search className="absolute left-3 top-2.5 text-gray-400" size={13} />
                </div>
 
-               {/* Elenco categorie filtrato */}
-               <div className="flex flex-col gap-0.5">
+               <div className="flex flex-col gap-0.5 text-left">
                   {filteredCategories.slice(0, 15).map((cat) => (
                     <Link 
                       key={cat.id} 
@@ -157,10 +156,9 @@ export default function CategoryPage() {
                </div>
             </div>
 
-            {/* FOLLOW US ON */}
-            <div className="pt-2">
+            <div className="pt-2 text-left">
                <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 mb-3 text-left">Follow us on</p>
-               <div className="flex flex-col gap-2">
+               <div className="flex flex-col gap-2 text-left">
                   <a href="#" className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-5 py-2.5 hover:bg-gray-50 no-underline shadow-sm transition-all group">
                     <div className="flex items-center gap-3">
                       <PinterestIcon />
