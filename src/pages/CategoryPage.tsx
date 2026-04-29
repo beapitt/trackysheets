@@ -30,27 +30,14 @@ export default function CategoryPage() {
     async function fetchCategoryData() {
       setLoading(true)
       
-      // 1. Recupero Categoria tramite Slug
-      const { data: catData } = await supabase
-        .from('categories')
-        .select('*')
-        .eq('slug', slug)
-        .maybeSingle()
+      const { data: catData } = await supabase.from('categories').select('*').eq('slug', slug).maybeSingle()
       
       if (catData) {
         setCategory(catData)
-        
-        // 2. Recupero Template tramite colonna 'category' (testo)
-        const { data: tData } = await supabase
-          .from('templates')
-          .select('*')
-          .eq('category', catData.name) 
-          .order('created_at', { ascending: false })
-        
+        const { data: tData } = await supabase.from('templates').select('*').eq('category', catData.name).order('created_at', { ascending: false })
         if (tData) setTemplates(tData)
       }
 
-      // 3. Dati Sidebar e Settings
       const { data: allCats } = await supabase.from('categories').select('*').order('name')
       const { data: sData } = await supabase.from('settings').select('*').maybeSingle()
       
@@ -70,6 +57,8 @@ export default function CategoryPage() {
   };
 
   const videoId = settings?.youtube_url ? getYouTubeID(settings.youtube_url) : null;
+
+  // Logica di filtro interattiva per la sidebar
   const filteredCategories = categories.filter(cat => 
     cat.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -98,17 +87,11 @@ export default function CategoryPage() {
                 {templates.map((template) => (
                   <Link key={template.id} to={`/template/${template.slug}`} className="group no-underline block">
                     <div className="aspect-[16/10] bg-[#f5f4ed] rounded-xl overflow-hidden mb-4 border border-gray-100 shadow-sm group-hover:shadow-md transition-all">
-                      <img 
-                        src={template.thumbnail} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" 
-                        alt={template.title} 
-                      />
+                      <img src={template.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" alt={template.title} />
                     </div>
-                    <h3 className="text-[15px] font-bold text-gray-900 mb-1 group-hover:text-[#1F5C3E]">{template.title}</h3>
+                    <h3 className="text-[14px] font-bold text-gray-900 mb-1 group-hover:text-[#1F5C3E]">{template.title}</h3>
                     <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        {template.software || 'Google Sheets'}
-                      </span>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{template.software || 'Google Sheets'}</span>
                       <span className="text-[10px] font-bold text-[#1F5C3E]">FREE →</span>
                     </div>
                   </Link>
@@ -116,15 +99,17 @@ export default function CategoryPage() {
               </div>
             ) : (
               <div className="py-20 text-center border-2 border-dashed border-gray-100 rounded-2xl">
-                <p className="text-gray-400 italic text-[13px]">No templates found in this category yet.</p>
+                <p className="text-gray-400 italic">No templates found in this category yet.</p>
               </div>
             )}
           </main>
 
+          {/* SIDEBAR UNIFORMATA */}
           <aside 
             className="w-[320px] flex-shrink-0 flex flex-col gap-8"
             style={{ position: 'sticky', top: '130px', alignSelf: 'flex-start' }}
           >
+            {/* VIDEO BOX */}
             {videoId && (
               <div>
                 <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-xl mb-3">
@@ -136,23 +121,43 @@ export default function CategoryPage() {
               </div>
             )}
 
-            <div>
-               <div className="bg-[#1F5C3E] text-white py-3 px-5 rounded-lg text-center mb-4 font-bold text-[10px] uppercase tracking-widest">
-                  Browse Categories
+            {/* CATEGORIES SECTION */}
+            <div className="flex flex-col gap-4">
+               {/* Titolo allineato a sinistra */}
+               <div className="bg-[#1F5C3E] text-white py-3 px-5 rounded-lg font-bold text-[11px] uppercase tracking-widest text-left">
+                  Categories
                </div>
+
+               {/* Barra di ricerca interattiva */}
+               <div className="relative">
+                  <input 
+                    type="text" 
+                    placeholder="Search categories..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full bg-[#f5f4ed] border border-gray-100 rounded-lg py-2 pl-9 pr-4 text-xs font-bold text-gray-600 outline-none focus:ring-1 focus:ring-[#1F5C3E]" 
+                  />
+                  <Search className="absolute left-3 top-2.5 text-gray-400" size={13} />
+               </div>
+
+               {/* Elenco categorie filtrato */}
                <div className="flex flex-col gap-0.5">
-                  {filteredCategories.slice(0, 12).map((cat) => (
+                  {filteredCategories.slice(0, 15).map((cat) => (
                     <Link 
                       key={cat.id} 
                       to={`/category/${cat.slug}`} 
-                      className={`text-[12px] font-bold no-underline py-2 border-b border-gray-50 hover:bg-gray-50 px-2 rounded-md transition-all ${cat.slug === slug ? 'text-[#1F5C3E] bg-gray-50' : 'text-gray-500'}`}
+                      className={`text-[12px] font-bold no-underline py-2 border-b border-gray-50 hover:bg-gray-50 px-2 rounded-md transition-all text-left ${cat.slug === slug ? 'text-[#1F5C3E] bg-gray-50' : 'text-gray-500'}`}
                     >
                       {cat.name}
                     </Link>
                   ))}
+                  {filteredCategories.length === 0 && (
+                    <p className="text-[11px] text-gray-400 italic px-2">No matches found</p>
+                  )}
                </div>
             </div>
 
+            {/* FOLLOW US ON */}
             <div className="pt-2">
                <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 mb-3 text-left">Follow us on</p>
                <div className="flex flex-col gap-2">
