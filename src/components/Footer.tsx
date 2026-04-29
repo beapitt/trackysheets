@@ -29,9 +29,23 @@ export default function Footer() {
 
           <div>
             <h4 className="font-bold text-green-300 text-[10px] uppercase tracking-[0.2em] mb-6">Legal</h4>
-            <ul className="space-y-3 p-0 list-none text-sm text-gray-200 font-medium">
-              <li className="hover:text-white cursor-pointer transition">Privacy Policy</li>
-              <li className="hover:text-white cursor-pointer transition">Terms of Service</li>
+            <ul className="space-y-3 p-0 list-none text-sm font-medium">
+              {/* CORREZIONE: Aggiunti i tag Link con i percorsi corretti */}
+              <li>
+                <Link to="/privacy" className="text-gray-200 hover:text-white no-underline transition">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="text-gray-200 hover:text-white no-underline transition">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link to="/disclaimer" className="text-gray-200 hover:text-white no-underline transition">
+                  Disclaimer
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
