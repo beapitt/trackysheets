@@ -5,24 +5,26 @@ import { Search, HelpCircle, Command } from 'lucide-react';
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
-  const location = useLocation(); // Recuperiamo il percorso attuale per gestire i bordi bianchi
+  const location = useLocation();
 
   return (
     <header className="sticky top-0 z-50 w-full shadow-lg" style={{ backgroundColor: '#1F5C3E' }}>
-      {/* RIGA 1: LOGO - SEARCH - HELP */}
+      {/* RIGA 1: LOGO - SEARCH (Solo Desktop) - HELP */}
       <div className="h-16 flex items-center border-b border-white/10">
-        <div className="w-full max-w-[1550px] mx-auto px-12 flex items-center justify-between">
+        <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 flex items-center justify-between gap-4">
           
-          <Link to="/" className="flex items-center gap-2.5 no-underline group">
+          {/* LOGO: Su mobile mostriamo solo l'icona TS per risparmiare spazio */}
+          <Link to="/" className="flex items-center gap-2.5 no-underline group flex-shrink-0">
             <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center font-black text-[#1F5C3E] text-base group-hover:scale-105 transition-transform">
               TS
             </div>
-            <span className="text-white font-semibold text-lg tracking-tight">
+            <span className="text-white font-semibold text-lg tracking-tight hidden sm:block">
               TrackySheets
             </span>
           </Link>
 
-          <div className="flex-1 max-w-[600px] mx-8">
+          {/* SEARCH: Nascosta su mobile, visibile da tablet in su (md:) */}
+          <div className="hidden md:block flex-1 max-w-[600px] mx-4">
             <div className="relative group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-green-100/50" />
               <input
@@ -38,21 +40,21 @@ export default function Navbar() {
             </div>
           </div>
 
-          <Link to="/help" className="flex items-center gap-2 text-green-100 hover:text-white transition-colors no-underline">
+          {/* HELP: Sempre visibile ma con margine ridotto su mobile */}
+          <Link to="/help" className="flex items-center gap-2 text-green-100 hover:text-white transition-colors no-underline flex-shrink-0">
             <HelpCircle size={18} />
-            <span className="text-sm font-medium">Help</span>
+            <span className="text-sm font-medium hidden xs:block">Help</span>
           </Link>
         </div>
       </div>
 
-      {/* RIGA 2: CATEGORIE PRINCIPALI */}
-      <nav className="h-11 flex items-center">
-        <div className="w-full max-w-[1550px] mx-auto px-12 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            {/* Home Link */}
+      {/* RIGA 2: CATEGORIE (Ora scorrevoli su mobile) */}
+      <nav className="h-11 flex items-center overflow-x-auto no-scrollbar">
+        <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 flex items-center justify-between min-w-max md:min-w-0">
+          <div className="flex items-center gap-4 md:gap-8">
             <Link 
               to="/" 
-              className={`text-[11px] font-bold no-underline uppercase tracking-widest pb-1 mt-1 transition-all ${
+              className={`text-[10px] md:text-[11px] font-bold no-underline uppercase tracking-widest pb-1 mt-1 transition-all whitespace-nowrap ${
                 location.pathname === '/' 
                 ? 'text-white border-b-2 border-white' 
                 : 'text-green-100/70 hover:text-white'
@@ -65,7 +67,7 @@ export default function Navbar() {
               <Link 
                 key={cat} 
                 to={`/category/${cat.toLowerCase()}`} 
-                className={`text-[11px] font-bold no-underline uppercase tracking-widest transition-colors pb-1 mt-1 ${
+                className={`text-[10px] md:text-[11px] font-bold no-underline uppercase tracking-widest transition-colors pb-1 mt-1 whitespace-nowrap ${
                   location.pathname === `/category/${cat.toLowerCase()}`
                   ? 'text-white border-b-2 border-white'
                   : 'text-green-100/70 hover:text-white'
@@ -76,10 +78,9 @@ export default function Navbar() {
             ))}
           </div>
           
-          {/* All Templates Link - Ora con lo stato attivo */}
           <Link 
             to="/templates" 
-            className={`text-[11px] font-black no-underline uppercase tracking-widest flex items-center gap-2 group transition-all pb-1 mt-1 ${
+            className={`text-[10px] md:text-[11px] font-black no-underline uppercase tracking-widest flex items-center gap-2 group transition-all pb-1 mt-1 ml-4 whitespace-nowrap ${
               location.pathname === '/templates'
               ? 'text-white border-b-2 border-white'
               : 'text-white hover:text-green-200'
@@ -90,6 +91,12 @@ export default function Navbar() {
           </Link>
         </div>
       </nav>
+      
+      {/* Stile per nascondere la barra di scorrimento su riga 2 */}
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </header>
   );
 }
