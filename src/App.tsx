@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-// Page Imports - Names verified with GitHub case sensitivity
+// Page Imports
 import Home from './pages/Home';
 import TemplateDetail from './pages/TemplateDetail';
 import CategoryPage from './pages/CategoryPage';
@@ -16,9 +16,15 @@ import Disclaimer from './pages/Disclaimer';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 
+// Import del Banner Cookie
+import CookieBanner from './components/CookieBanner';
+
 export default function App() {
   return (
     <BrowserRouter>
+      {/* Il banner deve stare QUI, fuori da Routes, per essere visibile ovunque */}
+      <CookieBanner />
+
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
