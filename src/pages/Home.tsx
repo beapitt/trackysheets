@@ -51,16 +51,17 @@ export default function Home() {
       <Navbar />
 
       <div className="w-full max-w-[1550px] mx-auto px-10 py-10">
-        {/* FIX STICKY DI CLAUDE: items-start sul contenitore */}
-        <div className="flex flex-row gap-[36px] items-start" style={{ alignItems: 'flex-start' }}>
+        {/* FIX CLAUDE: items-start sul parent flex per sbloccare lo sticky[cite: 1] */}
+        <div className="flex flex-row gap-[36px]" style={{ alignItems: 'flex-start' }}>
           
-          <main className="flex-[0.74] min-w-0 flex flex-col gap-[20px]">
+          {/* MAIN COLUMN[cite: 1] */}
+          <main className="flex-1 min-w-0 flex flex-col gap-[20px]">
             
             <section className="pt-4">
               <p className="text-[11px] font-semibold tracking-[0.08em] uppercase text-[#1F5C3E] mb-2">
                 Free Google Sheets Templates
               </p>
-              {/* Titolo Headline a 18px */}
+              {/* Titolo Headline ridotto a 18px[cite: 1] */}
               <h1 className="text-[18px] font-medium tracking-tight text-[#1f2937] leading-tight mb-1" style={{ letterSpacing: '-0.02em' }}>
                 Spreadsheets that work for you
               </h1>
@@ -91,13 +92,14 @@ export default function Home() {
               </div>
             </section>
 
+            {/* NEWLY RELEASED */}
             <section className="mt-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <h2 className="text-[15px] font-semibold text-[#1f2937] tracking-tight">Newly released</h2>
                   <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#EAF3DE] text-[#1F5C3E] uppercase tracking-wider">NEW</span>
                 </div>
-                <Link to="/templates" className="text-[12px] font-semibold text-[#1F5C3E] no-underline flex items-center gap-1">
+                <Link to="/templates" className="text-[12px] font-semibold text-[#1F5C3E] no-underline flex items-center gap-1 hover:opacity-70">
                   View all <ArrowRight size={14} />
                 </Link>
               </div>
@@ -106,10 +108,10 @@ export default function Home() {
               <div className="grid grid-cols-3 gap-6">
                 {templates.slice(0, 6).map((template) => (
                   <Link key={template.id} to={`/template/${template.slug}`} className="group no-underline block">
-                    <div className="aspect-[16/10] bg-[#f5f4ed] rounded-xl overflow-hidden mb-3 border border-gray-100 shadow-sm transition-all">
+                    <div className="aspect-[16/10] bg-[#f5f4ed] rounded-xl overflow-hidden mb-3 border border-gray-100 shadow-sm transition-all group-hover:shadow-md">
                       <img src={template.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={template.title} />
                     </div>
-                    <h3 className="text-[14px] font-bold text-gray-900 leading-tight mb-1 line-clamp-1">
+                    <h3 className="text-[14px] font-bold text-gray-900 leading-tight mb-1 line-clamp-1 group-hover:text-[#1F5C3E] transition-colors">
                       {template.title}
                     </h3>
                     <div className="flex justify-between items-center">
@@ -121,15 +123,16 @@ export default function Home() {
               </div>
             </section>
 
+            {/* HOW IT WORKS[cite: 1] */}
             <section className="border-t border-gray-100 pt-10 mt-6 mb-6">
               <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#1F5C3E] mb-10 text-center">
                 How it works
               </h3>
               <div className="grid grid-cols-3 gap-8">
                 {[
-                  { n: "01", title: "Choose", body: "Browse by category and find the right template." },
-                  { n: "02", title: "Copy", body: "One click to make a copy direttamente in Google Sheets." },
-                  { n: "03", title: "Use", body: "Start entering data. Charts are ready to use." },
+                  { n: "01", title: "Choose", body: "Browse by category and find the right template for your needs." },
+                  { n: "02", title: "Copy", body: "One click to make a copy directly in Google Sheets — no login required." },
+                  { n: "03", title: "Use", body: "Start entering data. Formulas and charts are ready to use." },
                 ].map((s) => (
                   <div key={s.n} className="flex flex-col gap-2">
                     <span className="text-[24px] font-bold text-transparent" 
@@ -142,12 +145,24 @@ export default function Home() {
             </section>
           </main>
 
-          {/* SIDEBAR - Fix Sticky con top: 88 e self-start[cite: 1] */}
-          <aside className="flex-[0.26] w-[260px] sticky top-[88px] self-start flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8" style={{ position: 'sticky', top: '88px', alignSelf: 'flex-start' }}>
+          {/* SIDEBAR FIX: flex-none per evitare height:stretch e sbloccare lo sticky[cite: 1] */}
+          <aside 
+            className="flex-none flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8" 
+            style={{ 
+              width: 260, 
+              position: 'sticky', 
+              top: 88, 
+              alignSelf: 'flex-start' 
+            }}
+          >
             {videoId && (
               <div>
                 <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
-                   <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${videoId}`} title="Guide" frameBorder="0" allowFullScreen></iframe>
+                   <iframe
+                    width="100%" height="100%"
+                    src={`https://www.youtube.com/embed/${videoId}`}
+                    title="Home Video Guide" frameBorder="0" allowFullScreen
+                  ></iframe>
                 </div>
                 <h4 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-[#374151]">
                   <MonitorPlay size={16} /> Video Guide
@@ -160,8 +175,13 @@ export default function Home() {
                   <span className="text-[11px] font-black uppercase tracking-widest">Categories</span>
                </div>
                <div className="relative">
-                  <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Filter categories..." 
-                         className="w-full bg-[#f5f4ed] border border-gray-100 rounded-lg py-2 pl-9 pr-4 text-xs font-bold text-gray-600 focus:ring-1 focus:ring-[#1F5C3E] outline-none" />
+                  <input 
+                    type="text" 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Filter categories..." 
+                    className="w-full bg-[#f5f4ed] border border-gray-100 rounded-lg py-2 pl-9 pr-4 text-xs font-bold text-gray-600 focus:ring-1 focus:ring-[#1F5C3E] transition-all outline-none"
+                  />
                   <Search className="absolute left-3 top-2.5 text-gray-400" size={13} />
                </div>
                <div className="flex flex-col gap-1 px-1">
@@ -174,9 +194,12 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col gap-3">
-               <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1">Follow us on</h4>
+               <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1 text-center">Follow us on</h4>
                <a href="#" className="flex items-center justify-between border border-gray-200 rounded-full px-4 py-2 hover:bg-gray-50 transition-all no-underline">
-                  <div className="flex items-center gap-2.5"><PinterestIcon /><span className="text-[12px] font-bold text-gray-700">Pinterest</span></div>
+                  <div className="flex items-center gap-2.5">
+                    <PinterestIcon />
+                    <span className="text-[12px] font-bold text-gray-700">Pinterest</span>
+                  </div>
                   <span className="text-[10px] font-black text-[#1F5C3E] uppercase tracking-tighter">Follow →</span>
                </a>
             </div>
