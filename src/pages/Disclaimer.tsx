@@ -25,11 +25,11 @@ export default function Disclaimer() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-white font-sans text-left">
       <Navbar />
       
       <div className="w-full max-w-[1550px] mx-auto px-12 py-10">
-        <div className="flex flex-row items-start gap-12">
+        <div className="flex flex-row items-start gap-12 text-left">
           
           <main className="flex-1 min-w-0 text-left">
             <h1 className="text-[32px] font-bold text-[#1f2937] mb-4 border-b pb-4 uppercase tracking-tight text-left">
@@ -41,16 +41,12 @@ export default function Disclaimer() {
             ) : (
               <div 
                 className="prose prose-slate max-w-none text-[15px] leading-relaxed text-gray-600 space-y-4 text-left"
-                dangerouslySetInnerHTML={{ __html: content }} 
+                dangerouslySetInnerHTML={{ __html: content || 'No content available. Please update in Admin Settings.' }} 
               />
-            )}
-            
-            {!loading && !content && (
-              <p className="text-gray-400 italic text-left">Please update content in Admin Settings.</p>
             )}
           </main>
 
-          {/* Sidebar corretta e aggiornata */}
+          {/* Questa è la sidebar che vedi nella Home e in Privacy */}
           <Sidebar />
           
         </div>
