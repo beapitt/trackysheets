@@ -4,77 +4,104 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
 import Sidebar from '../layout/Sidebar'
-import { LayoutGrid } from 'lucide-react'
+import CategoryPills from '../components/CategoryPills'
+import { Search } from 'lucide-react'
 
 export default function AllTemplates() {
   const [templates, setTemplates] = useState<any[]>([])
+  const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("")
 
   useEffect(() => {
-    async function fetchAllTemplates() {
-      // Carica tutti i prodotti ordinati per i più recenti
-      const { data } = await supabase
+    async function fetchData() {
+      const { data: tData } = await supabase
         .from('templates')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('title', { ascending: true })
+
+      const { data: cData } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name')
       
-      if (data) setTemplates(data)
+      if (tData) setTemplates(tData)
+      if (cData) setCategories(cData)
       setLoading(false)
     }
-    fetchAllTemplates()
+    fetchData()
   }, [])
+
+  const filteredTemplates = templates.filter(t =>
+    t.title.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   if (loading) return null;
 
   return (
     <div className="min-h-screen bg-white font-sans text-left">
       <Navbar />
+      
+      {/* Pillole delle categorie per navigazione rapida su Mobile */}
+      <CategoryPills categories={categories} />
 
-      <div className="w-full max-w-[1550px] mx-auto px-12 py-10 text-left">
-        <div className="flex flex-row items-start gap-12 text-left">
+      <div className="w-full max-w-[1550px] mx-auto px-6 md:px-12 py-10 text-left">
+        <div className="flex flex-col lg:flex-row items-start gap-12 text-left">
           
-          <main className="flex-1 min-w-0 text-left">
-            {/* Header della pagina catalogo */}
-            <header className="mb-8 border-b border-gray-100 pb-6">
-              <div className="flex items-center gap-3 mb-2">
-                <LayoutGrid className="text-[#1F5C3E]" size={24} />
-                <h1 className="text-[28px] font-bold text-[#1f2937] uppercase tracking-tight">
-                  All Templates
-                </h1>
+          <main className="flex-1 min-w-0 text-left w-full">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+              <h1 className="text-[32px] font-bold text-[#1f2937] uppercase tracking-tight text-left">
+                All Templates
+              </h1>
+              
+              {/* Barra di ricerca interna alla pagina */}
+              <div className="relative w-full md:w-72">
+                <input
+                  type="text"
+                  placeholder="Search all templates..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-gray-50 border border-gray-100 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-[#1F5C3E]/20 transition-all"
+                />
+                <Search className="absolute left-3 top-3 text-gray-400" size={16} />
               </div>
-              <p className="text-[14px] text-[#4b5563]">
-                Explore our full library of {templates.length} professional Google Sheets planners.
-              </p>
-            </header>
+            </div>
 
-            {/* Griglia a 3 colonne (più densa per gestire molti prodotti) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
-              {templates.map((template) => (
+            {/* Griglia Adattiva: 1 colonna mobile, 2 tablet (md), 3 desktop (lg) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
+              {filteredTemplates.map((template) => (
                 <Link key={template.id} to={`/template/${template.slug}`} className="group no-underline block text-left">
-                  <div className="aspect-[16/10] bg-[#f5f4ed] rounded-xl overflow-hidden mb-3 border border-gray-100 shadow-sm group-hover:shadow-md transition-all">
+                  <div className="aspect-[16/10] bg-[#f5f4ed] rounded-2xl overflow-hidden mb-4 border border-gray-100 shadow-sm group-hover:shadow-xl transition-all duration-300">
                     <img 
                       src={template.thumbnail} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" 
                       alt={template.title} 
                     />
                   </div>
-                  <h3 className="text-[14px] font-bold text-gray-900 mb-0.5 group-hover:text-[#1F5C3E] text-left">
+                  <h3 className="text-[15px] font-bold text-gray-900 mb-1 group-hover:text-[#1F5C3E] transition-colors text-left">
                     {template.title}
                   </h3>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">
-                    Free Download
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-[#1F5C3E] bg-[#EAF3DE] px-2 py-0.5 rounded uppercase tracking-wider">
+                      Free
+                    </span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      Google Sheets
+                    </span>
+                  </div>
                 </Link>
               ))}
             </div>
 
-            {/* Messaggio se non ci sono ancora molti prodotti */}
-            {templates.length === 0 && (
-              <p className="text-gray-400 italic text-left">No templates found.</p>
+            {/* Messaggio se non ci sono risultati nella ricerca */}
+            {filteredTemplates.length === 0 && (
+              <div className="py-20 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-100">
+                <p className="text-gray-400 font-medium text-sm">No templates found matching your search.</p>
+              </div>
             )}
           </main>
 
-          {/* Sidebar coerente con il resto del sito */}
+          {/* Sidebar: si sposta sotto su mobile grazie a flex-col */}
           <Sidebar />
           
         </div>
