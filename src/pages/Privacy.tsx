@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import Navbar from '../layout/Navbar';
 import Footer from '../components/Footer';
-import Sidebar from '../components/Sidebar'; // Assicurati che esista un componente Sidebar separato o incolla la logica qui
+import Sidebar from '../layout/Sidebar'; // Percorso corretto
 
 export default function Privacy() {
   const [content, setContent] = useState('');
@@ -34,12 +34,7 @@ export default function Privacy() {
                    dangerouslySetInnerHTML={{ __html: content }} />
             )}
           </main>
-          
-          {/* Inseriamo la sidebar qui */}
-          <aside className="w-[320px] flex-shrink-0" style={{ position: 'sticky', top: '130px', alignSelf: 'flex-start' }}>
-            {/* Qui dovresti richiamare lo stesso componente Sidebar della Home/Categorie */}
-            <Sidebar /> 
-          </aside>
+          <Sidebar /> 
         </div>
       </div>
       <Footer />
