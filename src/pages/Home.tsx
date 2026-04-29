@@ -50,28 +50,18 @@ export default function Home() {
       <Navbar />
 
       <div className="w-full max-w-[1550px] mx-auto px-10 py-10">
-        {/* Layout a griglia per forzare l'altezza e lo sticky */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-[40px] items-start">
+        {/* Usiamo Grid per stabilità totale dello sticky */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-10 items-start">
           
-          <main className="min-w-0 flex flex-col gap-10">
-            
-            <section>
-              <p className="text-[11px] font-semibold tracking-[0.08em] uppercase text-[#1F5C3E] mb-2">
+          <main className="min-w-0 flex flex-col gap-8">
+            <section className="pt-4">
+              <p className="text-[11px] font-semibold tracking-widest uppercase text-[#1F5C3E] mb-2">
                 Free Google Sheets Templates
               </p>
-              <h1 
-                style={{ 
-                  fontSize: '18px', 
-                  fontWeight: 600, 
-                  color: '#1f2937', 
-                  letterSpacing: '-0.01em',
-                  lineHeight: '1.2' 
-                }}
-                className="mb-1"
-              >
+              <h1 className="text-[18px] font-bold text-[#1f2937] leading-tight mb-2">
                 Spreadsheets that work for you
               </h1>
-              <p className="text-[13px] text-[#4b5563] mb-5">Professional. Simple. Ready to use.</p>
+              <p className="text-[13px] text-[#4b5563] mb-6">Professional. Simple. Ready to use.</p>
               
               <p className="text-[13px] leading-relaxed text-[#374151] border-l-2 border-[#C0DD97] pl-4 mb-8 max-w-2xl">
                 TrackySheets provides free Google Sheets templates for budgeting, invoicing, 
@@ -104,7 +94,6 @@ export default function Home() {
                   View all <ArrowRight size={14} />
                 </Link>
               </div>
-              <div className="h-[1px] bg-gray-50 mb-8" />
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {templates.slice(0, 6).map((template) => (
                   <Link key={template.id} to={`/template/${template.slug}`} className="group no-underline block">
@@ -121,15 +110,15 @@ export default function Home() {
               </div>
             </section>
 
-            <section className="border-t border-gray-100 pt-10 mt-6 mb-10">
-              <h3 className="text-[12px] font-bold uppercase tracking-[0.15em] text-[#1F5C3E] mb-10 text-center">How it works</h3>
+            <section className="border-t border-gray-100 pt-10 mb-10 text-center">
+              <h3 className="text-[12px] font-bold uppercase tracking-widest text-[#1F5C3E] mb-10">How it works</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {[
                   { n: "01", title: "Choose", body: "Browse by category and find the right template." },
                   { n: "02", title: "Copy", body: "One click to make a copy directly in Google Sheets." },
                   { n: "03", title: "Use", body: "Start entering data. Formulas are ready to use." },
                 ].map((s) => (
-                  <div key={s.n} className="flex flex-col gap-2">
+                  <div key={s.n} className="flex flex-col gap-2 items-center">
                     <span className="text-[24px] font-bold text-transparent" style={{ WebkitTextStroke: "1.5px #1F5C3E" }}>{s.n}</span>
                     <h4 className="text-[13px] font-bold text-gray-900">{s.title}</h4>
                     <p className="text-[12px] text-[#6b7280] leading-relaxed">{s.body}</p>
@@ -139,12 +128,13 @@ export default function Home() {
             </section>
           </main>
 
+          {/* SIDEBAR - top: 124px è la chiave (108px navbar + 16px buffer) */}
           <aside 
             className="hidden lg:flex flex-col gap-10 border-l border-gray-50 pl-8"
-            style={{ position: 'sticky', top: '100px', height: 'fit-content' }}
+            style={{ position: 'sticky', top: '124px', height: 'fit-content' }}
           >
             {videoId && (
-              <div>
+              <div className="w-full">
                 <div className="aspect-video bg-black rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
                    <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${videoId}`} title="Guide" frameBorder="0" allowFullScreen></iframe>
                 </div>
@@ -159,13 +149,13 @@ export default function Home() {
                   <span className="text-[11px] font-black uppercase tracking-widest">Categories</span>
                </div>
                <div className="relative">
-                  <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Filter categories..." 
+                  <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Filter..." 
                          className="w-full bg-[#f5f4ed] border border-gray-100 rounded-lg py-2 pl-9 pr-4 text-xs font-bold text-gray-600 focus:ring-1 focus:ring-[#1F5C3E] outline-none" />
                   <Search className="absolute left-3 top-2.5 text-gray-400" size={13} />
                </div>
-               <div className="flex flex-col gap-1 px-1">
+               <div className="flex flex-col gap-1">
                   {filteredCategories.slice(0, 15).map((cat) => (
-                    <Link key={cat.id} to={`/category/${cat.slug}`} className="text-[12px] font-bold text-gray-500 hover:text-[#1F5C3E] no-underline py-2 border-b border-gray-50">
+                    <Link key={cat.id} to={`/category/${cat.slug}`} className="text-[12px] font-bold text-gray-500 hover:text-[#1F5C3E] no-underline py-2 border-b border-gray-50 transition-colors">
                       {cat.name}
                     </Link>
                   ))}
@@ -174,16 +164,15 @@ export default function Home() {
 
             <div className="flex flex-col gap-3 items-start">
                <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400">Follow us on</h4>
-               <a href="#" className="flex items-center justify-between w-full border border-gray-200 rounded-full px-4 py-2 hover:bg-gray-50 no-underline transition-all">
+               <a href="#" className="flex items-center justify-between w-full border border-gray-200 rounded-full px-4 py-2 hover:bg-gray-50 no-underline transition-all group">
                   <div className="flex items-center gap-2.5">
                     <PinterestIcon />
                     <span className="text-[11px] font-bold text-gray-700">Pinterest</span>
                   </div>
-                  <span className="text-[9px] font-black text-[#1F5C3E] uppercase tracking-tighter">Follow →</span>
+                  <span className="text-[9px] font-black text-[#1F5C3E] uppercase group-hover:translate-x-0.5 transition-transform">Follow →</span>
                </a>
             </div>
           </aside>
-
         </div>
       </div>
       <Footer />
