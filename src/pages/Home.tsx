@@ -51,16 +51,15 @@ export default function Home() {
       <Navbar />
 
       <div className="w-full max-w-[1550px] mx-auto px-10 py-10">
-        {/* Contenitore principale con items-start per permettere lo sticky[cite: 1] */}
-        <div className="flex flex-row gap-[36px] items-start">
+        <div className="flex flex-row gap-[36px] items-start" style={{ alignItems: 'flex-start' }}>
           
           <main className="flex-[0.74] min-w-0 flex flex-col gap-[20px]">
             
-            {/* HERO SECTION - Titolo a 18px come richiesto[cite: 1] */}
             <section className="pt-4">
               <p className="text-[11px] font-semibold tracking-[0.08em] uppercase text-[#1F5C3E] mb-2">
                 Free Google Sheets Templates
               </p>
+              {/* TITOLO A 18PX */}
               <h1 className="text-[18px] font-medium tracking-tight text-[#1f2937] leading-tight mb-1" style={{ letterSpacing: '-0.02em' }}>
                 Spreadsheets that work for you
               </h1>
@@ -91,7 +90,6 @@ export default function Home() {
               </div>
             </section>
 
-            {/* NEWLY RELEASED */}
             <section className="mt-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -122,7 +120,7 @@ export default function Home() {
               </div>
             </section>
 
-            {/* HOW IT WORKS */}
+            {/* HOW IT WORKS - Alzato[cite: 1] */}
             <section className="border-t border-gray-100 pt-10 mt-6 mb-6">
               <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#1F5C3E] mb-10 text-center">
                 How it works
@@ -130,7 +128,7 @@ export default function Home() {
               <div className="grid grid-cols-3 gap-8">
                 {[
                   { n: "01", title: "Choose", body: "Browse by category and find the right template." },
-                  { n: "02", title: "Copy", body: "One click to make a copy directly in Google Sheets." },
+                  { n: "02", title: "Copy", body: "One click to make a copy direttamente in Google Sheets." },
                   { n: "03", title: "Use", body: "Start entering data. Charts are ready to use." },
                 ].map((s) => (
                   <div key={s.n} className="flex flex-col gap-2">
@@ -144,8 +142,8 @@ export default function Home() {
             </section>
           </main>
 
-          {/* SIDEBAR - Sticky a 120px e FOLLOW US ON[cite: 1] */}
-          <aside className="flex-[0.26] w-[260px] sticky top-[120px] self-start flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8">
+          {/* SIDEBAR - Sticky Fix e FOLLOW US ON[cite: 1] */}
+          <aside className="flex-[0.26] w-[260px] sticky top-[120px] self-start flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8" style={{ position: 'sticky', top: '120px', alignSelf: 'flex-start' }}>
             {videoId && (
               <div>
                 <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
