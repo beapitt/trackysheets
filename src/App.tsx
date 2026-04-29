@@ -15,9 +15,10 @@ import Settings from './pages/Settings';
 import Disclaimer from './pages/Disclaimer';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
+import AllTemplates from './pages/AllTemplates';
 
 // AGGIUNGI QUESTO IMPORT
-import AllTemplates from './pages/AllTemplates';
+import Help from './pages/Help';
 
 // Import del Banner Cookie
 import CookieBanner from './components/CookieBanner';
@@ -25,7 +26,6 @@ import CookieBanner from './components/CookieBanner';
 export default function App() {
   return (
     <BrowserRouter>
-      {/* Il banner deve stare QUI, fuori da Routes, per essere visibile ovunque */}
       <CookieBanner />
 
       <Routes>
@@ -34,9 +34,10 @@ export default function App() {
         <Route path="/template/:slug" element={<TemplateDetail />} />
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/login" element={<Login />} /> 
+        <Route path="/templates" element={<AllTemplates />} />
         
         {/* AGGIUNGI QUESTA ROTTA */}
-        <Route path="/templates" element={<AllTemplates />} />
+        <Route path="/help" element={<Help />} />
         
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/privacy" element={<Privacy />} />
