@@ -16,6 +16,9 @@ import Disclaimer from './pages/Disclaimer';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 
+// AGGIUNGI QUESTO IMPORT
+import AllTemplates from './pages/AllTemplates';
+
 // Import del Banner Cookie
 import CookieBanner from './components/CookieBanner';
 
@@ -31,6 +34,10 @@ export default function App() {
         <Route path="/template/:slug" element={<TemplateDetail />} />
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/login" element={<Login />} /> 
+        
+        {/* AGGIUNGI QUESTA ROTTA */}
+        <Route path="/templates" element={<AllTemplates />} />
+        
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
