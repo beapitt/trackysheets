@@ -5,6 +5,7 @@ import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
 import { Search, ArrowRight, MonitorPlay } from 'lucide-react'
 
+// Icone Social rimangono invariate
 const PinterestIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="#E60023">
     <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.947-.199-2.403.041-3.439.219-.937 1.406-5.965 1.406-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.22 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12.017 24 18.637 24 24 18.632 24 12.012 24 5.39 18.637 0 12.017 0z"/>
@@ -26,7 +27,6 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      // APPLICATO SUGGERIMENTO CLAUDE: Limite a 8 per la vetrina Newly Released
       const { data: tData } = await supabase
         .from('templates')
         .select('*')
@@ -62,10 +62,11 @@ export default function Home() {
     <div className="min-h-screen bg-white font-sans text-left">
       <Navbar />
 
-      <div className="w-full max-w-[1550px] mx-auto px-12 py-10 text-left">
-        <div className="flex flex-row items-start gap-12 text-left">
+      <div className="w-full max-w-[1550px] mx-auto px-6 md:px-12 py-10 text-left">
+        {/* LAYOUT ADATTIVO: flex-col su mobile, flex-row su desktop */}
+        <div className="flex flex-col lg:flex-row items-start gap-12 text-left">
           
-          <main className="flex-1 min-w-0 text-left">
+          <main className="flex-1 min-w-0 text-left w-full">
             <section className="text-left">
               <p className="text-[11px] font-bold tracking-widest uppercase text-[#1F5C3E] mb-2 text-left">
                 Free Google Sheets Templates
@@ -80,7 +81,8 @@ export default function Home() {
                 project tracking, and more — no login or registration required.
               </p>
 
-              <div className="grid grid-cols-3 gap-3 mb-8 text-left">
+              {/* BOX STEP ADATTIVI: 1 colonna su mobile, 3 su desktop */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8 text-left">
                 {[
                   { num: `50+`, sub: "free templates", n: "01" },
                   { num: "100%", sub: "Google Sheets", n: "02" },
@@ -95,6 +97,7 @@ export default function Home() {
               </div>
             </section>
 
+            {/* GRIGLIA PRODOTTI ADATTIVA: 1 colonna su mobile, 2 su desktop */}
             <section className="mb-6 text-left">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -105,7 +108,8 @@ export default function Home() {
                   View all templates →
                 </Link>
               </div>
-              <div className="grid grid-cols-2 gap-6 text-left">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                 {templates.map((template) => (
                   <Link key={template.id} to={`/template/${template.slug}`} className="group no-underline block text-left">
                     <div className="aspect-[16/10] bg-[#f5f4ed] rounded-xl overflow-hidden mb-3 border border-gray-100 shadow-sm group-hover:shadow-md transition-all">
@@ -118,9 +122,10 @@ export default function Home() {
               </div>
             </section>
 
+            {/* HOW IT WORKS: 1 colonna su mobile, 3 su desktop */}
             <section className="border-t border-gray-100 pt-6 pb-8 text-left">
               <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#1F5C3E] mb-6 text-center">How it works</h3>
-              <div className="grid grid-cols-3 gap-6 text-left">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                 {[
                   { n: "01", title: "Choose", body: "Pick a template from our library." },
                   { n: "02", title: "Copy", body: "Click 'Make a copy' to save it to your Drive." },
@@ -136,8 +141,9 @@ export default function Home() {
             </section>
           </main>
 
+          {/* SIDEBAR: Verrà nascosta o spostata sotto su mobile grazie a flex-col lg:flex-row */}
           <aside 
-            className="w-[320px] flex-shrink-0 flex flex-col gap-8 text-left"
+            className="w-full lg:w-[320px] flex-shrink-0 flex flex-col gap-8 text-left"
             style={{ position: 'sticky', top: '130px', alignSelf: 'flex-start' }}
           >
             {videoId && (
