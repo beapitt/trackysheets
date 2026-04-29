@@ -13,5 +13,13 @@ body {
   overflow-x: hidden; 
 }
 
-/* Lasciamo il controllo totale alle pagine */
-h1, h2, h3, h4 { @apply tracking-tight; }
+/* Rimuoviamo i vincoli pesanti per lasciare spazio ai 18px della Home */
+h1, h2, h3, h4 {
+  @apply tracking-tight;
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
