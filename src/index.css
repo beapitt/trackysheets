@@ -10,17 +10,8 @@
 body {
   @apply antialiased bg-white text-gray-900;
   font-family: 'Inter', system-ui, sans-serif;
-  /* Assicuriamoci che non ci siano blocchi allo scroll globale */
   overflow-x: hidden; 
 }
 
-/* Rimosse le dimensioni fisse !important per dare il controllo alla Home */
-h1, h2, h3, h4 {
-  @apply tracking-tight;
-}
-
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-}
+/* Lasciamo il controllo totale alle pagine */
+h1, h2, h3, h4 { @apply tracking-tight; }
