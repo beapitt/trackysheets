@@ -51,16 +51,19 @@ export default function Home() {
       <Navbar />
 
       <div className="w-full max-w-[1550px] mx-auto px-10 py-10">
+        {/* Fix Sticky: items-start sul parent grid */}
         <div className="flex flex-col lg:flex-row gap-[36px] items-start">
           
-          <main className="flex-1 min-w-0 flex flex-col gap-12">
+          {/* AREA PRINCIPALE - Ridotto gap tra sezioni a 20px come suggerito */}
+          <main className="flex-1 min-w-0 flex flex-col gap-[20px]">
             
             {/* 1. HERO SECTION */}
             <section className="pt-4">
               <p className="text-[11px] font-semibold tracking-[0.08em] uppercase text-[#1F5C3E] mb-2">
                 Free Google Sheets Templates
               </p>
-              <h1 className="text-[26px] font-medium tracking-tight text-[#1f2937] leading-tight mb-1" style={{ letterSpacing: '-0.02em' }}>
+              {/* Headline ridotta a 22px per maggiore compostezza */}
+              <h1 className="text-[22px] font-medium tracking-tight text-[#1f2937] leading-tight mb-1" style={{ letterSpacing: '-0.02em' }}>
                 Spreadsheets that work for you
               </h1>
               <p className="text-[13px] text-[#4b5563] mb-5 font-normal">
@@ -90,8 +93,8 @@ export default function Home() {
               </div>
             </section>
 
-            {/* 2. NEWLY RELEASED[cite: 1] */}
-            <section>
+            {/* 2. NEWLY RELEASED */}
+            <section className="mt-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <h2 className="text-[15px] font-semibold text-[#1f2937] tracking-tight">Newly released</h2>
@@ -121,7 +124,7 @@ export default function Home() {
               </div>
             </section>
 
-            {/* 3. HOW IT WORKS[cite: 1] */}
+            {/* 3. HOW IT WORKS */}
             <section className="border-t border-gray-100 pt-10 mb-6">
               <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#1F5C3E] mb-10 text-center">
                 How it works
@@ -143,8 +146,8 @@ export default function Home() {
             </section>
           </main>
 
-          {/* SIDEBAR STICKY[cite: 1] */}
-          <aside className="w-full lg:w-[260px] sticky top-24 self-start pt-4 flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8">
+          {/* SIDEBAR - Fix Sticky con top: 88 e self-start[cite: 1] */}
+          <aside className="w-full lg:w-[260px] sticky top-[88px] self-start pt-4 flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8">
             {videoId ? (
               <div>
                 <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
