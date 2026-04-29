@@ -47,20 +47,20 @@ export default function Home() {
   if (loading) return null;
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-white font-sans overflow-x-hidden">
       <Navbar />
 
       <div className="w-full max-w-[1550px] mx-auto px-10 py-10">
-        {/* FIX STICKY: items-start è vitale qui */}
         <div className="flex flex-row gap-[36px] items-start">
           
           <main className="flex-[0.74] min-w-0 flex flex-col gap-[20px]">
             
+            {/* HERO SECTION - Titolo ridotto a 20px[cite: 1] */}
             <section className="pt-4">
               <p className="text-[11px] font-semibold tracking-[0.08em] uppercase text-[#1F5C3E] mb-2">
                 Free Google Sheets Templates
               </p>
-              <h1 className="text-[22px] font-medium tracking-tight text-[#1f2937] leading-tight mb-1" style={{ letterSpacing: '-0.02em' }}>
+              <h1 className="text-[20px] font-medium tracking-tight text-[#1f2937] leading-tight mb-1" style={{ letterSpacing: '-0.02em' }}>
                 Spreadsheets that work for you
               </h1>
               <p className="text-[13px] text-[#4b5563] mb-5">
@@ -90,6 +90,7 @@ export default function Home() {
               </div>
             </section>
 
+            {/* NEWLY RELEASED */}
             <section className="mt-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -120,7 +121,8 @@ export default function Home() {
               </div>
             </section>
 
-            <section className="border-t border-gray-100 pt-10 mb-6">
+            {/* HOW IT WORKS - Alzato[cite: 1] */}
+            <section className="border-t border-gray-100 pt-8 mt-4 mb-6">
               <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#1F5C3E] mb-10 text-center">
                 How it works
               </h3>
@@ -141,8 +143,8 @@ export default function Home() {
             </section>
           </main>
 
-          {/* SIDEBAR: STICKY TOP CORRETTO */}
-          <aside className="flex-[0.26] w-[260px] sticky top-[100px] self-start flex flex-col gap-10 border-l border-gray-50 pl-8">
+          {/* SIDEBAR - Sticky Fix e FOLLOW US ON[cite: 1] */}
+          <aside className="flex-[0.26] w-[260px] sticky top-[110px] self-start flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8">
             {videoId && (
               <div>
                 <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
@@ -173,7 +175,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col gap-3">
-               <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1">Follow us</h4>
+               <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1">Follow us on</h4>
                <a href="#" className="flex items-center justify-between border border-gray-200 rounded-full px-4 py-2 hover:bg-gray-50 transition-all no-underline">
                   <div className="flex items-center gap-2.5"><PinterestIcon /><span className="text-[12px] font-bold text-gray-700">Pinterest</span></div>
                   <span className="text-[10px] font-black text-[#1F5C3E] uppercase tracking-tighter">Follow →</span>
