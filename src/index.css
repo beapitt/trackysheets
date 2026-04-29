@@ -8,17 +8,14 @@
 }
 
 body {
+  /* NON aggiungere overflow-hidden qui, altrimenti lo sticky muore */
   @apply antialiased bg-white text-gray-900;
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* Titoli eleganti e non giganti */
-h1 {
-  @apply font-bold tracking-tight text-3xl md:text-4xl lg:text-5xl !important;
-}
-
-h2 {
-  @apply font-semibold tracking-tight text-xl md:text-2xl !important;
+/* Rimosse le dimensioni fisse e gli !important per lasciare il controllo alle pagine */
+h1, h2, h3, h4 {
+  @apply tracking-tight;
 }
 
 .transition-all {
