@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../layout/Navbar';
 import Footer from '../components/Footer';
 import Sidebar from '../layout/Sidebar';
+import { Mail } from 'lucide-react';
 
 export default function Help() {
   return (
@@ -37,6 +38,21 @@ export default function Help() {
                 <p className="text-left">
                   Many of our complex planners include a dedicated video guide. You can find these in the sidebar of the specific product page or on our YouTube channel.
                 </p>
+              </section>
+
+              {/* NUOVA SEZIONE CONTATTI */}
+              <section className="bg-[#f8fafc] rounded-2xl p-8 border border-slate-100 mt-12">
+                <h3 className="text-[#1F5C3E] font-bold text-xl mb-2 text-left">Still need help?</h3>
+                <p className="text-left mb-6 text-slate-500">
+                  If you have technical issues with a template or suggestions for new ones, feel free to reach out.
+                </p>
+                <a 
+                  href="mailto:support@trackysheets.com" 
+                  className="inline-flex items-center gap-3 bg-[#1F5C3E] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#16432d] transition-all no-underline shadow-lg shadow-green-900/10"
+                >
+                  <Mail size={20} />
+                  Contact Support
+                </a>
               </section>
             </div>
           </main>
