@@ -1,45 +1,62 @@
-import React from "react";
-
-const GREEN = "#2D5A27";
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import Navbar from '../layout/Navbar';
+import Footer from '../components/Footer';
+import Sidebar from '../layout/Sidebar';
 
 export default function Disclaimer() {
+  const [content, setContent] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchDisclaimer() {
+      // Recupera il testo dalla colonna disclaimer nella tabella settings
+      const { data } = await supabase
+        .from('settings')
+        .select('disclaimer')
+        .maybeSingle();
+      
+      if (data?.disclaimer) {
+        setContent(data.disclaimer);
+      }
+      setLoading(false);
+    }
+    fetchDisclaimer();
+  }, []);
+
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Disclaimer</h1>
-      <p className="text-sm text-gray-400 mb-8">Last updated: {new Date().getFullYear()}</p>
+    <div className="min-h-screen bg-white font-sans">
+      <Navbar />
+      
+      <div className="w-full max-w-[1550px] mx-auto px-12 py-10">
+        <div className="flex flex-row items-start gap-12">
+          
+          <main className="flex-1 min-w-0 text-left">
+            <h1 className="text-[32px] font-bold text-[#1f2937] mb-4 border-b pb-4 uppercase tracking-tight text-left">
+              Disclaimer
+            </h1>
+            
+            {loading ? (
+              <p className="text-gray-400 italic text-left">Loading disclaimer...</p>
+            ) : (
+              <div 
+                className="prose prose-slate max-w-none text-[15px] leading-relaxed text-gray-600 space-y-4 text-left"
+                dangerouslySetInnerHTML={{ __html: content }} 
+              />
+            )}
+            
+            {!loading && !content && (
+              <p className="text-gray-400 italic text-left">Please update content in Admin Settings.</p>
+            )}
+          </main>
 
-      <div className="prose prose-sm text-gray-700 space-y-6">
-        <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">1. General Information Only</h2>
-          <p>The spreadsheet templates and content provided on Tracky Sheets are for general informational and productivity purposes only. Nothing on this site constitutes financial, legal, accounting, or professional advice.</p>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">2. No Professional Advice</h2>
-          <p>Templates related to finance, budgeting, invoicing, or legal matters are provided as tools to help you organize information. They are not a substitute for advice from a qualified professional. Always consult a licensed accountant, financial advisor, or attorney for matters specific to your situation.</p>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">3. Accuracy of Information</h2>
-          <p>While we strive to keep our templates accurate and up to date, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, or suitability of the templates for any purpose.</p>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">4. External Links</h2>
-          <p>Our site links to Google Sheets and other third-party platforms. We have no control over the content or availability of those sites and are not responsible for any loss or damage that may arise from your use of them.</p>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">5. Use at Your Own Risk</h2>
-          <p>Your use of any template from Tracky Sheets is entirely at your own risk. Tracky Sheets and its contributors shall not be held liable for any errors, omissions, or outcomes resulting from the use of these templates.</p>
-        </section>
+          {/* Sidebar corretta e aggiornata */}
+          <Sidebar />
+          
+        </div>
       </div>
-
-      <div className="mt-10 pt-6 border-t border-gray-200">
-        <a href="/" style={{ color: GREEN }} className="text-sm font-medium hover:underline">
-          ← Back to Home
-        </a>
-      </div>
+      
+      <Footer />
     </div>
   );
 }
