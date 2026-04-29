@@ -90,7 +90,7 @@ export default function Home() {
               </div>
             </section>
 
-            {/* 2. NEWLY RELEASED */}
+            {/* 2. NEWLY RELEASED[cite: 1] */}
             <section>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -121,7 +121,7 @@ export default function Home() {
               </div>
             </section>
 
-            {/* 3. HOW IT WORKS */}
+            {/* 3. HOW IT WORKS[cite: 1] */}
             <section className="border-t border-gray-100 pt-10 mb-6">
               <h3 className="text-[13px] font-bold uppercase tracking-[0.15em] text-[#1F5C3E] mb-10 text-center">
                 How it works
@@ -143,8 +143,8 @@ export default function Home() {
             </section>
           </main>
 
-          {/* SIDEBAR */}
-          <aside className="w-full lg:w-[260px] sticky top-24 pt-4 flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8">
+          {/* SIDEBAR STICKY[cite: 1] */}
+          <aside className="w-full lg:w-[260px] sticky top-24 self-start pt-4 flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8">
             {videoId ? (
               <div>
                 <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
