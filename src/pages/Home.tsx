@@ -26,9 +26,16 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const { data: tData } = await supabase.from('templates').select('*').order('created_at', { ascending: false })
+      // APPLICATO SUGGERIMENTO CLAUDE: Limite a 8 per la vetrina Newly Released
+      const { data: tData } = await supabase
+        .from('templates')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(8);
+
       const { data: cData } = await supabase.from('categories').select('*').order('name')
       const { data: sData } = await supabase.from('settings').select('*').maybeSingle()
+      
       if (tData) setTemplates(tData)
       if (cData) setCategories(cData)
       if (sData) setSettings(sData)
@@ -52,71 +59,68 @@ export default function Home() {
   if (loading) return null;
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-white font-sans text-left">
       <Navbar />
 
-      <div className="w-full max-w-[1550px] mx-auto px-12 py-10">
-        <div className="flex flex-row items-start gap-12">
+      <div className="w-full max-w-[1550px] mx-auto px-12 py-10 text-left">
+        <div className="flex flex-row items-start gap-12 text-left">
           
-          <main className="flex-1 min-w-0">
-            <section>
-              <p className="text-[11px] font-bold tracking-widest uppercase text-[#1F5C3E] mb-2">
+          <main className="flex-1 min-w-0 text-left">
+            <section className="text-left">
+              <p className="text-[11px] font-bold tracking-widest uppercase text-[#1F5C3E] mb-2 text-left">
                 Free Google Sheets Templates
               </p>
-              <h1 className="text-[28px] font-bold text-[#1f2937] leading-tight mb-2">
+              <h1 className="text-[28px] font-bold text-[#1f2937] leading-tight mb-2 text-left">
                 Spreadsheets that work for you
               </h1>
-              <p className="text-[14px] text-[#4b5563] mb-6">Professional. Simple. Ready to use.</p>
+              <p className="text-[14px] text-[#4b5563] mb-6 text-left">Professional. Simple. Ready to use.</p>
               
-              <p className="text-[13px] leading-relaxed text-[#374151] border-l-2 border-[#C0DD97] pl-4 mb-6 max-w-2xl">
+              <p className="text-[13px] leading-relaxed text-[#374151] border-l-2 border-[#C0DD97] pl-4 mb-6 max-w-2xl text-left">
                 TrackySheets provides free Google Sheets templates for budgeting, invoicing, 
                 project tracking, and more — no login or registration required.
               </p>
 
-              {/* BOX VERDI ALLUNGATI: rimosso max-w per coprire il main */}
-              <div className="grid grid-cols-3 gap-3 mb-8">
+              <div className="grid grid-cols-3 gap-3 mb-8 text-left">
                 {[
                   { num: `50+`, sub: "free templates", n: "01" },
                   { num: "100%", sub: "Google Sheets", n: "02" },
                   { num: "0", sub: "login required", n: "03" },
                 ].map((s) => (
-                  <div key={s.n} className="bg-[#EAF3DE] rounded-xl p-4 border border-[#C0DD97]/20 flex flex-col justify-center">
-                    <span className="text-[10px] font-bold text-[#3B6D11] block mb-0.5 opacity-50 uppercase tracking-tighter">Step {s.n}</span>
-                    <span className="text-[22px] font-bold text-[#27500A] block leading-none mb-0.5">{s.num}</span>
-                    <span className="text-[10px] text-[#3B6D11] uppercase font-bold tracking-tight">{s.sub}</span>
+                  <div key={s.n} className="bg-[#EAF3DE] rounded-xl p-4 border border-[#C0DD97]/20 flex flex-col justify-center text-left">
+                    <span className="text-[10px] font-bold text-[#3B6D11] block mb-0.5 opacity-50 uppercase tracking-tighter text-left">Step {s.n}</span>
+                    <span className="text-[22px] font-bold text-[#27500A] block leading-none mb-0.5 text-left">{s.num}</span>
+                    <span className="text-[10px] text-[#3B6D11] uppercase font-bold tracking-tight text-left">{s.sub}</span>
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* NEWLY RELEASED: Margine compattato */}
-            <section className="mb-6">
+            <section className="mb-6 text-left">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-[16px] font-bold text-[#1f2937]">Newly released</h2>
+                  <h2 className="text-[16px] font-bold text-[#1f2937] text-left">Newly released</h2>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EAF3DE] text-[#1F5C3E] uppercase">NEW</span>
                 </div>
                 <Link to="/templates" className="text-[11px] font-bold text-[#1F5C3E] no-underline opacity-80">
                   View all templates →
                 </Link>
               </div>
-              <div className="grid grid-cols-2 gap-6">
-                {templates.slice(0, 4).map((template) => (
-                  <Link key={template.id} to={`/template/${template.slug}`} className="group no-underline block">
+              <div className="grid grid-cols-2 gap-6 text-left">
+                {templates.map((template) => (
+                  <Link key={template.id} to={`/template/${template.slug}`} className="group no-underline block text-left">
                     <div className="aspect-[16/10] bg-[#f5f4ed] rounded-xl overflow-hidden mb-3 border border-gray-100 shadow-sm group-hover:shadow-md transition-all">
                       <img src={template.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" alt={template.title} />
                     </div>
-                    <h3 className="text-[14px] font-bold text-gray-900 mb-0.5 group-hover:text-[#1F5C3E]">{template.title}</h3>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Free Download</span>
+                    <h3 className="text-[14px] font-bold text-gray-900 mb-0.5 group-hover:text-[#1F5C3E] text-left">{template.title}</h3>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">Free Download</span>
                   </Link>
                 ))}
               </div>
             </section>
 
-            {/* HOW IT WORKS: Margine superiore drasticamente ridotto */}
-            <section className="border-t border-gray-100 pt-6 pb-8">
+            <section className="border-t border-gray-100 pt-6 pb-8 text-left">
               <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#1F5C3E] mb-6 text-center">How it works</h3>
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-6 text-left">
                 {[
                   { n: "01", title: "Choose", body: "Pick a template from our library." },
                   { n: "02", title: "Copy", body: "Click 'Make a copy' to save it to your Drive." },
@@ -132,41 +136,37 @@ export default function Home() {
             </section>
           </main>
 
-          {/* SIDEBAR */}
           <aside 
-            className="w-[320px] flex-shrink-0 flex flex-col gap-8"
+            className="w-[320px] flex-shrink-0 flex flex-col gap-8 text-left"
             style={{ position: 'sticky', top: '130px', alignSelf: 'flex-start' }}
           >
-            {/* VIDEO BOX */}
             {videoId && (
-              <div>
+              <div className="text-left">
                 <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-xl mb-3">
                    <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allowFullScreen></iframe>
                 </div>
-                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 text-left">
                   <MonitorPlay size={14} /> Video Guide
                 </div>
               </div>
             )}
 
-            {/* CATEGORIES: Margine inferiore rimosso per avvicinare i social */}
-            <div>
+            <div className="text-left">
                <div className="bg-[#1F5C3E] text-white py-3 px-5 rounded-lg text-center mb-4 font-bold text-[10px] uppercase tracking-widest">
-                  Browse Categories
+                 Browse Categories
                </div>
-               <div className="flex flex-col gap-0.5">
+               <div className="flex flex-col gap-0.5 text-left">
                   {filteredCategories.slice(0, 8).map((cat) => (
-                    <Link key={cat.id} to={`/category/${cat.slug}`} className="text-[12px] font-bold text-gray-500 hover:text-[#1F5C3E] no-underline py-2 border-b border-gray-50 hover:bg-gray-50 px-2 rounded-md transition-all">
+                    <Link key={cat.id} to={`/category/${cat.slug}`} className="text-[12px] font-bold text-gray-500 hover:text-[#1F5C3E] no-underline py-2 border-b border-gray-50 hover:bg-gray-50 px-2 rounded-md transition-all text-left">
                       {cat.name}
                     </Link>
                   ))}
                </div>
             </div>
 
-            {/* FOLLOW US ON - CON YOUTUBE */}
-            <div className="pt-2">
+            <div className="pt-2 text-left">
                <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 mb-3 text-left">Follow us on</p>
-               <div className="flex flex-col gap-2">
+               <div className="flex flex-col gap-2 text-left">
                   <a href="#" className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-5 py-2.5 hover:bg-gray-50 no-underline shadow-sm transition-all group">
                     <div className="flex items-center gap-3">
                       <PinterestIcon />
