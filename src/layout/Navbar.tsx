@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom'; // Aggiunto useLocation
+import { Link, useLocation } from 'react-router-dom';
 import { Search, HelpCircle, Command } from 'lucide-react';
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
-  const location = useLocation(); // Recuperiamo il percorso attuale
+  const location = useLocation(); // Recuperiamo il percorso attuale per gestire i bordi bianchi
 
   return (
     <header className="sticky top-0 z-50 w-full shadow-lg" style={{ backgroundColor: '#1F5C3E' }}>
@@ -49,7 +49,7 @@ export default function Navbar() {
       <nav className="h-11 flex items-center">
         <div className="w-full max-w-[1550px] mx-auto px-12 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            {/* FIX: Il bordo bianco appare solo se siamo nella Home (/) */}
+            {/* Home Link */}
             <Link 
               to="/" 
               className={`text-[11px] font-bold no-underline uppercase tracking-widest pb-1 mt-1 transition-all ${
@@ -76,7 +76,15 @@ export default function Navbar() {
             ))}
           </div>
           
-          <Link to="/templates" className="text-[11px] font-black text-white no-underline uppercase tracking-widest flex items-center gap-2 group">
+          {/* All Templates Link - Ora con lo stato attivo */}
+          <Link 
+            to="/templates" 
+            className={`text-[11px] font-black no-underline uppercase tracking-widest flex items-center gap-2 group transition-all pb-1 mt-1 ${
+              location.pathname === '/templates'
+              ? 'text-white border-b-2 border-white'
+              : 'text-white hover:text-green-200'
+            }`}
+          >
             All Templates 
             <span className="group-hover:translate-x-1 transition-transform">→</span>
           </Link>
