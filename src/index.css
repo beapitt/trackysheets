@@ -7,55 +7,29 @@
   --warm-cream: #f5f4ed;
 }
 
-/* 
-   RESET TOTALE: 
-   Rimuoviamo i vincoli che bloccano lo scroll nativo del browser.
-*/
-html, body {
-  height: auto;
-  min-height: 100%;
-  margin: 0;
-  padding: 0;
-  /* Assicura che lo scroll sia gestito dal body e non da div interni */
-  overflow-x: hidden; 
+/* REGOLA CRITICA: solo html/body gestiscono lo scroll. */
+html {
+  height: 100%;
 }
 
 body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
   @apply antialiased bg-white text-gray-900;
-  font-family: 'Inter', system-ui, sans-serif;
-  /* Rimosso overflow-y: auto: il browser deve decidere quando mostrare la barra */
 }
 
 #root {
-  width: 100%;
-  /* min-height: 100vh spinge il footer in fondo se la pagina è corta */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
-/* Impedisce ai componenti flex/grid di uscire dai bordi */
+/* Fix globale flex/grid shrink — previene overflow orizzontale */
 * {
   min-width: 0;
-}
-
-/* Tipografia */
-h1, h2, h3, h4 {
-  @apply tracking-tight;
-}
-
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-}
-
-@layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  box-sizing: border-box;
 }
