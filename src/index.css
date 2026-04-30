@@ -8,28 +8,33 @@
 }
 
 /* 
-   CORREZIONE CHIRURGICA: 
-   Rimosso overflow-x da html e body che bloccava lo 'sticky'.
-   Usiamo 'clip' solo se necessario o gestiamo lo scroll a livello di singoli div.
+   CORREZIONE FINALE: 
+   Forziamo l'altezza minima e permettiamo lo scroll verticale.
 */
-html, body {
+html {
+  height: 100%;
+  overflow-y: auto; /* Permette lo scroll della pagina */
+}
+
+body {
   margin: 0;
   padding: 0;
   min-height: 100%;
+  @apply antialiased bg-white text-gray-900;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden; /* Evita fastidiosi scorrimenti laterali */
 }
 
 #root {
   width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Impedisce ai componenti flex/grid di uscire dai bordi senza rompere lo sticky */
+/* Impedisce ai componenti flex/grid di uscire dai bordi */
 * {
   min-width: 0;
-}
-
-body {
-  @apply antialiased bg-white text-gray-900;
-  font-family: 'Inter', system-ui, sans-serif;
 }
 
 /* Tipografia */
@@ -43,7 +48,6 @@ h1, h2, h3, h4 {
   transition-duration: 300ms;
 }
 
-/* Utility per nascondere la scrollbar nelle barre delle categorie */
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
