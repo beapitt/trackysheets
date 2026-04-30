@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { Plus, Trash2 } from 'lucide-react';
 
 export default function AdminTemplates() {
   const [templates, setTemplates] = useState<any[]>([]);
@@ -20,13 +21,31 @@ export default function AdminTemplates() {
     setLoading(false);
   }
 
+  // Funzioni specifiche per le FAQ nel modulo Admin
+  const handleAddFaq = () => {
+    const currentFaqs = Array.isArray(editingTemplate.faqs) ? editingTemplate.faqs : [];
+    setEditingTemplate({ ...editingTemplate, faqs: [...currentFaqs, { q: '', a: '' }] });
+  };
+
+  const handleRemoveFaq = (index: number) => {
+    const currentFaqs = Array.isArray(editingTemplate.faqs) ? editingTemplate.faqs : [];
+    const newFaqs = currentFaqs.filter((_, i) => i !== index);
+    setEditingTemplate({ ...editingTemplate, faqs: newFaqs });
+  };
+
+  const handleFaqChange = (index: number, field: 'q' | 'a', value: string) => {
+    const currentFaqs = [...(editingTemplate.faqs || [])];
+    currentFaqs[index][field] = value;
+    setEditingTemplate({ ...editingTemplate, faqs: currentFaqs });
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     try {
       setUploading(true);
       const file = e.target.files?.[0];
       if (!file) return;
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = `${fileName}`;
       const { error: uploadError } = await supabase.storage.from('templates').upload(filePath, file);
       if (uploadError) throw uploadError;
@@ -41,7 +60,13 @@ export default function AdminTemplates() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabase.from('templates').upsert(editingTemplate);
+    // Assicuriamoci che faqs sia un array prima di salvare
+    const templateToSave = {
+      ...editingTemplate,
+      faqs: Array.isArray(editingTemplate.faqs) ? editingTemplate.faqs : []
+    };
+
+    const { error } = await supabase.from('templates').upsert(templateToSave);
     if (error) alert('Error saving: ' + error.message);
     else {
       alert('Template saved successfully!');
@@ -61,12 +86,12 @@ export default function AdminTemplates() {
   if (loading) return <div className="p-10 italic text-gray-500 font-sans">Loading database...</div>;
 
   return (
-    <div className="p-8 font-sans bg-gray-50 min-h-screen text-gray-800">
+    <div className="p-8 font-sans bg-gray-50 min-h-screen text-gray-800 text-left">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-black text-[#14532d] uppercase tracking-tight">Manage Templates</h1>
           <button 
-            onClick={() => setEditingTemplate({ title: '', slug: '', price: 0, status: 'draft', software_os: 'Google Sheets', file_format: 'Google Sheets Spreadsheet' })}
+            onClick={() => setEditingTemplate({ title: '', slug: '', price: 0, status: 'draft', software: 'Google Sheets', file_format: 'Instant Copy', faqs: [] })}
             className="bg-[#1a8856] text-white px-6 py-2 rounded-lg font-bold shadow-md hover:bg-[#14532d] transition"
           >
             + Add New Template
@@ -75,13 +100,13 @@ export default function AdminTemplates() {
 
         {editingTemplate ? (
           <form onSubmit={handleSave} className="space-y-8 bg-white p-8 rounded-xl shadow-xl border border-gray-100">
-            <div className="flex justify-between items-center border-b pb-4">
+            <div className="flex justify-between items-center border-b pb-4 text-left">
               <h2 className="text-xl font-bold text-gray-800">Edit Template Details</h2>
               <button type="button" onClick={() => setEditingTemplate(null)} className="text-gray-400 hover:text-red-500 font-bold text-2xl transition">✕</button>
             </div>
 
             {/* BASIC INFO */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-left">
               <div className="md:col-span-1">
                 <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Title</label>
                 <input type="text" value={editingTemplate.title || ''} onChange={(e) => setEditingTemplate({...editingTemplate, title: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg outline-none focus:border-[#1a8856]" required />
@@ -107,7 +132,7 @@ export default function AdminTemplates() {
             </div>
 
             {/* MEDIA SECTION */}
-            <div className="p-6 bg-green-50/20 rounded-xl border border-green-100 space-y-6">
+            <div className="p-6 bg-green-50/20 rounded-xl border border-green-100 space-y-6 text-left">
               <div>
                 <label className="block text-[10px] font-black text-[#14532d] uppercase mb-2 tracking-widest">Download URL (Google Drive)</label>
                 <input type="text" value={editingTemplate.download_url || ''} onChange={(e) => setEditingTemplate({...editingTemplate, download_url: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg outline-none" />
@@ -128,8 +153,46 @@ export default function AdminTemplates() {
               </div>
             </div>
 
+            {/* FAQ SECTION (PRO METHOD) */}
+            <div className="p-6 bg-[#f5f4ed] rounded-xl border border-gray-200 text-left">
+              <div className="flex justify-between items-center mb-4">
+                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest">Frequently Asked Questions</label>
+                <button 
+                  type="button" 
+                  onClick={handleAddFaq}
+                  className="bg-[#1a8856] text-white px-3 py-1 rounded text-[10px] font-bold uppercase hover:bg-black transition"
+                >
+                  + Add FAQ
+                </button>
+              </div>
+              <div className="space-y-4">
+                {(editingTemplate.faqs || []).map((faq: any, index: number) => (
+                  <div key={index} className="flex gap-3 items-start bg-white p-4 rounded-lg border border-gray-100 relative">
+                    <div className="flex-1 space-y-2">
+                      <input 
+                        placeholder="Question" 
+                        value={faq.q} 
+                        onChange={(e) => handleFaqChange(index, 'q', e.target.value)}
+                        className="w-full p-2 text-sm border rounded outline-none focus:border-[#1a8856] font-bold"
+                      />
+                      <textarea 
+                        placeholder="Answer" 
+                        value={faq.a} 
+                        onChange={(e) => handleFaqChange(index, 'a', e.target.value)}
+                        className="w-full p-2 text-sm border rounded outline-none focus:border-[#1a8856]"
+                        rows={2}
+                      />
+                    </div>
+                    <button type="button" onClick={() => handleRemoveFaq(index)} className="text-gray-300 hover:text-red-500">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* SEO SECTION */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50 rounded-xl border border-gray-200 text-left">
               <div>
                 <label className="block text-[10px] font-black text-gray-500 uppercase mb-2 tracking-widest">SEO Title</label>
                 <input type="text" value={editingTemplate.seo_title || ''} onChange={(e) => setEditingTemplate({...editingTemplate, seo_title: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg outline-none" />
@@ -142,21 +205,6 @@ export default function AdminTemplates() {
                 <label className="block text-[10px] font-black text-gray-500 uppercase mb-2 tracking-widest">Meta Description</label>
                 <textarea value={editingTemplate.meta_description || ''} onChange={(e) => setEditingTemplate({...editingTemplate, meta_description: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg h-20 outline-none" />
               </div>
-            </div>
-
-            {/* DETAILS */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div><label className="block text-[10px] font-black text-gray-400 uppercase mb-2">Price</label><input type="number" value={editingTemplate.price ?? 0} onChange={(e) => setEditingTemplate({...editingTemplate, price: parseFloat(e.target.value)})} className="w-full p-3 border border-gray-200 rounded-lg outline-none" /></div>
-              <div><label className="block text-[10px] font-black text-gray-400 uppercase mb-2">OS</label><input type="text" value={editingTemplate.software_os || ''} onChange={(e) => setEditingTemplate({...editingTemplate, software_os: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg outline-none" /></div>
-              <div><label className="block text-[10px] font-black text-gray-400 uppercase mb-2">Format</label><input type="text" value={editingTemplate.file_format || ''} onChange={(e) => setEditingTemplate({...editingTemplate, file_format: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg outline-none" /></div>
-            </div>
-
-            {/* DESCRIPTIONS */}
-            <div className="space-y-4">
-              <div><label className="flex justify-between mb-2"><span className="text-[10px] font-black text-[#1a8856] uppercase tracking-widest">Short Description</span><span className="text-[10px] text-gray-400 italic">Use &lt;b&gt;...&lt;/b&gt; for bold</span></label>
-              <textarea value={editingTemplate.short_description || ''} onChange={(e) => setEditingTemplate({...editingTemplate, short_description: e.target.value})} className="w-full p-4 border border-gray-200 rounded-lg h-32 outline-none shadow-inner" /></div>
-              <div><label className="flex justify-between mb-2"><span className="text-[10px] font-black text-[#1a8856] uppercase tracking-widest">Long Description</span><span className="text-[10px] text-gray-400 italic">Use &lt;b&gt;...&lt;/b&gt; for bold</span></label>
-              <textarea value={editingTemplate.long_description || ''} onChange={(e) => setEditingTemplate({...editingTemplate, long_description: e.target.value})} className="w-full p-4 border border-gray-200 rounded-lg h-64 outline-none font-mono text-sm" /></div>
             </div>
 
             <div className="flex gap-4 pt-6 border-t">
