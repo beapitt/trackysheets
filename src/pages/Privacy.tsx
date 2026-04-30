@@ -21,19 +21,19 @@ export default function Privacy() {
       setLoading(false);
     }
     fetchPrivacy();
+    // Reset dello scroll all'apertura della pagina
+    window.scrollTo(0, 0);
   }, []);
 
   return (
-    /* Aggiunto flex e flex-col per gestire l'altezza */
-    <div className="flex flex-col min-h-screen bg-white font-sans text-left overflow-x-hidden">
+    /* 
+       Rimosso overflow-x-hidden che bloccava lo scroll. 
+       Aggiunto overflow-y-auto per sicurezza.
+    */
+    <div className="flex flex-col min-h-screen bg-white font-sans text-left overflow-y-auto">
       <Navbar />
       
-      {/* 
-          Aggiunto flex-grow: questo div si espanderà per riempire 
-          tutto lo spazio vuoto, spingendo il Footer verso il basso.
-      */}
       <div className="flex-grow w-full max-w-[1550px] mx-auto px-4 md:px-12 py-10">
-        
         <div className="flex flex-col lg:flex-row items-start gap-12">
           
           <main className="w-full lg:flex-1 min-w-0">
@@ -42,10 +42,11 @@ export default function Privacy() {
             </h1>
             
             {loading ? (
-              <p className="text-gray-400 italic">Loading policy...</p>
+              <p className="text-gray-400 italic font-bold text-[10px] uppercase tracking-widest">Loading policy...</p>
             ) : (
+              /* Aggiunto un margine inferiore per non far finire il testo a ridosso del footer */
               <div 
-                className="prose prose-slate max-w-none text-[15px] leading-relaxed text-gray-600 space-y-4 text-left"
+                className="prose prose-slate max-w-none text-[15px] leading-relaxed text-gray-600 mb-20 text-left"
                 dangerouslySetInnerHTML={{ __html: content }} 
               />
             )}
@@ -55,7 +56,10 @@ export default function Privacy() {
             )}
           </main>
 
-          <Sidebar />
+          {/* Sidebar visibile solo su desktop o gestita con flex-col */}
+          <aside className="w-full lg:w-[320px] shrink-0 sticky top-24 self-start">
+             <Sidebar />
+          </aside>
           
         </div>
       </div>
