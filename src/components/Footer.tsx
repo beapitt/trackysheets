@@ -3,62 +3,37 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    /* Ridotto padding top/bottom (pt-8 pb-8 invece di 16/12) */
-    <footer className="bg-[#14532d] text-white pt-8 pb-8 border-t-4 border-[#1a8856]">
-      <div className="max-w-7xl mx-auto px-6 md:px-8">
+    /* Eliminato il verde scuro, ora fondo crema e bordo sottile grigio */
+    <footer className="bg-[#f5f4ed] border-t border-gray-200 mt-12">
+      <div className="max-w-[1550px] mx-auto px-6 md:px-12 py-5 flex flex-col md:flex-row items-center justify-between gap-6">
         
-        {/* Ridotto il gap tra le colonne (gap-8 invece di 16) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-left">
-          
-          <div>
-            {/* Ridotto margine inferiore del logo (mb-3 invece di 6) */}
-            <div className="flex items-center gap-3 mb-3">
-              <div className="bg-[#14532d] text-white px-2 py-1 rounded font-bold text-lg border border-white/40">
-                TS
-              </div>
-              <span className="text-white font-bold text-xl tracking-tight">TrackySheets</span>
-            </div>
-            <p className="text-gray-300 text-[13px] leading-snug">
-              Professional <strong>Free Sheets & Planners</strong>. <br/>
-              The ultimate guide to Google Sheets.
-            </p>
+        {/* Sinistra: Logo compatto e Copyright */}
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 bg-[#1F5C3E] rounded flex items-center justify-center text-white text-[10px] font-bold">
+            TS
           </div>
-          
-          <div>
-            {/* Ridotto margine sotto EXPLORE (mb-3 invece di 6) */}
-            <h4 className="font-bold text-green-300 text-[10px] uppercase tracking-[0.2em] mb-3">Explore</h4>
-            <ul className="space-y-2 p-0 list-none text-sm font-medium">
-              <li><Link to="/templates" className="text-gray-200 hover:text-white no-underline transition">All Templates</Link></li>
-            </ul>
-          </div>
+          <span className="text-[12px] text-gray-500 font-medium">
+            © {new Date().getFullYear()} TrackySheets · Free Sheets & Planners
+          </span>
+        </div>
 
-          <div>
-            {/* Ridotto margine sotto LEGAL (mb-3 invece di 6) */}
-            <h4 className="font-bold text-green-300 text-[10px] uppercase tracking-[0.2em] mb-3">Legal</h4>
-            <ul className="space-y-2 p-0 list-none text-sm font-medium">
-              <li>
-                <Link to="/privacy" className="text-gray-200 hover:text-white no-underline transition">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="text-gray-200 hover:text-white no-underline transition">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link to="/disclaimer" className="text-gray-200 hover:text-white no-underline transition">
-                  Disclaimer
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-        
-        {/* Ridotto padding copyright (pt-6 invece di 8) */}
-        <div className="border-t border-white/10 pt-6 text-center text-gray-400 text-[9px] font-bold uppercase tracking-[0.2em]">
-          © {new Date().getFullYear()} TrackySheets • Free Sheets & Planners
-        </div>
+        {/* Destra: Link di navigazione orizzontali */}
+        <nav className="flex flex-wrap justify-center gap-x-8 gap-y-2">
+          {[
+            { label: 'All Templates', href: '/templates' },
+            { label: 'Privacy Policy', href: '/privacy' },
+            { label: 'Terms of Service', href: '/terms' },
+            { label: 'Disclaimer', href: '/disclaimer' },
+          ].map((link) => (
+            <Link 
+              key={link.label} 
+              to={link.href} 
+              className="text-[12px] text-gray-500 hover:text-[#1F5C3E] no-underline transition-colors font-semibold"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </footer>
   );
