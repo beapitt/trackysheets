@@ -10,7 +10,6 @@ export default function Terms() {
 
   useEffect(() => {
     async function fetchTerms() {
-      // Recupera il testo dalla colonna terms_of_use nella tabella settings
       const { data } = await supabase
         .from('settings')
         .select('terms_of_use')
@@ -25,15 +24,15 @@ export default function Terms() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-white font-sans text-left overflow-x-hidden">
       <Navbar />
       
-      <div className="w-full max-w-[1550px] mx-auto px-12 py-10">
-        <div className="flex flex-row items-start gap-12">
+      <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 py-10">
+        {/* Cambiato in flex-col per mobile, lg:flex-row per desktop */}
+        <div className="flex flex-col lg:flex-row items-start gap-12">
           
-          <main className="flex-1 min-w-0 text-left">
-            {/* Margine ridotto mb-4 per eliminare lo spazio bianco */}
-            <h1 className="text-[32px] font-bold text-[#1f2937] mb-4 border-b pb-4 uppercase tracking-tight text-left">
+          <main className="w-full lg:flex-1 min-w-0 text-left">
+            <h1 className="text-[24px] md:text-[32px] font-bold text-[#1f2937] mb-6 border-b pb-4 uppercase tracking-tight text-left">
               Terms of Use
             </h1>
             
@@ -51,7 +50,7 @@ export default function Terms() {
             )}
           </main>
 
-          {/* Sidebar corretta (quella della Home) */}
+          {/* La Sidebar scivolerà sotto il contenuto su mobile */}
           <Sidebar />
           
         </div>
