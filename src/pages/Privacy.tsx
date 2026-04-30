@@ -24,16 +24,18 @@ export default function Privacy() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white font-sans text-left overflow-x-hidden">
+    /* Aggiunto flex e flex-col per gestire l'altezza */
+    <div className="flex flex-col min-h-screen bg-white font-sans text-left overflow-x-hidden">
       <Navbar />
       
-      {/* Contenitore principale: px-4 su mobile per non toccare i bordi */}
-      <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 py-10">
+      {/* 
+          Aggiunto flex-grow: questo div si espanderà per riempire 
+          tutto lo spazio vuoto, spingendo il Footer verso il basso.
+      */}
+      <div className="flex-grow w-full max-w-[1550px] mx-auto px-4 md:px-12 py-10">
         
-        {/* Cambiato flex-row in flex-col (mobile) e lg:flex-row (desktop) */}
         <div className="flex flex-col lg:flex-row items-start gap-12">
           
-          {/* Main content: prende tutta la larghezza su mobile */}
           <main className="w-full lg:flex-1 min-w-0">
             <h1 className="text-[24px] md:text-[32px] font-bold text-[#1f2937] mb-6 border-b pb-4 uppercase tracking-tight text-left">
               Privacy Policy
@@ -53,7 +55,6 @@ export default function Privacy() {
             )}
           </main>
 
-          {/* Sidebar: ora scivola ordinatamente sotto il testo su mobile */}
           <Sidebar />
           
         </div>
