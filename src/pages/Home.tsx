@@ -31,18 +31,18 @@ export default function Home() {
   if (loading) return null;
 
   return (
-    <div className="min-h-screen bg-white font-sans text-left">
+    <div className="flex flex-col min-h-screen bg-white font-sans text-left">
       <Navbar />
       
       {/* Mobile Only View */}
       <CategoryPills categories={categories} />
 
-      <div className="w-full max-w-[1550px] mx-auto px-6 md:px-12 py-10">
+      <main className="flex-grow w-full max-w-[1550px] mx-auto px-6 md:px-12 py-10">
         
         {/* IL CONTENITORE PADRE: items-start è vitale per lo sticky */}
-        <div className="flex flex-col lg:flex-row items-start gap-12 relative">
+        <div className="flex flex-col lg:flex-row items-start gap-12">
           
-          <main className="flex-1 min-w-0 w-full">
+          <div className="flex-1 min-w-0 w-full">
             <section className="text-left">
               <p className="text-[11px] font-bold tracking-widest uppercase text-[#1F5C3E] mb-2">
                 Free Google Sheets Templates
@@ -112,23 +112,15 @@ export default function Home() {
                 ))}
               </div>
             </section>
-          </main>
+          </div>
 
-          {/* SIDEBAR CON FORZATURA CSS INLINE */}
-          <aside 
-            className="hidden lg:block w-[320px] flex-shrink-0"
-            style={{ 
-              position: 'sticky', 
-              top: '100px', 
-              alignSelf: 'flex-start',
-              height: 'fit-content'
-            }}
-          >
+          {/* Sidebar: Solo Desktop, Sticky */}
+          <aside className="hidden lg:block w-[320px] shrink-0 sticky top-24 self-start">
             <Sidebar />
           </aside>
 
         </div>
-      </div>
+      </main>
       <Footer />
     </div>
   )
