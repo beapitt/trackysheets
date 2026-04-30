@@ -7,13 +7,23 @@
   --warm-cream: #f5f4ed;
 }
 
+/* Fix globale per impedire lo slittamento laterale su mobile */
+html, body, #root {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Impedisce ai componenti flex/grid di uscire dai bordi */
+* {
+  min-width: 0;
+}
+
 body {
   @apply antialiased bg-white text-gray-900;
   font-family: 'Inter', system-ui, sans-serif;
-  overflow-x: hidden; 
 }
 
-/* Rimuoviamo i vincoli pesanti per lasciare spazio ai 18px della Home */
+/* Tipografia */
 h1, h2, h3, h4 {
   @apply tracking-tight;
 }
@@ -22,4 +32,15 @@ h1, h2, h3, h4 {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
+}
+
+/* Utility per nascondere la scrollbar nelle barre delle categorie */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
