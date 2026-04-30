@@ -82,133 +82,110 @@ export default function TemplateDetail() {
   );
 
   return (
-    <div className="min-h-screen bg-white text-[#1a1a1a] font-sans">
+    <div className="min-h-screen bg-white text-[#1a1a1a] font-sans text-left overflow-x-hidden">
       <Navbar />
 
-      <div className="w-full max-w-[1550px] mx-auto px-12 py-10">
-        
-        <div className="flex flex-col lg:flex-row gap-14 items-start">
+      <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 py-6 md:py-10 text-left">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start">
           
-          <main className="flex-[0.74] w-full">
-            
-            {/* BLOCCO TITOLO E DESCRIZIONE - CALIBRATO SAAS STYLE */}
-            <div className="mb-10">
-                <h1 
-                  className="leading-snug mb-1" 
-                  style={{ 
-                    fontSize: '26px',
-                    color: '#1f2937', 
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 500, 
-                    letterSpacing: '-0.02em' 
-                  }}
-                >
+          <main className="w-full lg:flex-[0.74] min-w-0">
+            {/* TITOLO - Responsive font size */}
+            <div className="mb-6 md:mb-10 text-left">
+                <h1 className="leading-snug mb-2 text-[22px] md:text-[26px] text-[#1f2937] font-medium tracking-tight">
                   {template.title}
                 </h1>
-                <p 
-                  className="leading-relaxed max-w-3xl"
-                  style={{ 
-                    fontSize: '13px',
-                    color: '#4b5563', 
-                    marginTop: '3px',
-                    fontWeight: 400
-                  }}
-                >
+                <p className="text-[13px] text-[#4b5563] leading-relaxed max-w-3xl">
                   {template.short_description?.replace(/<\/?[^>]+(>|$)/g, "")}
                 </p>
             </div>
 
-            <div className="grid xl:grid-cols-12 gap-10 mb-8">
-              <div className="xl:col-span-8">
+            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-10 mb-8">
+              {/* GALLERY */}
+              <div className="lg:col-span-8 overflow-hidden">
                 <div 
-                  className="aspect-[21/9] bg-[#f5f4ed] rounded-xl overflow-hidden mb-5 border border-gray-100 shadow-sm cursor-zoom-in"
+                  className="aspect-video bg-[#f5f4ed] rounded-xl overflow-hidden mb-4 border border-gray-100 shadow-sm cursor-zoom-in"
                   onClick={() => setLightboxImg(selectedImg)}
                 >
                   <img src={selectedImg || ''} className="w-full h-full object-cover" alt="Preview" />
                 </div>
-                <div className="flex gap-3">
+                {/* Thumbnails scorrevoli su mobile */}
+                <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
                   {gallery.map((img, i) => (
                     <button key={i} onClick={() => setSelectedImg(img)} 
-                      className={`w-28 aspect-video rounded-xl overflow-hidden border-2 transition-all ${selectedImg === img ? 'border-[#1F5C3E]' : 'border-transparent opacity-40 hover:opacity-100'}`}>
+                      className={`flex-shrink-0 w-24 md:w-28 aspect-video rounded-xl overflow-hidden border-2 transition-all ${selectedImg === img ? 'border-[#1F5C3E]' : 'border-transparent opacity-50'}`}>
                       <img src={img} className="w-full h-full object-cover" alt="Thumbnail" />
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="xl:col-span-4 flex flex-col">
-                <div className="bg-[#f5f4ed] rounded-xl p-5 border border-gray-100 mb-4 shadow-sm">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Technical Specifications</h4>
+              {/* SPECIFICHE TECNICHE */}
+              <div className="lg:col-span-4 flex flex-col w-full">
+                <div className="bg-[#f5f4ed] rounded-xl p-5 border border-gray-100 mb-4 shadow-sm overflow-hidden">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4 text-left">Technical Specifications</h4>
                   <div className="space-y-3 text-[12px] font-medium text-gray-700">
                     {[
                       { label: 'Software', value: template.software || 'Google Sheets' },
-                      { label: 'License', value: 'Personal Use Only' },
+                      { label: 'License', value: 'Personal Use' },
                       { label: 'Format', value: template.file_format || 'Instant Copy' },
-                      { label: 'Access', value: 'No Login Required' }
+                      { label: 'Access', value: 'No Login' }
                     ].map((item, idx) => (
-                      <div key={idx} className="flex justify-between border-b border-gray-200/40 pb-2 last:border-0">
-                        <span className="text-gray-400 font-bold">{item.label}</span>
-                        <span className="text-gray-700 text-right">{item.value}</span>
+                      <div key={idx} className="flex justify-between border-b border-gray-200/40 pb-2 last:border-0 min-w-0">
+                        <span className="text-gray-400 font-bold flex-shrink-0 mr-4">{item.label}</span>
+                        <span className="text-gray-700 truncate text-right">{item.value}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 <a href={template.download_url} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full bg-[#1F5C3E] text-white py-3 rounded-xl font-bold uppercase text-[12px] tracking-[0.1em] shadow-lg hover:bg-black transition-all no-underline">
-                  <span className="text-lg">↓</span> Download for Google Sheets
+                  className="flex items-center justify-center gap-2 w-full bg-[#1F5C3E] text-white py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-[0.1em] shadow-lg hover:bg-black transition-all no-underline">
+                  ↓ Download Now
                 </a>
                 
-                <div className="mt-4 flex justify-center items-center gap-5 text-[11px] font-bold text-gray-400 tracking-tight uppercase">
-                  <span className="flex items-center gap-1.5 whitespace-nowrap"><Check size={14} className="text-gray-300" /> No Registration</span>
-                  <span className="flex items-center gap-1.5 whitespace-nowrap"><Check size={14} className="text-gray-300" /> Safe & No Macros</span>
+                <div className="mt-4 flex flex-wrap justify-center items-center gap-x-5 gap-y-2 text-[10px] md:text-[11px] font-bold text-gray-400 uppercase">
+                  <span className="flex items-center gap-1.5 whitespace-nowrap"><Check size={14} /> No Registration</span>
+                  <span className="flex items-center gap-1.5 whitespace-nowrap"><Check size={14} /> Safe Access</span>
                 </div>
               </div>
             </div>
 
-            <div className="max-w-full">
-              <div className="border-l-4 border-[#C0DD97] pl-6 mb-6">
-                <div className="text-[17px] text-gray-600 leading-snug font-normal prose prose-flat max-w-none">
-                    {template.long_description?.split('\n').map((line: string, i: number) => {
-                        if (line.includes(':')) {
-                            const [boldPart, normalPart] = line.split(':');
-                            return <p key={i} className="mb-2"><strong className="text-gray-900 font-bold">{boldPart}:</strong>{normalPart}</p>
-                        }
-                        return <p key={i} className="mb-2">{line}</p>
-                    })}
+            {/* LONG DESCRIPTION */}
+            <div className="max-w-full text-left">
+              <div className="border-l-4 border-[#C0DD97] pl-4 md:pl-6 mb-8">
+                <div className="text-[15px] md:text-[17px] text-gray-600 leading-snug font-normal prose prose-flat max-w-none text-left">
+                    {template.long_description?.split('\n').map((line: string, i: number) => (
+                       <p key={i} className="mb-3">{line}</p>
+                    ))}
                 </div>
               </div>
 
-              <div className="mb-8 pr-0">
-                <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5">What's included</h3>
-                <div className="grid md:grid-cols-3 gap-4">
-                  {featuresList.map((f: string, i: number) => {
-                    const hasSeparator = f.includes(':');
-                    const title = hasSeparator ? f.split(':')[0] : f;
-                    const desc = hasSeparator ? f.split(':')[1] : "";
-                    
-                    return (
-                      <div key={i} className="bg-[#f5f4ed] px-5 py-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[130px]">
-                        <div className="mb-3">{featureIcons[i] || featureIcons[0]}</div>
-                        <h4 className="text-[18px] font-semibold mb-1 text-[#454544] tracking-tight leading-tight">
-                          {title}
-                        </h4>
-                        {desc && <p className="text-[11px] text-gray-500 leading-tight font-medium mt-1">{desc}</p>}
-                      </div>
-                    );
-                  })}
+              {/* FEATURES - Stack su mobile, Grid su desktop */}
+              <div className="mb-10 pr-0">
+                <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5 text-left">What's included</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {featuresList.map((f: string, i: number) => (
+                    <div key={i} className="bg-[#f5f4ed] px-5 py-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[130px] text-left">
+                      <div className="mb-3">{featureIcons[i] || featureIcons[0]}</div>
+                      <h4 className="text-[16px] md:text-[18px] font-semibold mb-1 text-[#454544] tracking-tight leading-tight">
+                        {f.includes(':') ? f.split(':')[0] : f}
+                      </h4>
+                      {f.includes(':') && <p className="text-[11px] text-gray-500 leading-tight font-medium mt-1">{f.split(':')[1]}</p>}
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <div className="mb-12 border-t border-gray-100 pt-6">
-                <h3 className="text-[12px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">How to use this template</h3>
-                <div className="space-y-4">
+              {/* HOW TO USE */}
+              <div className="mb-12 border-t border-gray-100 pt-8 text-left">
+                <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">How to use</h3>
+                <div className="space-y-5">
                   {howToUseSteps.map((step, i) => (
-                    <div key={i} className="flex items-start gap-6 max-w-4xl">
-                      <div className="w-7 h-7 flex items-center justify-center rounded-full bg-[#1F5C3E] text-white text-[11px] font-black shrink-0 mt-0.5">
+                    <div key={i} className="flex items-start gap-4 md:gap-6 max-w-4xl text-left">
+                      <div className="w-7 h-7 flex items-center justify-center rounded-full bg-[#1F5C3E] text-white text-[11px] font-black shrink-0">
                         {i + 1}
                       </div>
-                      <p className="text-[16px] text-gray-600 leading-snug font-medium">{step}</p>
+                      <p className="text-[15px] md:text-[16px] text-gray-600 leading-snug font-medium">{step}</p>
                     </div>
                   ))}
                 </div>
@@ -216,77 +193,52 @@ export default function TemplateDetail() {
             </div>
           </main>
 
-          <aside className="flex-[0.26] w-full sticky top-24 pt-4 flex flex-col gap-10 border-l border-gray-50 pl-8">
+          {/* ASIDE - Diventa una sezione finale su mobile */}
+          <aside className="w-full lg:w-[320px] lg:sticky lg:top-24 flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8 mt-10 lg:mt-0 pt-10 border-t lg:border-t-0 border-gray-100 text-left">
             {videoId ? (
-              <div>
+              <div className="w-full text-left">
                 <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
-                   <iframe
-                    width="100%" height="100%"
-                    src={`https://www.youtube.com/embed/${videoId}`}
-                    title="YouTube video player" frameBorder="0" allowFullScreen
-                  ></iframe>
+                   <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allowFullScreen></iframe>
                 </div>
-                <h4 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-[#374151]">
+                <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#374151]">
                   <MonitorPlay size={16} /> Video Tutorial
                 </h4>
               </div>
             ) : (
               <div className="aspect-video bg-[#f5f4ed] rounded-xl flex items-center justify-center border border-gray-100 text-gray-400 text-[10px] font-bold">
-                VIDEO TUTORIAL NOT AVAILABLE
+                VIDEO NOT AVAILABLE
               </div>
             )}
 
-            <div className="flex flex-col gap-4">
-               <div className="bg-[#1F5C3E] text-white py-2 px-4 rounded-md text-center">
+            <div className="flex flex-col gap-4 text-left">
+               <div className="bg-[#1F5C3E] text-white py-2.5 px-4 rounded-md text-center">
                   <span className="text-[11px] font-black uppercase tracking-widest">Categories</span>
                </div>
                <div className="relative">
-                  <input 
-                    type="text" 
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search categories..." 
-                    className="w-full bg-[#f5f4ed] border border-gray-100 rounded-lg py-2.5 pl-10 pr-4 text-xs font-bold text-gray-600 focus:ring-1 focus:ring-[#1F5C3E] transition-all"
-                  />
+                  <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search..." 
+                    className="w-full bg-[#f5f4ed] border border-gray-100 rounded-lg py-2.5 pl-10 pr-4 text-xs font-bold text-gray-600 outline-none" />
                   <Search className="absolute left-3 top-3 text-gray-400" size={14} />
                </div>
-               <div className="flex flex-col gap-1 px-1">
-                  {filteredCategories.map((cat) => (
-                    <Link key={cat.id} to={`/category/${cat.slug}`} className="text-[12px] font-bold text-gray-500 hover:text-[#1F5C3E] no-underline py-1.5 border-b border-gray-50">
+               <div className="flex flex-col gap-1">
+                  {filteredCategories.slice(0, 10).map((cat) => (
+                    <Link key={cat.id} to={`/category/${cat.slug}`} className="text-[12px] font-bold text-gray-500 hover:text-[#1F5C3E] no-underline py-2 border-b border-gray-50">
                       {cat.name}
                     </Link>
                   ))}
                </div>
             </div>
-
-            <div className="flex flex-col gap-3">
-               <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1">Follow us on</h4>
-               <a href="#" className="flex items-center justify-between w-full border border-gray-200 rounded-full px-4 py-2 hover:bg-gray-50 transition-colors no-underline">
-                  <div className="flex items-center gap-2.5">
-                    <PinterestIcon />
-                    <span className="text-[12px] font-bold text-gray-700">Pinterest</span>
-                  </div>
-                  <span className="text-[10px] font-black text-gray-400 uppercase">Follow <ArrowRight size={10} className="inline ml-0.5" /></span>
-               </a>
-               <a href="#" className="flex items-center justify-between w-full border border-gray-200 rounded-full px-4 py-2 hover:bg-gray-50 transition-colors no-underline">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-5 h-5 bg-[#FF0000] rounded-sm flex items-center justify-center text-white text-[8px]">▶</div>
-                    <span className="text-[12px] font-bold text-gray-700">YouTube</span>
-                  </div>
-                  <span className="text-[10px] font-black text-gray-400 uppercase">Subscribe <ArrowRight size={10} className="inline ml-0.5" /></span>
-               </a>
-            </div>
           </aside>
+
         </div>
       </div>
       <Footer />
 
       {lightboxImg && (
-        <div className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-6 cursor-zoom-out" onClick={() => setLightboxImg(null)}>
-          <button className="absolute top-6 right-6 text-white/70 hover:text-white" onClick={() => setLightboxImg(null)}>
+        <div className="fixed inset-0 bg-black/90 z-[110] flex items-center justify-center p-4 cursor-zoom-out" onClick={() => setLightboxImg(null)}>
+          <button className="absolute top-6 right-6 text-white/70 hover:text-white">
             <X size={32} />
           </button>
-          <img src={lightboxImg} className="max-w-full max-h-full rounded-lg shadow-2xl" alt="Enlarged" />
+          <img src={lightboxImg} className="max-w-full max-h-full rounded-lg" alt="Enlarged" />
         </div>
       )}
     </div>
