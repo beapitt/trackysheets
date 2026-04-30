@@ -5,7 +5,7 @@ import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
 import Sidebar from '../layout/Sidebar'
 import { 
-  LayoutGrid, Zap, BarChart3, X
+  LayoutGrid, Zap, BarChart3, X, ChevronDown
 } from 'lucide-react'
 
 export default function TemplateDetail() {
@@ -13,7 +13,8 @@ export default function TemplateDetail() {
   const [template, setTemplate] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [selectedImg, setSelectedImg] = useState<string | null>(null)
-  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null)
+  const [openFaq, setOpenFaq] = useState<number | null>(null)
 
   useEffect(() => {
     async function fetchData() {
@@ -55,13 +56,29 @@ export default function TemplateDetail() {
     <BarChart3 size={22} strokeWidth={2.5} className="text-[#1F5C3E]" />
   ];
 
+  // Preparazione JSON-LD per GEO
+  const faqData = Array.isArray(template.faqs) ? template.faqs : [];
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqData.map((item: any) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": { "@type": "Answer", "text": item.a }
+    }))
+  };
+
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a] font-sans text-left overflow-x-visible">
+      {/* Script invisibile per i motori di ricerca AI */}
+      <script type="application/ld+json">
+        {JSON.stringify(jsonLd)}
+      </script>
+
       <Navbar />
 
       <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 py-6 md:py-10 text-left">
         
-        {/* IL PADRE: items-start + relative sono i motori dello sticky */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start relative">
           
           <main className="w-full lg:flex-[0.74] min-w-0">
@@ -144,7 +161,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              <div className="mb-4 border-t border-gray-100 pt-8">
+              <div className="mb-10 border-t border-gray-100 pt-8">
                 <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">How to use</h3>
                 <div className="space-y-5">
                   {howToUseSteps.map((step, i) => (
@@ -157,10 +174,39 @@ export default function TemplateDetail() {
                   ))}
                 </div>
               </div>
+
+              {/* SEZIONE FAQ DINAMICA */}
+              {faqData.length > 0 && (
+                <div className="mb-10 border-t border-gray-100 pt-8">
+                  <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">Frequently Asked Questions</h3>
+                  <div className="divide-y divide-gray-100">
+                    {faqData.map((item: any, i: number) => (
+                      <div key={i} className="py-2">
+                        <button 
+                          onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                          className="w-full flex justify-between items-center py-4 text-left group"
+                        >
+                          <span className="text-[14px] font-bold text-gray-800 group-hover:text-[#1F5C3E] transition-colors pr-8">
+                            {item.q}
+                          </span>
+                          <ChevronDown 
+                            size={18} 
+                            className={`text-gray-400 transition-transform ${openFaq === i ? 'rotate-180 text-[#1F5C3E]' : ''}`} 
+                          />
+                        </button>
+                        <div className={`overflow-hidden transition-all duration-300 ${openFaq === i ? 'max-h-[300px] pb-4 opacity-100' : 'max-h-0 opacity-0'}`}>
+                          <p className="text-[14px] text-gray-500 leading-relaxed">
+                            {item.a}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </main>
 
-          {/* SIDEBAR: Forzata con h-fit e sticky */}
           <aside className="hidden lg:block w-[320px] flex-shrink-0 sticky top-24 self-start h-fit">
             <Sidebar />
           </aside>
