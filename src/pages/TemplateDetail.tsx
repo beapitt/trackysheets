@@ -89,7 +89,7 @@ export default function TemplateDetail() {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start">
           
           <main className="w-full lg:flex-[0.74] min-w-0">
-            {/* TITOLO - Responsive font size */}
+            {/* TITOLO */}
             <div className="mb-6 md:mb-10 text-left">
                 <h1 className="leading-snug mb-2 text-[22px] md:text-[26px] text-[#1f2937] font-medium tracking-tight">
                   {template.title}
@@ -108,7 +108,6 @@ export default function TemplateDetail() {
                 >
                   <img src={selectedImg || ''} className="w-full h-full object-cover" alt="Preview" />
                 </div>
-                {/* Thumbnails scorrevoli su mobile */}
                 <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
                   {gallery.map((img, i) => (
                     <button key={i} onClick={() => setSelectedImg(img)} 
@@ -142,15 +141,9 @@ export default function TemplateDetail() {
                   className="flex items-center justify-center gap-2 w-full bg-[#1F5C3E] text-white py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-[0.1em] shadow-lg hover:bg-black transition-all no-underline">
                   ↓ Download Now
                 </a>
-                
-                <div className="mt-4 flex flex-wrap justify-center items-center gap-x-5 gap-y-2 text-[10px] md:text-[11px] font-bold text-gray-400 uppercase">
-                  <span className="flex items-center gap-1.5 whitespace-nowrap"><Check size={14} /> No Registration</span>
-                  <span className="flex items-center gap-1.5 whitespace-nowrap"><Check size={14} /> Safe Access</span>
-                </div>
               </div>
             </div>
 
-            {/* LONG DESCRIPTION */}
             <div className="max-w-full text-left">
               <div className="border-l-4 border-[#C0DD97] pl-4 md:pl-6 mb-8">
                 <div className="text-[15px] md:text-[17px] text-gray-600 leading-snug font-normal prose prose-flat max-w-none text-left">
@@ -160,8 +153,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* FEATURES - Stack su mobile, Grid su desktop */}
-              <div className="mb-10 pr-0">
+              <div className="mb-10">
                 <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5 text-left">What's included</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {featuresList.map((f: string, i: number) => (
@@ -176,8 +168,8 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* HOW TO USE */}
-              <div className="mb-12 border-t border-gray-100 pt-8 text-left">
+              {/* HOW TO USE - Ridotto il margine inferiore da mb-12 a mb-4 */}
+              <div className="mb-4 border-t border-gray-100 pt-8 text-left">
                 <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">How to use</h3>
                 <div className="space-y-5">
                   {howToUseSteps.map((step, i) => (
@@ -193,8 +185,8 @@ export default function TemplateDetail() {
             </div>
           </main>
 
-          {/* ASIDE - Diventa una sezione finale su mobile */}
-          <aside className="w-full lg:w-[320px] lg:sticky lg:top-24 flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8 mt-10 lg:mt-0 pt-10 border-t lg:border-t-0 border-gray-100 text-left">
+          {/* ASIDE - Ridotto il margine superiore da mt-10 a mt-2 e il padding top da pt-10 a pt-2 */}
+          <aside className="w-full lg:w-[320px] lg:sticky lg:top-24 flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8 mt-2 lg:mt-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-gray-100 text-left">
             {videoId ? (
               <div className="w-full text-left">
                 <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
@@ -232,15 +224,6 @@ export default function TemplateDetail() {
         </div>
       </div>
       <Footer />
-
-      {lightboxImg && (
-        <div className="fixed inset-0 bg-black/90 z-[110] flex items-center justify-center p-4 cursor-zoom-out" onClick={() => setLightboxImg(null)}>
-          <button className="absolute top-6 right-6 text-white/70 hover:text-white">
-            <X size={32} />
-          </button>
-          <img src={lightboxImg} className="max-w-full max-h-full rounded-lg" alt="Enlarged" />
-        </div>
-      )}
     </div>
   )
 }
