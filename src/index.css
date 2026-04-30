@@ -7,29 +7,31 @@
   --warm-cream: #f5f4ed;
 }
 
-/* Reset strutturale: permettiamo lo scroll naturale */
-html {
+/* 
+   RESET TOTALE: 
+   Rimuoviamo i vincoli che bloccano lo scroll nativo del browser.
+*/
+html, body {
+  height: auto;
+  min-height: 100%;
   margin: 0;
   padding: 0;
-  height: auto;
+  /* Assicura che lo scroll sia gestito dal body e non da div interni */
+  overflow-x: hidden; 
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
   @apply antialiased bg-white text-gray-900;
   font-family: 'Inter', system-ui, sans-serif;
-  overflow-x: hidden;
-  /* Rimosso overflow-y: auto forzato */
+  /* Rimosso overflow-y: auto: il browser deve decidere quando mostrare la barra */
 }
 
 #root {
   width: 100%;
+  /* min-height: 100vh spinge il footer in fondo se la pagina è corta */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  position: relative;
 }
 
 /* Impedisce ai componenti flex/grid di uscire dai bordi */
