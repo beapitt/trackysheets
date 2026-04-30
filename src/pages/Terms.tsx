@@ -4,47 +4,43 @@ import Navbar from '../layout/Navbar';
 import Footer from '../components/Footer';
 import Sidebar from '../layout/Sidebar'; 
 
-export default function Privacy() {
+export default function Terms() {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchPrivacy() {
+    async function fetchTerms() {
       const { data } = await supabase
         .from('settings')
-        .select('privacy_policy')
+        .select('terms_of_service') // Assicurati che il nome colonna sia corretto su Supabase
         .maybeSingle();
       
-      if (data?.privacy_policy) {
-        setContent(data.privacy_policy);
+      if (data?.terms_of_service) {
+        setContent(data.terms_of_service);
       }
       setLoading(false);
     }
-    fetchPrivacy();
-    // Reset dello scroll all'apertura della pagina
+    fetchTerms();
     window.scrollTo(0, 0);
   }, []);
 
   return (
-    /* 
-       Rimosso overflow-x-hidden che bloccava lo scroll. 
-       Aggiunto overflow-y-auto per sicurezza.
-    */
-    <div className="flex flex-col min-h-screen bg-white font-sans text-left overflow-y-auto">
+    /* flex-col + min-h-screen gestiscono lo Sticky Footer */
+    <div className="flex flex-col min-h-screen bg-white font-sans text-left">
       <Navbar />
       
+      {/* flex-grow riempie lo spazio e spinge il footer giù */}
       <div className="flex-grow w-full max-w-[1550px] mx-auto px-4 md:px-12 py-10">
         <div className="flex flex-col lg:flex-row items-start gap-12">
           
           <main className="w-full lg:flex-1 min-w-0">
             <h1 className="text-[24px] md:text-[32px] font-bold text-[#1f2937] mb-6 border-b pb-4 uppercase tracking-tight text-left">
-              Privacy Policy
+              Terms of Service
             </h1>
             
             {loading ? (
-              <p className="text-gray-400 italic font-bold text-[10px] uppercase tracking-widest">Loading policy...</p>
+              <p className="text-gray-400 italic font-bold text-[10px] uppercase tracking-widest">Loading terms...</p>
             ) : (
-              /* Aggiunto un margine inferiore per non far finire il testo a ridosso del footer */
               <div 
                 className="prose prose-slate max-w-none text-[15px] leading-relaxed text-gray-600 mb-20 text-left"
                 dangerouslySetInnerHTML={{ __html: content }} 
@@ -56,7 +52,6 @@ export default function Privacy() {
             )}
           </main>
 
-          {/* Sidebar visibile solo su desktop o gestita con flex-col */}
           <aside className="w-full lg:w-[320px] shrink-0 sticky top-24 self-start">
              <Sidebar />
           </aside>
@@ -65,6 +60,9 @@ export default function Privacy() {
       </div>
       
       <Footer />
+    </div>
+  );
+}er />
     </div>
   );
 }
