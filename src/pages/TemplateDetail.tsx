@@ -3,16 +3,11 @@ import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
+import Sidebar from '../layout/Sidebar'
 import { 
   LayoutGrid, Zap, BarChart3, Check, 
-  Search, ArrowRight, X, MonitorPlay 
+  Search, X, MonitorPlay 
 } from 'lucide-react'
-
-const PinterestIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="#E60023">
-    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.947-.199-2.403.041-3.439.219-.937 1.406-5.965 1.406-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.22 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12.017 24 18.637 24 24 18.632 24 12.012 24 5.39 18.637 0 12.017 0z"/>
-  </svg>
-);
 
 export default function TemplateDetail() {
   const { slug } = useParams()
@@ -77,15 +72,12 @@ export default function TemplateDetail() {
     <BarChart3 size={22} strokeWidth={2.5} className="text-[#1F5C3E]" />
   ];
 
-  const filteredCategories = categories.filter(cat => 
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a] font-sans text-left overflow-x-hidden">
       <Navbar />
 
       <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 py-6 md:py-10 text-left">
+        {/* CORREZIONE: Aggiunto items-start per far funzionare lo sticky della Sidebar */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start">
           
           <main className="w-full lg:flex-[0.74] min-w-0">
@@ -168,7 +160,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* HOW TO USE - Ridotto il margine inferiore da mb-12 a mb-4 */}
+              {/* HOW TO USE - Ridotto il margine inferiore per evitare il buco bianco */}
               <div className="mb-4 border-t border-gray-100 pt-8 text-left">
                 <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">How to use</h3>
                 <div className="space-y-5">
@@ -185,45 +177,22 @@ export default function TemplateDetail() {
             </div>
           </main>
 
-          {/* ASIDE - Ridotto il margine superiore da mt-10 a mt-2 e il padding top da pt-10 a pt-2 */}
-          <aside className="w-full lg:w-[320px] lg:sticky lg:top-24 flex flex-col gap-10 lg:border-l lg:border-gray-50 lg:pl-8 mt-2 lg:mt-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-gray-100 text-left">
-            {videoId ? (
-              <div className="w-full text-left">
-                <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-100 shadow-lg mb-3">
-                   <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allowFullScreen></iframe>
-                </div>
-                <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#374151]">
-                  <MonitorPlay size={16} /> Video Tutorial
-                </h4>
-              </div>
-            ) : (
-              <div className="aspect-video bg-[#f5f4ed] rounded-xl flex items-center justify-center border border-gray-100 text-gray-400 text-[10px] font-bold">
-                VIDEO NOT AVAILABLE
-              </div>
-            )}
-
-            <div className="flex flex-col gap-4 text-left">
-               <div className="bg-[#1F5C3E] text-white py-2.5 px-4 rounded-md text-center">
-                  <span className="text-[11px] font-black uppercase tracking-widest">Categories</span>
-               </div>
-               <div className="relative">
-                  <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search..." 
-                    className="w-full bg-[#f5f4ed] border border-gray-100 rounded-lg py-2.5 pl-10 pr-4 text-xs font-bold text-gray-600 outline-none" />
-                  <Search className="absolute left-3 top-3 text-gray-400" size={14} />
-               </div>
-               <div className="flex flex-col gap-1">
-                  {filteredCategories.slice(0, 10).map((cat) => (
-                    <Link key={cat.id} to={`/category/${cat.slug}`} className="text-[12px] font-bold text-gray-500 hover:text-[#1F5C3E] no-underline py-2 border-b border-gray-50">
-                      {cat.name}
-                    </Link>
-                  ))}
-               </div>
-            </div>
-          </aside>
+          {/* SIDEBAR DINAMICA */}
+          <Sidebar />
 
         </div>
       </div>
+
       <Footer />
+
+      {lightboxImg && (
+        <div className="fixed inset-0 bg-black/90 z-[110] flex items-center justify-center p-4 cursor-zoom-out" onClick={() => setLightboxImg(null)}>
+          <button className="absolute top-6 right-6 text-white/70 hover:text-white">
+            <X size={32} />
+          </button>
+          <img src={lightboxImg} className="max-w-full max-h-full rounded-lg" alt="Enlarged" />
+        </div>
+      )}
     </div>
   )
 }
