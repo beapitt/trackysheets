@@ -7,32 +7,29 @@
   --warm-cream: #f5f4ed;
 }
 
-/* 
-   CORREZIONE: Pulizia dei vincoli di altezza. 
-   Il browser deve gestire lo scroll naturalmente.
-*/
-html, body {
-  height: auto;
-  min-height: 100%;
+/* Reset strutturale: permettiamo lo scroll naturale */
+html {
   margin: 0;
   padding: 0;
+  height: auto;
 }
 
 body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
   @apply antialiased bg-white text-gray-900;
   font-family: 'Inter', system-ui, sans-serif;
   overflow-x: hidden;
+  /* Rimosso overflow-y: auto forzato */
 }
 
-/* 
-   Il flex su #root garantisce che il footer venga spinto in fondo
-   se il contenuto della pagina è poco.
-*/
 #root {
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 /* Impedisce ai componenti flex/grid di uscire dai bordi */
