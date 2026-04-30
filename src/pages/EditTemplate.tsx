@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { Plus, Trash2 } from 'lucide-react';
 
 export default function EditTemplate() {
   const { id } = useParams();
@@ -18,6 +19,9 @@ export default function EditTemplate() {
     featured: false, status: 'published'
   });
 
+  // Stato specifico per le FAQ (Metodo Pro)
+  const [faqs, setFaqs] = useState<{ q: string; a: string }[]>([]);
+
   useEffect(() => {
     const init = async () => {
       const { data: cats } = await supabase.from('categories').select('*');
@@ -27,6 +31,8 @@ export default function EditTemplate() {
         if (data) {
           setFormData(data);
           setPreviews({thumbnail: data.thumbnail, img_1: data.img_1, img_2: data.img_2, img_3: data.img_3});
+          // Carica le FAQ se esistono, altrimenti array vuoto
+          setFaqs(Array.isArray(data.faqs) ? data.faqs : []);
         }
       }
       setLoading(false);
@@ -50,16 +56,37 @@ export default function EditTemplate() {
     return data.publicUrl;
   };
 
+  // Funzioni per gestire le FAQ
+  const handleAddFaq = () => {
+    setFaqs([...faqs, { q: '', a: '' }]);
+  };
+
+  const handleRemoveFaq = (index: number) => {
+    setFaqs(faqs.filter((_, i) => i !== index));
+  };
+
+  const handleFaqChange = (index: number, field: 'q' | 'a', value: string) => {
+    const newFaqs = [...faqs];
+    newFaqs[index][field] = value;
+    setFaqs(newFaqs);
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
-      let finalData = { ...formData };
+      let finalData = { 
+        ...formData,
+        faqs: faqs // Aggiungiamo l'array delle FAQ ai dati da salvare
+      };
+      
       for (const [key, file] of Object.entries(files)) {
         if (file) finalData[key] = await upload(file as File, key);
       }
+      
       const { error } = (id && id !== 'new') 
         ? await supabase.from('templates').update(finalData).eq('id', id)
         : await supabase.from('templates').insert([finalData]);
+        
       if (error) throw error;
       navigate('/admin/templates');
     } catch (err: any) {
@@ -104,6 +131,50 @@ export default function EditTemplate() {
             </div>
           ))}
         </div>
+
+        {/* --- SEZIONE FAQ "PRO" --- */}
+        <div className="border-t pt-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <label className="block text-xs font-bold uppercase text-gray-400">Template Specific FAQs (SEO & User Support)</label>
+            <button 
+              type="button" 
+              onClick={handleAddFaq}
+              className="bg-green-100 text-green-800 px-3 py-1 rounded text-[10px] font-bold uppercase hover:bg-green-800 hover:text-white transition"
+            >
+              + Add FAQ
+            </button>
+          </div>
+          
+          <div className="space-y-3">
+            {faqs.map((faq, index) => (
+              <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-200 relative group">
+                <button 
+                  type="button" 
+                  onClick={() => handleRemoveFaq(index)}
+                  className="absolute top-2 right-2 text-gray-300 hover:text-red-600 transition"
+                >
+                  <Trash2 size={14} />
+                </button>
+                <div className="space-y-2 pr-6">
+                  <input 
+                    placeholder="Question (e.g. Can I change the currency?)" 
+                    value={faq.q} 
+                    onChange={e => handleFaqChange(index, 'q', e.target.value)}
+                    className="w-full p-2 text-sm font-bold border rounded bg-white outline-none focus:border-green-800"
+                  />
+                  <textarea 
+                    placeholder="Answer..." 
+                    value={faq.a} 
+                    onChange={e => handleFaqChange(index, 'a', e.target.value)}
+                    className="w-full p-2 text-sm border rounded bg-white outline-none focus:border-green-800"
+                    rows={2}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* --- FINE SEZIONE FAQ --- */}
 
         <div className="space-y-4 border-t pt-6">
           <label className="block text-xs font-bold uppercase text-gray-300">Links & SEO</label>
