@@ -40,11 +40,12 @@ export default function Sidebar() {
   );
 
   return (
-    <aside className="w-[320px] flex-shrink-0 flex flex-col gap-8" style={{ position: 'sticky', top: '130px', alignSelf: 'flex-start' }}>
+    /* MODIFICA: w-full (mobile) -> lg:w-[320px] (desktop) e sticky solo su schermi grandi */
+    <aside className="w-full lg:w-[320px] flex-shrink-0 flex flex-col gap-8 lg:sticky lg:top-[130px] lg:self-start">
       
       {/* BOX VIDEO */}
       {videoId && (
-        <div>
+        <div className="w-full">
           <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-xl mb-3">
             <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allowFullScreen></iframe>
           </div>
