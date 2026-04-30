@@ -16,8 +16,6 @@ import Disclaimer from './pages/Disclaimer';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import AllTemplates from './pages/AllTemplates';
-
-// AGGIUNGI QUESTO IMPORT
 import Help from './pages/Help';
 
 // Import del Banner Cookie
@@ -26,36 +24,42 @@ import CookieBanner from './components/CookieBanner';
 export default function App() {
   return (
     <BrowserRouter>
-      <CookieBanner />
+      {/* 
+          Aggiungiamo un div contenitore con flex flex-col e min-h-screen. 
+          Questo dice al browser: "Questo sito deve essere alto almeno quanto lo schermo".
+          In combinazione con il 'mt-auto' nel Footer, lo spingerà sempre in fondo.
+      */}
+      <div className="flex flex-col min-h-screen">
+        <CookieBanner />
 
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/template/:slug" element={<TemplateDetail />} />
-        <Route path="/category/:slug" element={<CategoryPage />} />
-        <Route path="/login" element={<Login />} /> 
-        <Route path="/templates" element={<AllTemplates />} />
-        
-        {/* AGGIUNGI QUESTA ROTTA */}
-        <Route path="/help" element={<Help />} />
-        
-        <Route path="/disclaimer" element={<Disclaimer />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
-        
-        {/* Admin Routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/templates" element={<AdminTemplates />} />
-        <Route path="/admin/templates/new" element={<EditTemplate />} />
-        <Route path="/admin/templates/:id/edit" element={<EditTemplate />} />
-        <Route path="/admin/categories" element={<AdminCategories />} />
-        <Route path="/admin/categories/new" element={<EditCategory />} />
-        <Route path="/admin/categories/:id/edit" element={<EditCategory />} />
-        <Route path="/admin/settings" element={<Settings />} />
+        <div className="flex-grow">
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/template/:slug" element={<TemplateDetail />} />
+            <Route path="/category/:slug" element={<CategoryPage />} />
+            <Route path="/login" element={<Login />} /> 
+            <Route path="/templates" element={<AllTemplates />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/disclaimer" element={<Disclaimer />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/templates" element={<AdminTemplates />} />
+            <Route path="/admin/templates/new" element={<EditTemplate />} />
+            <Route path="/admin/templates/:id/edit" element={<EditTemplate />} />
+            <Route path="/admin/categories" element={<AdminCategories />} />
+            <Route path="/admin/categories/new" element={<EditCategory />} />
+            <Route path="/admin/categories/:id/edit" element={<EditCategory />} />
+            <Route path="/admin/settings" element={<Settings />} />
 
-        {/* Fallback Redirect */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+            {/* Fallback Redirect */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+      </div>
     </BrowserRouter>
   );
 }
