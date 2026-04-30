@@ -40,74 +40,80 @@ export default function Sidebar() {
   );
 
   return (
-    <aside 
-      className="w-full lg:w-[320px] flex-shrink-0 lg:sticky lg:top-24 self-start"
-      style={{ height: 'fit-content' }}
-    >
-      <div className="flex flex-col gap-8">
-        {/* BOX VIDEO */}
-        {videoId && (
-          <div className="w-full">
-            <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-xl mb-3">
-              <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allowFullScreen></iframe>
-            </div>
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-              <MonitorPlay size={14} /> Video Guide
-            </div>
+    /* 
+       Rimosso sticky forzato qui per lasciarlo al contenitore padre (aside) 
+       nelle pagine che lo richiedono. 
+    */
+    <div className="flex flex-col gap-8 w-full">
+      {/* BOX VIDEO */}
+      {videoId && (
+        <div className="w-full">
+          <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-xl mb-3">
+            <iframe 
+              width="100%" 
+              height="100%" 
+              src={`https://www.youtube.com/embed/${videoId}`} 
+              title="YouTube video player"
+              frameBorder="0" 
+              allowFullScreen
+            ></iframe>
           </div>
-        )}
-
-        {/* CATEGORIE E RICERCA */}
-        <div className="flex flex-col gap-4 text-left">
-          <div className="bg-[#1F5C3E] text-white py-3 px-5 rounded-lg font-bold text-[11px] uppercase tracking-widest text-left">
-            Categories
-          </div>
-          
-          <div className="relative">
-            <input 
-              type="text" 
-              placeholder="Search categories..." 
-              value={searchTerm} 
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-[#f5f4ed] border border-gray-100 rounded-lg py-2 pl-9 pr-4 text-xs font-bold text-gray-600 outline-none focus:ring-1 focus:ring-[#1F5C3E]" 
-            />
-            <Search className="absolute left-3 top-2.5 text-gray-400" size={13} />
-          </div>
-
-          <div className="flex flex-col gap-0.5">
-            {filteredCategories.slice(0, 15).map((cat) => (
-              <Link 
-                key={cat.id} 
-                to={`/category/${cat.slug}`} 
-                className={`text-[12px] font-bold no-underline py-2 border-b border-gray-50 hover:bg-gray-50 px-2 rounded-md transition-all text-left ${cat.slug === slug ? 'text-[#1F5C3E] bg-gray-50' : 'text-gray-500'}`}
-              >
-                {cat.name}
-              </Link>
-            ))}
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+            <MonitorPlay size={14} /> Video Guide
           </div>
         </div>
+      )}
 
-        {/* SOCIAL */}
-        <div className="pt-2">
-          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 mb-3 text-left">Follow us on</p>
-          <div className="flex flex-col gap-2">
-            <a href="#" className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-5 py-2.5 hover:bg-gray-50 no-underline shadow-sm transition-all group">
-              <div className="flex items-center gap-3">
-                <PinterestIcon />
-                <span className="text-[13px] font-bold text-gray-800">Pinterest</span>
-              </div>
-              <span className="text-[11px] font-medium text-gray-400 flex items-center gap-1 group-hover:text-[#1F5C3E]">Follow <ArrowRight size={12} /></span>
-            </a>
-            <a href="#" className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-5 py-2.5 hover:bg-gray-50 no-underline shadow-sm transition-all group">
-              <div className="flex items-center gap-3">
-                <YouTubeIcon />
-                <span className="text-[13px] font-bold text-gray-800">YouTube</span>
-              </div>
-              <span className="text-[11px] font-medium text-gray-400 flex items-center gap-1 group-hover:text-[#FF0000]">Subscribe <ArrowRight size={12} /></span>
-            </a>
-          </div>
+      {/* CATEGORIE E RICERCA */}
+      <div className="flex flex-col gap-4 text-left">
+        <div className="bg-[#1F5C3E] text-white py-3 px-5 rounded-lg font-bold text-[11px] uppercase tracking-widest text-left">
+          Categories
+        </div>
+        
+        <div className="relative">
+          <input 
+            type="text" 
+            placeholder="Search categories..." 
+            value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-[#f5f4ed] border border-gray-100 rounded-lg py-2 pl-9 pr-4 text-xs font-bold text-gray-600 outline-none focus:ring-1 focus:ring-[#1F5C3E]" 
+          />
+          <Search className="absolute left-3 top-2.5 text-gray-400" size={13} />
+        </div>
+
+        <div className="flex flex-col gap-0.5">
+          {filteredCategories.slice(0, 15).map((cat) => (
+            <Link 
+              key={cat.id} 
+              to={`/category/${cat.slug}`} 
+              className={`text-[12px] font-bold no-underline py-2 border-b border-gray-50 hover:bg-gray-50 px-2 rounded-md transition-all text-left ${cat.slug === slug ? 'text-[#1F5C3E] bg-gray-50' : 'text-gray-500'}`}
+            >
+              {cat.name}
+            </Link>
+          ))}
         </div>
       </div>
-    </aside>
+
+      {/* SOCIAL */}
+      <div className="pt-2">
+        <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 mb-3 text-left">Follow us on</p>
+        <div className="flex flex-col gap-2">
+          <a href="#" className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-5 py-2.5 hover:bg-gray-50 no-underline shadow-sm transition-all group">
+            <div className="flex items-center gap-3">
+              <PinterestIcon />
+              <span className="text-[13px] font-bold text-gray-800">Pinterest</span>
+            </div>
+            <span className="text-[11px] font-medium text-gray-400 flex items-center gap-1 group-hover:text-[#1F5C3E]">Follow <ArrowRight size={12} /></span>
+          </a>
+          <a href="#" className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-5 py-2.5 hover:bg-gray-50 no-underline shadow-sm transition-all group">
+            <div className="flex items-center gap-3">
+              <YouTubeIcon />
+              <span className="text-[13px] font-bold text-gray-800">YouTube</span>
+            </div>
+            <span className="text-[11px] font-medium text-gray-400 flex items-center gap-1 group-hover:text-[#FF0000]">Subscribe <ArrowRight size={12} /></span>
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }
