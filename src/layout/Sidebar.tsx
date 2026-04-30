@@ -40,8 +40,7 @@ export default function Sidebar() {
   );
 
   return (
-    /* MODIFICA: w-full (mobile) -> lg:w-[320px] (desktop) e sticky solo su schermi grandi */
-    <aside className="w-full lg:w-[320px] flex-shrink-0 flex flex-col gap-8 lg:sticky lg:top-[130px] lg:self-start">
+    <aside className="w-full lg:w-[320px] flex-shrink-0 flex flex-col gap-8 lg:sticky lg:top-24 lg:self-start h-fit">
       
       {/* BOX VIDEO */}
       {videoId && (
