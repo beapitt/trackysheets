@@ -1,17 +1,28 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
 import Sidebar from '../layout/Sidebar'
 import CategoryPills from '../components/CategoryPills'
-import { Search } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 
 export default function AllTemplates() {
   const [templates, setTemplates] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
+  
+  const location = useLocation()
+
+  // Sincronizza la ricerca interna con quella della Navbar (URL)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const query = params.get('search')
+    if (query) {
+      setSearchTerm(query)
+    }
+  }, [location.search])
 
   useEffect(() => {
     async function fetchData() {
@@ -32,17 +43,18 @@ export default function AllTemplates() {
     fetchData()
   }, [])
 
+  // Filtro intelligente: cerca nel titolo e nella descrizione breve
   const filteredTemplates = templates.filter(t =>
-    t.title.toLowerCase().includes(searchTerm.toLowerCase())
+    t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    t.short_description?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   if (loading) return null;
 
   return (
-    <div className="min-h-screen bg-white font-sans text-left">
+    <div className="min-h-screen bg-white font-sans text-left overflow-x-hidden">
       <Navbar />
       
-      {/* Pillole delle categorie per navigazione rapida su Mobile */}
       <CategoryPills categories={categories} />
 
       <div className="w-full max-w-[1550px] mx-auto px-6 md:px-12 py-10 text-left">
@@ -50,15 +62,24 @@ export default function AllTemplates() {
           
           <main className="flex-1 min-w-0 text-left w-full">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-              <h1 className="text-[32px] font-bold text-[#1f2937] uppercase tracking-tight text-left">
-                All Templates
-              </h1>
+              <div>
+                <h1 className="text-[28px] md:text-[32px] font-bold text-[#1f2937] uppercase tracking-tight text-left">
+                  {searchTerm ? `Results for: ${searchTerm}` : 'All Templates'}
+                </h1>
+                {searchTerm && (
+                  <button 
+                    onClick={() => setSearchTerm("")}
+                    className="text-[10px] font-bold text-[#1F5C3E] uppercase tracking-widest flex items-center gap-1 mt-1 hover:opacity-70"
+                  >
+                    <X size={12} /> Clear search
+                  </button>
+                )}
+              </div>
               
-              {/* Barra di ricerca interna alla pagina */}
               <div className="relative w-full md:w-72">
                 <input
                   type="text"
-                  placeholder="Search all templates..."
+                  placeholder="Filter results..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full bg-gray-50 border border-gray-100 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-[#1F5C3E]/20 transition-all"
@@ -67,7 +88,6 @@ export default function AllTemplates() {
               </div>
             </div>
 
-            {/* Griglia Adattiva: 1 colonna mobile, 2 tablet (md), 3 desktop (lg) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
               {filteredTemplates.map((template) => (
                 <Link key={template.id} to={`/template/${template.slug}`} className="group no-underline block text-left">
@@ -93,15 +113,14 @@ export default function AllTemplates() {
               ))}
             </div>
 
-            {/* Messaggio se non ci sono risultati nella ricerca */}
             {filteredTemplates.length === 0 && (
               <div className="py-20 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-100">
                 <p className="text-gray-400 font-medium text-sm">No templates found matching your search.</p>
+                <button onClick={() => setSearchTerm("")} className="mt-4 text-[#1F5C3E] font-bold text-xs uppercase underline">Show all templates</button>
               </div>
             )}
           </main>
 
-          {/* Sidebar: si sposta sotto su mobile grazie a flex-col */}
           <Sidebar />
           
         </div>
