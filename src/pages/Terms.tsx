@@ -12,7 +12,7 @@ export default function Terms() {
     async function fetchTerms() {
       const { data } = await supabase
         .from('settings')
-        .select('terms_of_service') // Assicurati che il nome colonna sia corretto su Supabase
+        .select('terms_of_service')
         .maybeSingle();
       
       if (data?.terms_of_service) {
@@ -25,11 +25,9 @@ export default function Terms() {
   }, []);
 
   return (
-    /* flex-col + min-h-screen gestiscono lo Sticky Footer */
-    <div className="flex flex-col min-h-screen bg-white font-sans text-left">
+    <div className="flex flex-col min-h-screen bg-white font-sans text-left overflow-y-auto">
       <Navbar />
       
-      {/* flex-grow riempie lo spazio e spinge il footer giù */}
       <div className="flex-grow w-full max-w-[1550px] mx-auto px-4 md:px-12 py-10">
         <div className="flex flex-col lg:flex-row items-start gap-12">
           
@@ -60,9 +58,6 @@ export default function Terms() {
       </div>
       
       <Footer />
-    </div>
-  );
-}er />
     </div>
   );
 }
