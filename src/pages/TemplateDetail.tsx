@@ -56,7 +56,6 @@ export default function TemplateDetail() {
     <BarChart3 size={22} strokeWidth={2.5} className="text-[#1F5C3E]" />
   ];
 
-  // Preparazione JSON-LD per GEO
   const faqData = Array.isArray(template.faqs) ? template.faqs : [];
   const jsonLd = {
     "@context": "https://schema.org",
@@ -70,7 +69,6 @@ export default function TemplateDetail() {
 
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a] font-sans text-left overflow-x-visible">
-      {/* Script invisibile per i motori di ricerca AI */}
       <script type="application/ld+json">
         {JSON.stringify(jsonLd)}
       </script>
@@ -78,12 +76,11 @@ export default function TemplateDetail() {
       <Navbar />
 
       <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 py-6 md:py-10 text-left">
-        
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start relative">
           
           <main className="w-full lg:flex-[0.74] min-w-0">
-            {/* TITOLO */}
-            <div className="mb-6 md:mb-10 text-left">
+            {/* TITOLO - Margine ridotto */}
+            <div className="mb-6 md:mb-8 text-left">
                 <h1 className="leading-snug mb-2 text-[22px] md:text-[26px] text-[#1f2937] font-medium tracking-tight">
                   {template.title}
                 </h1>
@@ -93,7 +90,6 @@ export default function TemplateDetail() {
             </div>
 
             <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-10 mb-8">
-              {/* GALLERY */}
               <div className="lg:col-span-8 overflow-hidden">
                 <div 
                   className="aspect-video bg-[#f5f4ed] rounded-xl overflow-hidden mb-4 border border-gray-100 shadow-sm cursor-zoom-in"
@@ -111,7 +107,6 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* SPECIFICHE TECNICHE */}
               <div className="lg:col-span-4 flex flex-col w-full">
                 <div className="bg-[#f5f4ed] rounded-xl p-5 border border-gray-100 mb-4 shadow-sm">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Technical Specifications</h4>
@@ -138,21 +133,22 @@ export default function TemplateDetail() {
             </div>
 
             <div className="max-w-full text-left">
-              <div className="border-l-4 border-[#C0DD97] pl-4 md:pl-6 mb-8">
+              <div className="border-l-4 border-[#C0DD97] pl-4 md:pl-6 mb-6">
                 <div className="text-[15px] md:text-[17px] text-gray-600 leading-snug font-normal">
                     {template.long_description?.split('\n').map((line: string, i: number) => (
-                       <p key={i} className="mb-3">{line}</p>
+                       <p key={i} className="mb-2">{line}</p>
                     ))}
                 </div>
               </div>
 
-              <div className="mb-10">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5">What's included</h3>
+              {/* Box Sezione Ridotti */}
+              <div className="mb-8">
+                <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-4">What's included</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {featuresList.map((f: string, i: number) => (
-                    <div key={i} className="bg-[#f5f4ed] px-5 py-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[130px]">
-                      <div className="mb-3">{featureIcons[i] || featureIcons[0]}</div>
-                      <h4 className="text-[16px] md:text-[18px] font-semibold mb-1 text-[#454544] tracking-tight leading-tight">
+                    <div key={i} className="bg-[#f5f4ed] px-5 py-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[110px]">
+                      <div className="mb-2">{featureIcons[i] || featureIcons[0]}</div>
+                      <h4 className="text-[15px] md:text-[16px] font-semibold mb-0.5 text-[#454544] tracking-tight leading-tight">
                         {f.includes(':') ? f.split(':')[0] : f}
                       </h4>
                       {f.includes(':') && <p className="text-[11px] text-gray-500 leading-tight font-medium mt-1">{f.split(':')[1]}</p>}
@@ -161,41 +157,42 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              <div className="mb-10 border-t border-gray-100 pt-8">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">How to use</h3>
-                <div className="space-y-5">
+              {/* How to use - Spazio compattato */}
+              <div className="mb-8 border-t border-gray-100 pt-6">
+                <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-4">How to use</h3>
+                <div className="space-y-4">
                   {howToUseSteps.map((step, i) => (
                     <div key={i} className="flex items-start gap-4 md:gap-6 max-w-4xl">
-                      <div className="w-7 h-7 flex items-center justify-center rounded-full bg-[#1F5C3E] text-white text-[11px] font-black shrink-0">
+                      <div className="w-6 h-6 flex items-center justify-center rounded-full bg-[#1F5C3E] text-white text-[10px] font-black shrink-0">
                         {i + 1}
                       </div>
-                      <p className="text-[15px] md:text-[16px] text-gray-600 leading-snug font-medium">{step}</p>
+                      <p className="text-[14px] md:text-[15px] text-gray-600 leading-snug font-medium">{step}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* SEZIONE FAQ DINAMICA */}
+              {/* FAQ - Spazio compattato */}
               {faqData.length > 0 && (
-                <div className="mb-10 border-t border-gray-100 pt-8">
-                  <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">Frequently Asked Questions</h3>
+                <div className="mb-8 border-t border-gray-100 pt-6">
+                  <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-2">Frequently Asked Questions</h3>
                   <div className="divide-y divide-gray-100">
                     {faqData.map((item: any, i: number) => (
-                      <div key={i} className="py-2">
+                      <div key={i} className="py-1">
                         <button 
                           onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                          className="w-full flex justify-between items-center py-4 text-left group"
+                          className="w-full flex justify-between items-center py-3 text-left group"
                         >
-                          <span className="text-[14px] font-bold text-gray-800 group-hover:text-[#1F5C3E] transition-colors pr-8">
+                          <span className="text-[13px] md:text-[14px] font-bold text-gray-800 group-hover:text-[#1F5C3E] transition-colors pr-8">
                             {item.q}
                           </span>
                           <ChevronDown 
-                            size={18} 
+                            size={16} 
                             className={`text-gray-400 transition-transform ${openFaq === i ? 'rotate-180 text-[#1F5C3E]' : ''}`} 
                           />
                         </button>
-                        <div className={`overflow-hidden transition-all duration-300 ${openFaq === i ? 'max-h-[300px] pb-4 opacity-100' : 'max-h-0 opacity-0'}`}>
-                          <p className="text-[14px] text-gray-500 leading-relaxed">
+                        <div className={`overflow-hidden transition-all duration-200 ${openFaq === i ? 'max-h-[300px] pb-3 opacity-100' : 'max-h-0 opacity-0'}`}>
+                          <p className="text-[13px] md:text-[14px] text-gray-500 leading-relaxed">
                             {item.a}
                           </p>
                         </div>
@@ -210,7 +207,6 @@ export default function TemplateDetail() {
           <aside className="hidden lg:block w-[320px] flex-shrink-0 sticky top-24 self-start h-fit">
             <Sidebar />
           </aside>
-
         </div>
       </div>
 
