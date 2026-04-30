@@ -24,15 +24,18 @@ export default function Privacy() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-white font-sans text-left overflow-x-hidden">
       <Navbar />
       
-      <div className="w-full max-w-[1550px] mx-auto px-12 py-10">
-        <div className="flex flex-row items-start gap-12">
+      {/* Contenitore principale: px-4 su mobile per non toccare i bordi */}
+      <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 py-10">
+        
+        {/* Cambiato flex-row in flex-col (mobile) e lg:flex-row (desktop) */}
+        <div className="flex flex-col lg:flex-row items-start gap-12">
           
-          <main className="flex-1 min-w-0">
-            {/* Ridotto il margine inferiore mb-4 invece di mb-10 */}
-            <h1 className="text-[32px] font-bold text-[#1f2937] mb-4 border-b pb-4 uppercase tracking-tight">
+          {/* Main content: prende tutta la larghezza su mobile */}
+          <main className="w-full lg:flex-1 min-w-0">
+            <h1 className="text-[24px] md:text-[32px] font-bold text-[#1f2937] mb-6 border-b pb-4 uppercase tracking-tight text-left">
               Privacy Policy
             </h1>
             
@@ -40,7 +43,7 @@ export default function Privacy() {
               <p className="text-gray-400 italic">Loading policy...</p>
             ) : (
               <div 
-                className="prose prose-slate max-w-none text-[15px] leading-relaxed text-gray-600 space-y-4"
+                className="prose prose-slate max-w-none text-[15px] leading-relaxed text-gray-600 space-y-4 text-left"
                 dangerouslySetInnerHTML={{ __html: content }} 
               />
             )}
@@ -50,7 +53,7 @@ export default function Privacy() {
             )}
           </main>
 
-          {/* Sidebar corretta importata dal layout */}
+          {/* Sidebar: ora scivola ordinatamente sotto il testo su mobile */}
           <Sidebar />
           
         </div>
