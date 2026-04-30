@@ -8,26 +8,29 @@
 }
 
 /* 
-   CORREZIONE FINALE: 
-   Forziamo l'altezza minima e permettiamo lo scroll verticale.
+   CORREZIONE: Pulizia dei vincoli di altezza. 
+   Il browser deve gestire lo scroll naturalmente.
 */
-html {
-  height: 100%;
-  overflow-y: auto; /* Permette lo scroll della pagina */
+html, body {
+  height: auto;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
   @apply antialiased bg-white text-gray-900;
   font-family: 'Inter', system-ui, sans-serif;
-  overflow-x: hidden; /* Evita fastidiosi scorrimenti laterali */
+  overflow-x: hidden;
 }
 
+/* 
+   Il flex su #root garantisce che il footer venga spinto in fondo
+   se il contenuto della pagina è poco.
+*/
 #root {
   width: 100%;
-  min-height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
