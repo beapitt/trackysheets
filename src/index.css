@@ -7,28 +7,28 @@
   --warm-cream: #f5f4ed;
 }
 
-/* REGOLA CRITICA: solo html/body gestiscono lo scroll. */
-html {
-  height: 100%;
+/* Reset strutturale: l'altezza è gestita solo da #root */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: auto;
+  min-height: 100%;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  overflow-x: hidden;
-  font-family: 'Inter', sans-serif;
   @apply antialiased bg-white text-gray-900;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
 }
 
+/* #root è l'unico che deve avere flex-col e min-height */
 #root {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
   width: 100%;
 }
 
-/* Fix globale flex/grid shrink — previene overflow orizzontale */
 * {
   min-width: 0;
   box-sizing: border-box;
