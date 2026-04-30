@@ -6,14 +6,17 @@ import { Mail } from 'lucide-react';
 
 export default function Help() {
   return (
-    <div className="min-h-screen bg-white font-sans text-left">
+    <div className="min-h-screen bg-white font-sans text-left overflow-x-hidden">
       <Navbar />
       
-      <div className="w-full max-w-[1550px] mx-auto px-12 py-10 text-left">
-        <div className="flex flex-row items-start gap-12 text-left">
+      {/* Container fluido: padding ridotto su mobile (px-4) e pieno su desktop (md:px-12) */}
+      <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 py-6 md:py-10 text-left">
+        
+        {/* FIX CRITICO: flex-col su mobile, flex-row solo da schermi grandi (lg:) */}
+        <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 text-left">
           
-          <main className="flex-1 min-w-0 text-left">
-            <h1 className="text-[32px] font-bold text-[#1f2937] mb-4 border-b pb-4 uppercase tracking-tight text-left">
+          <main className="flex-1 min-w-0 text-left w-full">
+            <h1 className="text-[26px] md:text-[32px] font-bold text-[#1f2937] mb-4 border-b pb-4 uppercase tracking-tight text-left">
               Help & Support
             </h1>
             
@@ -40,15 +43,15 @@ export default function Help() {
                 </p>
               </section>
 
-              {/* SEZIONE CONTATTI */}
-              <section className="bg-[#f8fafc] rounded-2xl p-8 border border-slate-100 mt-12">
+              {/* SEZIONE CONTATTI - Responsive padding */}
+              <section className="bg-[#f8fafc] rounded-2xl p-6 md:p-8 border border-slate-100 mt-12">
                 <h3 className="text-[#1F5C3E] font-bold text-xl mb-2 text-left">Still need help?</h3>
-                <p className="text-left mb-6 text-slate-500">
+                <p className="text-left mb-6 text-slate-500 text-sm md:text-base">
                   If you have technical issues with a template or suggestions for new ones, feel free to reach out.
                 </p>
                 <a 
                   href="mailto:support@trackysheets.com" 
-                  className="inline-flex items-center gap-3 bg-[#1F5C3E] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#16432d] transition-all no-underline shadow-lg shadow-green-900/10"
+                  className="inline-flex items-center justify-center gap-3 bg-[#1F5C3E] text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold hover:bg-[#16432d] transition-all no-underline shadow-lg"
                 >
                   <Mail size={20} />
                   Contact Support
@@ -57,6 +60,7 @@ export default function Help() {
             </div>
           </main>
 
+          {/* La Sidebar ora scivolerà sotto il main grazie a flex-col */}
           <Sidebar />
           
         </div>
