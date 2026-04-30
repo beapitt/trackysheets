@@ -1,12 +1,23 @@
 "use client";
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, HelpCircle, Command, X } from 'lucide-react';
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Funzione per gestire la ricerca al tasto Invio
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Reindirizza alla pagina All Templates con il parametro di ricerca
+      navigate(`/templates?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-[100] w-full shadow-lg" style={{ backgroundColor: '#1F5C3E' }}>
@@ -24,8 +35,8 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* SEARCH DESKTOP (Visibile solo da tablet in su) */}
-          <div className="hidden md:block flex-1 max-w-[500px] mx-4 relative group">
+          {/* SEARCH DESKTOP */}
+          <form onSubmit={handleSearch} className="hidden md:block flex-1 max-w-[500px] mx-4 relative group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-green-100/50" />
             <input
               type="text"
@@ -34,14 +45,13 @@ export default function Navbar() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-11 pr-12 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-green-100/50 focus:bg-white focus:text-gray-900 focus:outline-none transition-all text-sm"
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 px-1.5 py-1 rounded bg-white/10 border border-white/10 text-[10px] text-green-100/40 font-mono group-focus-within:hidden">
-              <Command size={10} /> K
-            </div>
-          </div>
+            <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 px-1.5 py-1 rounded bg-white/10 border border-white/10 text-[10px] text-green-100/40 font-mono group-focus-within:hidden">
+              <Command size={10} /> ENTER
+            </button>
+          </form>
 
           {/* ACTIONS MOBILE & HELP */}
           <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-            {/* Pulsante ricerca mobile */}
             <button 
               onClick={() => setIsSearchOpen(true)}
               className="md:hidden p-2 text-white/80 hover:text-white transition-colors"
@@ -56,9 +66,9 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* SEARCH OVERLAY MOBILE (Appare sopra la riga 1) */}
+      {/* SEARCH OVERLAY MOBILE */}
       {isSearchOpen && (
-        <div className="absolute inset-0 z-[110] bg-[#1F5C3E] flex items-center px-4 gap-3">
+        <form onSubmit={handleSearch} className="absolute inset-0 z-[110] bg-[#1F5C3E] flex items-center px-4 gap-3">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
             <input
@@ -71,12 +81,13 @@ export default function Navbar() {
             />
           </div>
           <button 
+            type="button"
             onClick={() => setIsSearchOpen(false)}
             className="text-white p-2 hover:bg-white/10 rounded-full transition-colors"
           >
             <X size={24} />
           </button>
-        </div>
+        </form>
       )}
 
       {/* RIGA 2: CATEGORIE SCORREVOLI */}
