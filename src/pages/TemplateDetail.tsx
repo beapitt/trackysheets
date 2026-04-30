@@ -5,8 +5,7 @@ import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
 import Sidebar from '../layout/Sidebar'
 import { 
-  LayoutGrid, Zap, BarChart3, Check, 
-  Search, X, MonitorPlay 
+  LayoutGrid, Zap, BarChart3, X
 } from 'lucide-react'
 
 export default function TemplateDetail() {
@@ -15,8 +14,6 @@ export default function TemplateDetail() {
   const [loading, setLoading] = useState(true)
   const [selectedImg, setSelectedImg] = useState<string | null>(null)
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
-  const [categories, setCategories] = useState<any[]>([])
-  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -25,8 +22,6 @@ export default function TemplateDetail() {
         setTemplate(tData)
         setSelectedImg(tData.thumbnail)
       }
-      const { data: cData } = await supabase.from('categories').select('*').order('name')
-      if (cData) setCategories(cData)
       setLoading(false)
     }
     fetchData()
@@ -41,23 +36,11 @@ export default function TemplateDetail() {
     if (!data) return [];
     if (Array.isArray(data)) return data;
     if (typeof data === 'string') {
-      if (data.startsWith('[') && data.endsWith(']')) {
-        try { return JSON.parse(data); } catch (e) { }
-      }
       return data.split('\n').map(item => item.trim()).filter(item => item !== '');
     }
     return [];
   };
 
-  const getYouTubeID = (url: string) => {
-    if (!url) return null;
-    if (url.length === 11 && !url.includes('/') && !url.includes('.')) return url;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-  };
-
-  const videoId = getYouTubeID(template.youtube_url);
   const featuresList = parseList(template.features);
   
   const howToUseSteps = [
@@ -73,12 +56,13 @@ export default function TemplateDetail() {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-[#1a1a1a] font-sans text-left overflow-x-hidden">
+    <div className="min-h-screen bg-white text-[#1a1a1a] font-sans text-left overflow-x-visible">
       <Navbar />
 
       <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 py-6 md:py-10 text-left">
-        {/* CORREZIONE: Aggiunto items-start per far funzionare lo sticky della Sidebar */}
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start">
+        
+        {/* IL PADRE: items-start + relative sono i motori dello sticky */}
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start relative">
           
           <main className="w-full lg:flex-[0.74] min-w-0">
             {/* TITOLO */}
@@ -112,8 +96,8 @@ export default function TemplateDetail() {
 
               {/* SPECIFICHE TECNICHE */}
               <div className="lg:col-span-4 flex flex-col w-full">
-                <div className="bg-[#f5f4ed] rounded-xl p-5 border border-gray-100 mb-4 shadow-sm overflow-hidden">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4 text-left">Technical Specifications</h4>
+                <div className="bg-[#f5f4ed] rounded-xl p-5 border border-gray-100 mb-4 shadow-sm">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Technical Specifications</h4>
                   <div className="space-y-3 text-[12px] font-medium text-gray-700">
                     {[
                       { label: 'Software', value: template.software || 'Google Sheets' },
@@ -121,9 +105,9 @@ export default function TemplateDetail() {
                       { label: 'Format', value: template.file_format || 'Instant Copy' },
                       { label: 'Access', value: 'No Login' }
                     ].map((item, idx) => (
-                      <div key={idx} className="flex justify-between border-b border-gray-200/40 pb-2 last:border-0 min-w-0">
-                        <span className="text-gray-400 font-bold flex-shrink-0 mr-4">{item.label}</span>
-                        <span className="text-gray-700 truncate text-right">{item.value}</span>
+                      <div key={idx} className="flex justify-between border-b border-gray-200/40 pb-2 last:border-0">
+                        <span className="text-gray-400 font-bold">{item.label}</span>
+                        <span className="text-gray-700">{item.value}</span>
                       </div>
                     ))}
                   </div>
@@ -138,7 +122,7 @@ export default function TemplateDetail() {
 
             <div className="max-w-full text-left">
               <div className="border-l-4 border-[#C0DD97] pl-4 md:pl-6 mb-8">
-                <div className="text-[15px] md:text-[17px] text-gray-600 leading-snug font-normal prose prose-flat max-w-none text-left">
+                <div className="text-[15px] md:text-[17px] text-gray-600 leading-snug font-normal">
                     {template.long_description?.split('\n').map((line: string, i: number) => (
                        <p key={i} className="mb-3">{line}</p>
                     ))}
@@ -146,10 +130,10 @@ export default function TemplateDetail() {
               </div>
 
               <div className="mb-10">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5 text-left">What's included</h3>
+                <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-5">What's included</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {featuresList.map((f: string, i: number) => (
-                    <div key={i} className="bg-[#f5f4ed] px-5 py-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[130px] text-left">
+                    <div key={i} className="bg-[#f5f4ed] px-5 py-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[130px]">
                       <div className="mb-3">{featureIcons[i] || featureIcons[0]}</div>
                       <h4 className="text-[16px] md:text-[18px] font-semibold mb-1 text-[#454544] tracking-tight leading-tight">
                         {f.includes(':') ? f.split(':')[0] : f}
@@ -160,12 +144,11 @@ export default function TemplateDetail() {
                 </div>
               </div>
 
-              {/* HOW TO USE - Ridotto il margine inferiore per evitare il buco bianco */}
-              <div className="mb-4 border-t border-gray-100 pt-8 text-left">
+              <div className="mb-4 border-t border-gray-100 pt-8">
                 <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#374151] mb-6">How to use</h3>
                 <div className="space-y-5">
                   {howToUseSteps.map((step, i) => (
-                    <div key={i} className="flex items-start gap-4 md:gap-6 max-w-4xl text-left">
+                    <div key={i} className="flex items-start gap-4 md:gap-6 max-w-4xl">
                       <div className="w-7 h-7 flex items-center justify-center rounded-full bg-[#1F5C3E] text-white text-[11px] font-black shrink-0">
                         {i + 1}
                       </div>
@@ -177,8 +160,10 @@ export default function TemplateDetail() {
             </div>
           </main>
 
-          {/* SIDEBAR DINAMICA */}
-          <Sidebar />
+          {/* SIDEBAR: Forzata con h-fit e sticky */}
+          <aside className="hidden lg:block w-[320px] flex-shrink-0 sticky top-24 self-start h-fit">
+            <Sidebar />
+          </aside>
 
         </div>
       </div>
