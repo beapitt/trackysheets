@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
 import Sidebar from '../layout/Sidebar'
-import { LayoutGrid, Zap, BarChart3, X, ChevronDown, Download } from 'lucide-react'
+import { ChevronDown, Download, X, LayoutGrid, Zap, BarChart3, CheckCircle2 } from 'lucide-react'
 
 export default function TemplateDetail() {
   const { slug } = useParams()
@@ -16,101 +16,119 @@ export default function TemplateDetail() {
 
   useEffect(() => {
     async function fetchData() {
-      const { data: tData } = await supabase.from('templates').select('*').eq('slug', slug).single()
-      if (tData) {
-        setTemplate(tData)
-        setSelectedImg(tData.thumbnail)
+      const { data } = await supabase.from('templates').select('*').eq('slug', slug).single()
+      if (data) {
+        setTemplate(data)
+        setSelectedImg(data.thumbnail)
       }
       setLoading(false)
     }
     fetchData()
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 0)
   }, [slug])
 
-  if (loading || !template) return null;
+  if (loading || !template) return null
 
   const gallery = [template.thumbnail, template.img_1, template.img_2, template.img_3].filter(Boolean)
-  const faqData = Array.isArray(template.faqs) ? template.faqs : [];
+  const faqData = Array.isArray(template.faqs) ? template.faqs : []
+
+  const featureIcons = [
+    <LayoutGrid size={20} className="text-[#1F5C3E]" />, 
+    <Zap size={20} className="text-[#1F5C3E]" />, 
+    <BarChart3 size={20} className="text-[#1F5C3E]" />
+  ];
 
   return (
-    <div className="min-h-screen bg-white text-[#1a1a1a] font-inter text-left">
+    <div className="min-h-screen bg-white text-[#1a1a1a] font-inter antialiased">
       <Navbar />
 
-      <main className="w-full max-w-7xl mx-auto px-6 md:px-10 pt-12 pb-20">
-        <div className="flex flex-col lg:flex-row gap-12 items-start">
+      <main className="max-w-7xl mx-auto px-6 md:px-10 pt-8 pb-12">
+        
+        {/* TITOLO - Margine ridotto a mb-6 */}
+        <div className="mb-6">
+          <h1 className="text-[26px] md:text-[32px] font-bold tracking-tight text-[#1f2937] leading-tight">
+            {template.title}
+          </h1>
+          <p className="text-[14px] text-gray-500 mt-1.5 font-medium">
+            Official Google Sheets Template — High-Performance Dashboard
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           
-          <div className="w-full lg:flex-[0.74] min-w-0">
-            {/* TITOLO INTER - Allineato alla H di Home */}
-            <div className="mb-8">
-              <h1 className="text-[26px] md:text-[28px] text-[#1f2937] font-medium tracking-tight leading-tight mb-2">
-                {template.title}
-              </h1>
-              <p className="text-[14px] text-gray-500 max-w-3xl">Free Google Sheets template — automated dashboard for business finances</p>
-            </div>
-
-            {/* GALLERY + IL TUO BOX METADATI ORIGINALE */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-              <div className="lg:col-span-7">
-                <div className="aspect-video bg-[#f5f4ed] rounded-xl overflow-hidden mb-4 border border-gray-100 cursor-zoom-in" onClick={() => setLightboxImg(selectedImg)}>
-                  <img src={selectedImg || ''} className="w-full h-full object-cover" alt="Preview" />
-                </div>
-                <div className="flex gap-2">
-                  {gallery.map((img, i) => (
-                    <button key={i} onClick={() => setSelectedImg(img)} className={`w-20 aspect-video rounded-lg overflow-hidden border-2 transition-all ${selectedImg === img ? 'border-[#1F5C3E]' : 'border-transparent opacity-50'}`}>
-                      <img src={img} className="w-full h-full object-cover" alt="Thumbnail" />
-                    </button>
-                  ))}
-                </div>
+          <div className="lg:col-span-8">
+            
+            {/* GALLERY - Margine ridotto a mb-6 */}
+            <div className="mb-6">
+              <div
+                className="aspect-video bg-[#f5f4ed] rounded-2xl overflow-hidden border border-gray-100 shadow-sm cursor-zoom-in group relative"
+                onClick={() => setLightboxImg(selectedImg)}
+              >
+                <img src={selectedImg || ''} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.01]" />
               </div>
 
-              {/* SCHEDA TECNICA ORIGINALE (Screenshot 2) */}
-              <div className="lg:col-span-5 flex flex-col">
-                <div className="bg-[#f9f9f6] rounded-xl p-6 border border-gray-100 mb-4">
-                  <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-4 border-b border-gray-200 pb-2">Scheda Tecnica</h4>
-                  <div className="space-y-3">
-                    {[
-                      { label: 'Software', value: 'Google Sheets', bold: true },
-                      { label: 'Compatibilità', value: 'Excel, Sheets' },
-                      { label: 'Licenza', value: 'Free' },
-                      { label: 'Difficoltà', value: 'Beginner', bold: true },
-                      { label: 'Aggiornato', value: 'Apr 2026' }
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center text-[13px] border-b border-gray-200/50 pb-2 last:border-0">
-                        <span className="text-gray-500">{item.label}</span>
-                        <span className={`text-gray-900 ${item.bold ? 'font-bold' : ''}`}>{item.value}</span>
-                      </div>
-                    ))}
+              <div className="flex gap-3 mt-3">
+                {gallery.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedImg(img)}
+                    className={`w-24 aspect-video rounded-xl overflow-hidden border-2 transition-all ${
+                      selectedImg === img ? 'border-[#1F5C3E] shadow-sm' : 'border-transparent opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <img src={img} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* DESCRIPTION - Margine ridotto a mb-6 */}
+            <div className="border-l-4 border-[#C0DD97] pl-6 mb-6">
+              <div className="text-[16px] text-gray-600 leading-relaxed whitespace-pre-wrap font-medium">
+                {template.long_description}
+              </div>
+            </div>
+
+            {/* HOW TO USE - Margine ridotto e padding compattato */}
+            <div className="mb-6 bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+              <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">
+                How to Use this Template
+              </h3>
+
+              <div className="space-y-4">
+                {[
+                  'Click the "Download for Google Sheets" button on the right.',
+                  'A new tab will open; click "Make a copy" to save it to your Drive.',
+                  'Follow the internal setup instructions and start tracking.'
+                ].map((step, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <div className="w-6 h-6 rounded-full bg-[#1F5C3E] text-white flex items-center justify-center text-[12px] font-black shrink-0 shadow-sm">
+                      {i + 1}
+                    </div>
+                    <p className="text-[14px] text-gray-700 font-semibold leading-snug">{step}</p>
                   </div>
-                </div>
-
-                <a href={template.google_sheets_url} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full bg-[#1F5C3E] text-white py-3.5 rounded-lg font-bold text-[14px] shadow-sm hover:bg-[#16422d] transition-all no-underline">
-                  <Download size={18} /> Download for Google Sheets
-                </a>
-                <div className="flex justify-center gap-6 mt-4 text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
-                   <span>✓ No macros</span> <span>✓ Safe</span> <span>✓ 100% free</span>
-                </div>
+                ))}
               </div>
             </div>
 
-            {/* SEZIONI INFERIORI COMPATTATE */}
-            <div className="border-l-4 border-[#C0DD97] pl-6 mb-10 text-[15px] text-gray-600 leading-relaxed">
-              {template.long_description}
-            </div>
-
-            {/* FAQ RIPULITE */}
+            {/* FAQ - Spazio compattato */}
             {faqData.length > 0 && (
-              <div className="pt-8 border-t border-gray-100">
-                <h3 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-6">Frequently Asked Questions</h3>
+              <div className="pt-4 border-t border-gray-100">
+                <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">
+                  Frequently Asked Questions
+                </h3>
                 <div className="divide-y divide-gray-100">
                   {faqData.map((item: any, i: number) => (
-                    <div key={i} className="py-1">
-                      <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex justify-between items-center py-4 text-left">
-                        <span className="text-[14px] font-bold text-gray-800">{item.q}</span>
-                        <ChevronDown size={16} className={`text-gray-300 transition-all ${openFaq === i ? 'rotate-180 text-[#1F5C3E]' : ''}`} />
+                    <div key={i} className="py-0.5">
+                      <button
+                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                        className="w-full flex justify-between items-center py-3 text-left group"
+                      >
+                        <span className="text-[14px] font-bold text-gray-800 group-hover:text-[#1F5C3E] transition-colors">{item.q}</span>
+                        <ChevronDown size={16} className={`transition-transform duration-300 ${openFaq === i ? 'rotate-180 text-[#1F5C3E]' : 'text-gray-300'}`} />
                       </button>
-                      <div className={`overflow-hidden transition-all duration-300 ${openFaq === i ? 'max-h-40 pb-4 opacity-100' : 'max-h-0 opacity-0'}`}>
-                        <p className="text-[13px] text-gray-500">{item.a}</p>
+                      <div className={`transition-all duration-200 overflow-hidden ${openFaq === i ? 'max-h-60 pb-3 opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <p className="text-[13px] text-gray-500 leading-relaxed">{item.a}</p>
                       </div>
                     </div>
                   ))}
@@ -119,11 +137,66 @@ export default function TemplateDetail() {
             )}
           </div>
 
-          <aside className="w-full lg:w-[280px] shrink-0 lg:sticky lg:top-24 self-start">
-            <Sidebar />
+          <aside className="lg:col-span-4 lg:sticky lg:top-24 self-start">
+            
+            <div className="bg-[#f9f9f6] rounded-2xl p-5 border border-gray-100 mb-4 shadow-sm">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 border-b border-gray-200 pb-2 text-center">
+                Technical Specifications
+              </h4>
+
+              <div className="space-y-3 text-[13px]">
+                {[
+                  { label: 'Software', value: 'Google Sheets', bold: true },
+                  { label: 'License', value: 'Personal use only', bold: true },
+                  { label: 'Format', value: 'Instant Copy' },
+                  { label: 'Access', value: 'No Login Required' }
+                ].map((item, i) => (
+                  <div key={i} className="flex justify-between items-center border-b border-gray-200/50 pb-1.5 last:border-0">
+                    <span className="text-gray-500 font-semibold">{item.label}</span>
+                    <span className={`text-gray-900 ${item.bold ? 'font-bold' : 'font-medium'}`}>{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <a
+              href={template.google_sheets_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 w-full bg-[#1F5C3E] text-white py-3.5 rounded-xl font-bold text-[14px] hover:bg-black transition-all duration-300 shadow-lg no-underline mb-3"
+            >
+              <Download size={18} />
+              Download Now
+            </a>
+
+            <div className="flex justify-center gap-3 text-[10px] font-black text-gray-400 uppercase tracking-tighter mb-6">
+              <div className="flex items-center gap-1"><CheckCircle2 size={12} className="text-[#C0DD97]" /> No macros</div>
+              <div className="flex items-center gap-1"><CheckCircle2 size={12} className="text-[#C0DD97]" /> Safe</div>
+              <div className="flex items-center gap-1"><CheckCircle2 size={12} className="text-[#C0DD97]" /> 100% free</div>
+            </div>
+
+            {template.youtube_url && (
+              <div className="mt-2 aspect-video rounded-2xl overflow-hidden border border-gray-100">
+                <iframe src={template.youtube_url} className="w-full h-full" allowFullScreen />
+              </div>
+            )}
+            
+            <div className="mt-6">
+              <Sidebar />
+            </div>
           </aside>
         </div>
       </main>
+
+      {/* LIGHTBOX */}
+      {lightboxImg && (
+        <div className="fixed inset-0 bg-black/95 z-[999] flex items-center justify-center p-4" onClick={() => setLightboxImg(null)}>
+          <button className="absolute top-6 right-6 text-white/70 hover:text-white">
+            <X size={35} />
+          </button>
+          <img src={lightboxImg} className="max-w-full max-h-full rounded-lg object-contain" />
+        </div>
+      )}
 
       <Footer />
     </div>
