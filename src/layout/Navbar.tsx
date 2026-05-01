@@ -20,7 +20,9 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-[100] w-full shadow-md font-inter" style={{ backgroundColor: '#1F5C3E' }}>
       <div className="h-[60px] flex items-center border-b border-white/5 px-6 md:px-10">
-        <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-4">
+        {/* Container allargato a 1440px per allineamento perfetto */}
+        <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between gap-4">
+          
           <Link to="/" className="flex items-center gap-3 no-underline group flex-shrink-0">
             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center font-black text-[#1F5C3E] text-lg shadow-sm">TS</div>
             <span className="text-white font-bold text-[19px] tracking-tight hidden sm:block">TrackySheets</span>
@@ -37,7 +39,7 @@ export default function Navbar() {
             />
           </form>
 
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5 text-right">
             <Link to="/help" className="flex items-center gap-2 text-green-100/70 hover:text-white transition-colors no-underline">
               <HelpCircle size={20} />
               <span className="text-[13px] font-bold uppercase tracking-wider hidden md:block">Help</span>
@@ -47,7 +49,8 @@ export default function Navbar() {
       </div>
 
       <nav className="h-[42px] flex items-center bg-black/10">
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between">
+        {/* Container allargato a 1440px anche per la barra delle categorie */}
+        <div className="w-full max-w-[1440px] mx-auto px-6 md:px-10 flex items-center justify-between">
           <div className="flex items-center gap-8">
             {['Home', 'Finance', 'Budgeting', 'Productivity'].map((item) => (
               <Link 
