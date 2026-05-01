@@ -7,7 +7,7 @@
   --warm-cream: #f5f4ed;
 }
 
-/* Reset strutturale: l'altezza è gestita solo da #root */
+/* REGOLA CRITICA: Solo html/body gestiscono lo scroll. */
 html, body {
   margin: 0;
   padding: 0;
@@ -21,7 +21,7 @@ body {
   overflow-x: hidden;
 }
 
-/* #root è l'unico che deve avere flex-col e min-height */
+/* #root è l'unico contenitore con flex-col e min-height per il footer */
 #root {
   display: flex;
   flex-direction: column;
@@ -32,4 +32,24 @@ body {
 * {
   min-width: 0;
   box-sizing: border-box;
+}
+
+h1, h2, h3, h4 {
+  @apply tracking-tight;
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
