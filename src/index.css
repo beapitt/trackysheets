@@ -13,12 +13,14 @@ html, body {
   padding: 0;
   height: auto;
   min-height: 100%;
+  /* Aggiunta protezione per il mobile */
+  overflow-x: hidden;
+  position: relative;
 }
 
 body {
   @apply antialiased bg-white text-gray-900;
   font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
 }
 
 /* #root è l'unico contenitore con flex-col e min-height per il footer */
@@ -52,4 +54,9 @@ h1, h2, h3, h4 {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+}
+
+/* Forza la scomparsa di ogni scroll orizzontale residuo */
+.flex {
+  min-width: 0;
 }
