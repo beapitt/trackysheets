@@ -44,8 +44,9 @@ export default function TemplateDetail() {
           <h1 className="text-[26px] md:text-[32px] font-bold tracking-tight text-[#1f2937] leading-tight">
             {template.title}
           </h1>
-          <p className="text-[14px] text-gray-500 mt-1.5 font-medium">
-            Official Google Sheets Template — High-Performance Dashboard
+          {/* RIPRISTINATA SHORT DESCRIPTION DINAMICA */}
+          <p className="text-[14px] text-gray-600 mt-1.5 font-medium italic">
+            {template.short_description}
           </p>
         </div>
 
