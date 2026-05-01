@@ -35,20 +35,17 @@ export default function Sidebar() {
   };
 
   const videoId = settings?.youtube_url ? getYouTubeID(settings.youtube_url) : null;
+  
   const filteredCategories = categories.filter(cat => 
     cat.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    /* 
-       Rimosso sticky forzato qui per lasciarlo al contenitore padre (aside) 
-       nelle pagine che lo richiedono. 
-    */
     <div className="flex flex-col gap-8 w-full">
-      {/* BOX VIDEO */}
+      {/* SEZIONE VIDEO GUIDE */}
       {videoId && (
         <div className="w-full">
-          <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-xl mb-3">
+          <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-sm mb-3">
             <iframe 
               width="100%" 
               height="100%" 
@@ -58,18 +55,19 @@ export default function Sidebar() {
               allowFullScreen
             ></iframe>
           </div>
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-            <MonitorPlay size={14} /> Video Guide
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 text-left">
+            <MonitorPlay size={14} className="text-[#1F5C3E]" /> Video Guide
           </div>
         </div>
       )}
 
-      {/* CATEGORIE E RICERCA */}
+      {/* BOX CATEGORIE E RICERCA */}
       <div className="flex flex-col gap-4 text-left">
-        <div className="bg-[#1F5C3E] text-white py-3 px-5 rounded-lg font-bold text-[11px] uppercase tracking-widest text-left">
+        <div className="bg-[#1F5C3E] text-white py-3 px-5 rounded-lg font-bold text-[11px] uppercase tracking-widest">
           Categories
         </div>
         
+        {/* Barra di ricerca categorie */}
         <div className="relative">
           <input 
             type="text" 
@@ -81,36 +79,50 @@ export default function Sidebar() {
           <Search className="absolute left-3 top-2.5 text-gray-400" size={13} />
         </div>
 
-        <div className="flex flex-col gap-0.5">
-          {filteredCategories.slice(0, 15).map((cat) => (
-            <Link 
-              key={cat.id} 
-              to={`/category/${cat.slug}`} 
-              className={`text-[12px] font-bold no-underline py-2 border-b border-gray-50 hover:bg-gray-50 px-2 rounded-md transition-all text-left ${cat.slug === slug ? 'text-[#1F5C3E] bg-gray-50' : 'text-gray-500'}`}
-            >
-              {cat.name}
-            </Link>
-          ))}
+        {/* Lista Categorie */}
+        <div className="flex flex-col gap-0.5 max-h-[400px] overflow-y-auto no-scrollbar">
+          {filteredCategories.length > 0 ? (
+            filteredCategories.map((cat) => (
+              <Link 
+                key={cat.id} 
+                to={`/category/${cat.slug}`} 
+                className={`text-[12px] font-bold no-underline py-2 border-b border-gray-50 hover:bg-gray-50 px-2 rounded-md transition-all text-left ${
+                  cat.slug === slug ? 'text-[#1F5C3E] bg-gray-50' : 'text-gray-500'
+                }`}
+              >
+                {cat.name}
+              </Link>
+            ))
+          ) : (
+            <p className="text-[11px] text-gray-400 italic px-2">No categories found.</p>
+          )}
         </div>
       </div>
 
-      {/* SOCIAL */}
+      {/* SEZIONE SOCIAL FOLLOW */}
       <div className="pt-2">
         <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 mb-3 text-left">Follow us on</p>
         <div className="flex flex-col gap-2">
+          {/* Pinterest Link */}
           <a href="#" className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-5 py-2.5 hover:bg-gray-50 no-underline shadow-sm transition-all group">
             <div className="flex items-center gap-3">
               <PinterestIcon />
               <span className="text-[13px] font-bold text-gray-800">Pinterest</span>
             </div>
-            <span className="text-[11px] font-medium text-gray-400 flex items-center gap-1 group-hover:text-[#1F5C3E]">Follow <ArrowRight size={12} /></span>
+            <span className="text-[11px] font-medium text-gray-400 flex items-center gap-1 group-hover:text-[#1F5C3E]">
+              Follow <ArrowRight size={12} />
+            </span>
           </a>
+          
+          {/* YouTube Link */}
           <a href="#" className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-5 py-2.5 hover:bg-gray-50 no-underline shadow-sm transition-all group">
             <div className="flex items-center gap-3">
               <YouTubeIcon />
               <span className="text-[13px] font-bold text-gray-800">YouTube</span>
             </div>
-            <span className="text-[11px] font-medium text-gray-400 flex items-center gap-1 group-hover:text-[#FF0000]">Subscribe <ArrowRight size={12} /></span>
+            <span className="text-[11px] font-medium text-gray-400 flex items-center gap-1 group-hover:text-[#FF0000]">
+              Subscribe <ArrowRight size={12} />
+            </span>
           </a>
         </div>
       </div>
