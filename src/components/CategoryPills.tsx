@@ -10,12 +10,13 @@ interface Category {
 interface CategoryPillsProps {
   categories: Category[];
   activeSlug?: string;
+  isHome?: boolean; // Aggiungiamo questa prop
 }
 
-export default function CategoryPills({ categories, activeSlug }: CategoryPillsProps) {
+export default function CategoryPills({ categories, activeSlug, isHome }: CategoryPillsProps) {
   return (
-    <div className="w-full bg-white lg:hidden border-b border-gray-50 overflow-hidden">
-      {/* CSS per nascondere la scrollbar su tutti i browser */}
+    /* Sfondo verde per continuità con la Navbar */
+    <div className="w-full lg:hidden border-b border-white/10" style={{ backgroundColor: '#1F5C3E' }}>
       <style dangerouslySetInnerHTML={{ __html: `
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -28,23 +29,23 @@ export default function CategoryPills({ categories, activeSlug }: CategoryPillsP
         <div className="flex flex-row gap-2 px-4 flex-nowrap">
           <Link
             to="/templates"
-            className={`whitespace-nowrap px-4 py-2 rounded-full text-[12px] font-bold transition-all border shrink-0 ${
-              !activeSlug 
-                ? 'bg-[#1F5C3E] text-white border-[#1F5C3E]' 
-                : 'bg-gray-50 text-gray-500 border-gray-100'
+            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-[12px] font-bold transition-all border shrink-0 ${
+              !activeSlug && !isHome
+                ? 'bg-white text-[#1F5C3E] border-white' 
+                : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
             }`}
           >
-            All
+            All Templates
           </Link>
           
           {categories.map((cat) => (
             <Link
               key={cat.id}
               to={`/category/${cat.slug}`}
-              className={`whitespace-nowrap px-4 py-2 rounded-full text-[12px] font-bold transition-all border shrink-0 ${
+              className={`whitespace-nowrap px-4 py-1.5 rounded-full text-[12px] font-bold transition-all border shrink-0 ${
                 activeSlug === cat.slug
-                  ? 'bg-[#1F5C3E] text-white border-[#1F5C3E]'
-                  : 'bg-gray-50 text-gray-500 border-gray-100'
+                  ? 'bg-white text-[#1F5C3E] border-white'
+                  : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
               }`}
             >
               {cat.name}
