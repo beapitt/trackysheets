@@ -26,12 +26,13 @@ export default function Home() {
       setLoading(false)
     }
     fetchData()
+    window.scrollTo(0, 0);
   }, [])
 
   if (loading) return null;
 
   return (
-    <div className="flex flex-col min-h-screen bg-white font-sans text-left">
+    <>
       <Navbar />
       
       {/* Mobile Only View */}
@@ -122,6 +123,6 @@ export default function Home() {
         </div>
       </main>
       <Footer />
-    </div>
+    </>
   )
 }
