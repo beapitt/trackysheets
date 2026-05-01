@@ -19,11 +19,11 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-[100] w-full shadow-md" style={{ backgroundColor: '#1F5C3E' }}>
-      {/* RIGA 1: LOGO - SEARCH - HELP (Altezza ottimizzata a 60px) */}
-      <div className="h-[60px] flex items-center border-b border-white/5 px-4 md:px-12">
-        <div className="w-full max-w-[1550px] mx-auto flex items-center justify-between gap-4">
+      {/* RIGA 1: LOGO - SEARCH - HELP (Container a 1280px) */}
+      <div className="h-[60px] flex items-center border-b border-white/5 px-6 md:px-10">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-4">
           
-          {/* LOGO - Più bilanciato con il footer */}
+          {/* LOGO */}
           <Link to="/" className="flex items-center gap-3 no-underline group flex-shrink-0">
             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center font-black text-[#1F5C3E] text-lg group-hover:scale-105 transition-transform shadow-sm">
               TS
@@ -43,9 +43,6 @@ export default function Navbar() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-11 pr-12 py-2 rounded-xl bg-white/5 border border-white/10 text-white placeholder-green-100/30 focus:bg-white focus:text-gray-900 focus:outline-none transition-all text-sm font-medium"
             />
-            <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 px-1.5 py-1 rounded bg-white/5 border border-white/5 text-[9px] text-green-100/30 font-bold group-focus-within:hidden">
-              <Command size={10} /> ENTER
-            </button>
           </form>
 
           {/* HELP & ACTIONS */}
@@ -64,9 +61,9 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* RIGA 2: CATEGORIE (Altezza ottimizzata a 40px) */}
+      {/* RIGA 2: CATEGORIE (Container a 1280px) */}
       <nav className="h-[42px] flex items-center overflow-x-auto no-scrollbar bg-black/10">
-        <div className="w-full max-w-[1550px] mx-auto px-4 md:px-12 flex items-center justify-between min-w-max md:min-w-0">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between min-w-max md:min-w-0">
           <div className="flex items-center gap-6 md:gap-10">
             <Link 
               to="/" 
