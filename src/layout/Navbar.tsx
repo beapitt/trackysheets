@@ -1,11 +1,10 @@
 "use client";
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, HelpCircle, X } from 'lucide-react';
+import { Search, HelpCircle } from 'lucide-react';
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -13,14 +12,12 @@ export default function Navbar() {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/templates?search=${encodeURIComponent(searchQuery.trim())}`);
-      setIsSearchOpen(false);
     }
   };
 
   return (
     <header className="sticky top-0 z-[100] w-full shadow-md font-inter" style={{ backgroundColor: '#1F5C3E' }}>
       <div className="h-[60px] flex items-center border-b border-white/5 px-6 md:px-10">
-        {/* Container a 1440px per allineamento millimetrico con il contenuto */}
         <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between gap-4">
           
           <Link to="/" className="flex items-center gap-3 no-underline group flex-shrink-0">
@@ -51,9 +48,7 @@ export default function Navbar() {
       <nav className="h-[42px] flex items-center bg-black/10">
         <div className="w-full max-w-[1440px] mx-auto px-6 md:px-10 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            {/* Aggiunto 'All Templates' all'array */}
             {['Home', 'All Templates', 'Finance', 'Budgeting', 'Productivity'].map((item) => {
-              // Logica per determinare il path corretto
               const path = item === 'Home' ? '/' 
                          : item === 'All Templates' ? '/templates' 
                          : `/category/${item.toLowerCase()}`;
@@ -69,7 +64,6 @@ export default function Navbar() {
                   }`}
                 >
                   {item}
-                  {/* Sottolineatura opzionale per l'elemento attivo */}
                   {isActive && (
                     <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#C0DD97]"></span>
                   )}
@@ -81,5 +75,4 @@ export default function Navbar() {
       </nav>
     </header>
   );
-}
 }
