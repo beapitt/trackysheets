@@ -3,11 +3,9 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    /* mt-auto spinge il footer in fondo se il contenitore è un flex-col */
     <footer className="bg-white border-t border-gray-100 mt-auto w-full">
       <div className="max-w-[1550px] mx-auto px-6 md:px-12 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
         
-        {/* Sinistra: Logo più grande (w-8 h-8) per allinearsi visivamente alla navbar */}
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-[#1F5C3E] rounded-md flex items-center justify-center text-white text-[12px] font-bold shadow-sm">
             TS
@@ -17,7 +15,6 @@ export default function Footer() {
           </span>
         </div>
 
-        {/* Destra: Link puliti */}
         <nav className="flex flex-wrap justify-center gap-x-8 gap-y-2">
           {[
             { label: 'All Templates', href: '/templates' },
