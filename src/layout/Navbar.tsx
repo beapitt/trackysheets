@@ -20,7 +20,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-[100] w-full shadow-md font-inter" style={{ backgroundColor: '#1F5C3E' }}>
       <div className="h-[60px] flex items-center border-b border-white/5 px-6 md:px-10">
-        {/* Container allargato a 1440px per allineamento perfetto */}
+        {/* Container a 1440px per allineamento millimetrico con il contenuto */}
         <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between gap-4">
           
           <Link to="/" className="flex items-center gap-3 no-underline group flex-shrink-0">
@@ -49,23 +49,37 @@ export default function Navbar() {
       </div>
 
       <nav className="h-[42px] flex items-center bg-black/10">
-        {/* Container allargato a 1440px anche per la barra delle categorie */}
         <div className="w-full max-w-[1440px] mx-auto px-6 md:px-10 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            {['Home', 'Finance', 'Budgeting', 'Productivity'].map((item) => (
-              <Link 
-                key={item}
-                to={item === 'Home' ? '/' : `/category/${item.toLowerCase()}`}
-                className={`text-[11px] font-black no-underline uppercase tracking-[0.15em] relative py-2 ${
-                  location.pathname === (item === 'Home' ? '/' : `/category/${item.toLowerCase()}`) ? 'text-white' : 'text-green-100/40 hover:text-white'
-                }`}
-              >
-                {item}
-              </Link>
-            ))}
+            {/* Aggiunto 'All Templates' all'array */}
+            {['Home', 'All Templates', 'Finance', 'Budgeting', 'Productivity'].map((item) => {
+              // Logica per determinare il path corretto
+              const path = item === 'Home' ? '/' 
+                         : item === 'All Templates' ? '/templates' 
+                         : `/category/${item.toLowerCase()}`;
+              
+              const isActive = location.pathname === path;
+
+              return (
+                <Link 
+                  key={item}
+                  to={path}
+                  className={`text-[11px] font-black no-underline uppercase tracking-[0.15em] relative py-2 transition-colors ${
+                    isActive ? 'text-white' : 'text-green-100/40 hover:text-white'
+                  }`}
+                >
+                  {item}
+                  {/* Sottolineatura opzionale per l'elemento attivo */}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#C0DD97]"></span>
+                  )}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </nav>
     </header>
   );
+}
 }
