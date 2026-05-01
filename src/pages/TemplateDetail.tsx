@@ -44,7 +44,7 @@ export default function TemplateDetail() {
 
       <main className="max-w-7xl mx-auto px-6 md:px-10 pt-8 pb-12">
         
-        {/* TITOLO - Margine ridotto a mb-6 */}
+        {/* TITOLO - Allineato alla H di Home */}
         <div className="mb-6">
           <h1 className="text-[26px] md:text-[32px] font-bold tracking-tight text-[#1f2937] leading-tight">
             {template.title}
@@ -58,7 +58,7 @@ export default function TemplateDetail() {
           
           <div className="lg:col-span-8">
             
-            {/* GALLERY - Margine ridotto a mb-6 */}
+            {/* GALLERY */}
             <div className="mb-6">
               <div
                 className="aspect-video bg-[#f5f4ed] rounded-2xl overflow-hidden border border-gray-100 shadow-sm cursor-zoom-in group relative"
@@ -82,14 +82,14 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* DESCRIPTION - Margine ridotto a mb-6 */}
+            {/* DESCRIPTION */}
             <div className="border-l-4 border-[#C0DD97] pl-6 mb-6">
               <div className="text-[16px] text-gray-600 leading-relaxed whitespace-pre-wrap font-medium">
                 {template.long_description}
               </div>
             </div>
 
-            {/* HOW TO USE - Margine ridotto e padding compattato */}
+            {/* HOW TO USE - Cerchietti verdi ripristinati */}
             <div className="mb-6 bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
               <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">
                 How to Use this Template
@@ -111,7 +111,7 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* FAQ - Spazio compattato */}
+            {/* FAQ */}
             {faqData.length > 0 && (
               <div className="pt-4 border-t border-gray-100">
                 <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">
@@ -139,6 +139,7 @@ export default function TemplateDetail() {
 
           <aside className="lg:col-span-4 lg:sticky lg:top-24 self-start">
             
+            {/* BOX METADATI - In inglese */}
             <div className="bg-[#f9f9f6] rounded-2xl p-5 border border-gray-100 mb-4 shadow-sm">
               <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 border-b border-gray-200 pb-2 text-center">
                 Technical Specifications
@@ -174,13 +175,8 @@ export default function TemplateDetail() {
               <div className="flex items-center gap-1"><CheckCircle2 size={12} className="text-[#C0DD97]" /> Safe</div>
               <div className="flex items-center gap-1"><CheckCircle2 size={12} className="text-[#C0DD97]" /> 100% free</div>
             </div>
-
-            {template.youtube_url && (
-              <div className="mt-2 aspect-video rounded-2xl overflow-hidden border border-gray-100">
-                <iframe src={template.youtube_url} className="w-full h-full" allowFullScreen />
-              </div>
-            )}
             
+            {/* Il video viene gestito ora SOLO dalla Sidebar per evitare doppioni */}
             <div className="mt-6">
               <Sidebar />
             </div>
