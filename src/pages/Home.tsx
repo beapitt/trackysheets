@@ -17,7 +17,7 @@ export default function Home() {
         .from('templates')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(8);
+        .limit(9); // Aumentato a 9 per una griglia perfetta da 3x3
 
       const { data: cData } = await supabase.from('categories').select('*').order('name')
       
@@ -35,14 +35,15 @@ export default function Home() {
     <>
       <Navbar />
       
-      {/* Mobile Only View */}
+      {/* Pills visibili solo su mobile per navigazione rapida */}
       <CategoryPills categories={categories} />
 
       <main className="flex-grow w-full max-w-[1550px] mx-auto px-6 md:px-12 py-10">
         
-        {/* IL CONTENITORE PADRE: items-start è vitale per lo sticky */}
+        {/* Layout Flex: colonna su mobile, riga su desktop. items-start è vitale per lo sticky */}
         <div className="flex flex-col lg:flex-row items-start gap-12">
           
+          {/* Griglia Template (Sinistra) */}
           <div className="flex-1 min-w-0 w-full">
             <section className="text-left">
               <p className="text-[11px] font-bold tracking-widest uppercase text-[#1F5C3E] mb-2">
@@ -53,7 +54,7 @@ export default function Home() {
               </h1>
               <p className="text-[14px] text-[#4b5563] mb-6">Professional. Simple. Ready to use.</p>
               
-              <p className="text-[13px] leading-relaxed text-[#374151] border-l-2 border-[#C0DD97] pl-4 mb-6 max-w-2xl">
+              <p className="text-[13px] leading-relaxed text-[#374151] border-l-2 border-[#C0DD97] pl-4 mb-6 max-w-2xl text-left">
                 TrackySheets provides free Google Sheets templates for budgeting, invoicing, 
                 project tracking, and more — no login or registration required.
               </p>
@@ -65,9 +66,9 @@ export default function Home() {
                   { num: "0", sub: "login required", n: "03" },
                 ].map((s) => (
                   <div key={s.n} className="bg-[#EAF3DE] rounded-xl p-4 border border-[#C0DD97]/20 flex flex-col justify-center">
-                    <span className="text-[10px] font-bold text-[#3B6D11] block mb-0.5 opacity-50 uppercase tracking-tighter">Step {s.n}</span>
-                    <span className="text-[22px] font-bold text-[#27500A] block leading-none mb-0.5">{s.num}</span>
-                    <span className="text-[10px] text-[#3B6D11] uppercase font-bold tracking-tight">{s.sub}</span>
+                    <span className="text-[10px] font-bold text-[#3B6D11] block mb-0.5 opacity-50 uppercase tracking-tighter text-left">Step {s.n}</span>
+                    <span className="text-[22px] font-bold text-[#27500A] block leading-none mb-0.5 text-left">{s.num}</span>
+                    <span className="text-[10px] text-[#3B6D11] uppercase font-bold tracking-tight text-left">{s.sub}</span>
                   </div>
                 ))}
               </div>
@@ -84,14 +85,15 @@ export default function Home() {
                 </Link>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Griglia a 3 colonne su Desktop (lg:grid-cols-3) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {templates.map((template) => (
                   <Link key={template.id} to={`/template/${template.slug}`} className="group no-underline block">
                     <div className="aspect-[16/10] bg-[#f5f4ed] rounded-xl overflow-hidden mb-3 border border-gray-100 shadow-sm group-hover:shadow-md transition-all">
                       <img src={template.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" alt={template.title} />
                     </div>
-                    <h3 className="text-[14px] font-bold text-gray-900 mb-0.5 group-hover:text-[#1F5C3E]">{template.title}</h3>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Free Download</span>
+                    <h3 className="text-[14px] font-bold text-gray-900 mb-0.5 group-hover:text-[#1F5C3E] text-left">{template.title}</h3>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">Free Download</p>
                   </Link>
                 ))}
               </div>
@@ -108,15 +110,15 @@ export default function Home() {
                   <div key={s.n} className="text-center">
                     <span className="text-[28px] font-bold text-[#EAF3DE] block mb-0.5 leading-none">{s.n}</span>
                     <h4 className="text-[13px] font-bold text-gray-900 mb-1">{s.title}</h4>
-                    <p className="text-[11px] text-[#6b7280] leading-relaxed">{s.body}</p>
+                    <p className="text-[11px] text-[#6b7280] leading-relaxed px-4">{s.body}</p>
                   </div>
                 ))}
               </div>
             </section>
           </div>
 
-          {/* Sidebar: Solo Desktop, Sticky */}
-          <aside className="hidden lg:block w-[320px] shrink-0 sticky top-24 self-start">
+          {/* Sidebar: Ora visibile su mobile, sticky su desktop */}
+          <aside className="w-full lg:w-[320px] shrink-0 lg:sticky lg:top-24 self-start">
             <Sidebar />
           </aside>
 
