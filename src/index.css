@@ -54,6 +54,21 @@ h1, h2, h3, h4 {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* MODAL SCROLLBAR - Stile moderno e sottile */
+  .legal-modal-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+  .legal-modal-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .legal-modal-scroll::-webkit-scrollbar-thumb {
+    background: #e5e7eb; /* Grigio chiarissimo */
+    border-radius: 20px;
+  }
+  .legal-modal-scroll::-webkit-scrollbar-thumb:hover {
+    background: #d1d5db;
+  }
 }
 
 /* Forza la scomparsa di ogni scroll orizzontale residuo */
