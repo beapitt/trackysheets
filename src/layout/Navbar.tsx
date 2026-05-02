@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, Menu, X, LayoutGrid, HelpCircle, Mail } from 'lucide-react';
+import { Search, Menu, X, LayoutGrid, Mail } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 export default function Navbar() {
@@ -33,6 +33,10 @@ export default function Navbar() {
     ...categories.slice(0, 3).map(cat => ({ name: cat.name, path: `/category/${cat.slug}` }))
   ];
 
+  // Logica per identificare la pagina attuale su mobile
+  const isTemplatePage = location.pathname.startsWith('/template/');
+  const currentPageLabel = isTemplatePage ? 'Template' : 'Home';
+
   return (
     <header className="sticky top-0 z-[100] w-full shadow-md font-inter" style={{ backgroundColor: '#1F5C3E' }}>
       
@@ -46,7 +50,7 @@ export default function Navbar() {
             <span className="font-bold text-[19px] hidden sm:block">TrackySheets</span>
           </Link>
 
-          {/* Ricerca Centrale (Sempre presente) */}
+          {/* Ricerca Centrale */}
           <form onSubmit={handleSearch} className="flex-1 max-w-[500px] relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
             <input
@@ -58,7 +62,7 @@ export default function Navbar() {
             />
           </form>
 
-          {/* Hamburger Menu (Sempre presente per mobile, utile anche su desktop) */}
+          {/* Hamburger Menu */}
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="p-2 text-white hover:bg-white/10 rounded-xl transition-colors shrink-0"
@@ -68,7 +72,14 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* SUB-NAV SOLO DESKTOP (Appare solo da md in su) */}
+      {/* SEGNALAZIONE PAGINA ATTIVA - SOLO MOBILE (30px altezza) */}
+      <div className="flex md:hidden h-[30px] items-center justify-center bg-black/10 border-t border-white/5">
+         <span className="text-[10px] font-black text-white uppercase tracking-[0.2em] border-b-2 border-white pb-0.5">
+            {currentPageLabel}
+         </span>
+      </div>
+
+      {/* SUB-NAV SOLO DESKTOP */}
       <nav className="hidden md:flex h-[42px] items-center bg-black/10 border-t border-white/5">
         <div className="w-full max-w-[1440px] mx-auto px-10 flex items-center gap-8">
           {navLinks.map((link) => {
@@ -88,25 +99,24 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* MENU A SCOMPARSA (MOBILE & DESKTOP EXTRA) */}
+      {/* MENU A SCOMPARSA (MOBILE & DESKTOP) */}
       {isMenuOpen && (
         <div className="absolute top-[64px] md:top-[106px] left-0 w-full bg-white border-b border-gray-200 shadow-2xl animate-in slide-in-from-top-2 duration-200 text-left">
           <div className="max-w-[1440px] mx-auto px-6 py-8 md:px-10 grid grid-cols-1 md:grid-cols-12 gap-10">
             
-            {/* Categorie */}
             <div className="md:col-span-8">
               <div className="flex items-center gap-2 mb-6 text-[#1F5C3E]">
                 <LayoutGrid size={18} />
                 <span className="text-[11px] font-black uppercase tracking-[0.2em]">Full Menu</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-1">
-                <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-[15px] font-bold py-2.5 text-gray-600 hover:text-[#1F5C3E] border-b border-gray-50 no-underline">Home</Link>
+                <Link to="/" onClick={() => setIsMenuOpen(false)} className={`text-[15px] font-bold py-2.5 border-b border-gray-50 no-underline ${location.pathname === '/' ? 'text-[#1F5C3E]' : 'text-gray-600 hover:text-[#1F5C3E]'}`}>Home</Link>
                 {categories.map((cat) => (
                   <Link
                     key={cat.id}
                     to={`/category/${cat.slug}`}
                     onClick={() => setIsMenuOpen(false)}
-                    className="text-[15px] font-bold py-2.5 text-gray-600 hover:text-[#1F5C3E] border-b border-gray-50 no-underline"
+                    className={`text-[15px] font-bold py-2.5 border-b border-gray-50 no-underline ${location.pathname.includes(cat.slug) ? 'text-[#1F5C3E]' : 'text-gray-600 hover:text-[#1F5C3E]'}`}
                   >
                     {cat.name}
                   </Link>
@@ -114,8 +124,7 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Supporto */}
-            <div className="md:col-span-4 flex flex-col gap-6 border-t md:border-t-0 md:border-l border-gray-100 pt-8 md:pt-0 md:pl-10">
+            <div className="md:col-span-4 flex flex-col gap-6 border-t md:border-t-0 md:border-l border-gray-100 pt-8 md:pt-0 md:pl-10 text-left">
               <Link to="/help" onClick={() => setIsMenuOpen(false)} className="text-[15px] font-bold text-gray-600 no-underline hover:text-[#1F5C3E]">Help Center</Link>
               <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
                 <div className="flex items-center gap-2 mb-2 text-[#1F5C3E]">
