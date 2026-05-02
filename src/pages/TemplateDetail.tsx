@@ -38,7 +38,7 @@ export default function TemplateDetail() {
 
       <main className="max-w-[1440px] mx-auto px-5 md:px-10 pt-4 md:pt-6 pb-12">
         
-        {/* TITOLO E DESCRIZIONE - INTER ANTRACITE */}
+        {/* TITOLO E DESCRIZIONE */}
         <div className="mb-6 text-left">
           <h1 className="text-[24px] md:text-[32px] font-bold tracking-tight text-[#1f2937] leading-tight">
             {template.title}
@@ -81,8 +81,8 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* GUIDE BOX */}
-            <div className="mb-8 bg-gray-50/50 p-6 rounded-2xl border border-gray-100 max-w-4xl text-left">
+            {/* GUIDE BOX - MARGINE RIDOTTO PER AVVICINARE LA SIDEBAR SU MOBILE */}
+            <div className="mb-4 lg:mb-8 bg-gray-50/50 p-6 rounded-2xl border border-gray-100 max-w-4xl text-left">
               <h3 className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Guide</h3>
               <div className="space-y-3">
                 {['Click Download Now', 'Select Make a copy', 'Instant access'].map((step, i) => (
@@ -95,41 +95,53 @@ export default function TemplateDetail() {
             </div>
           </div>
 
-          {/* SIDEBAR - BOX UNICO PER ZERO SPAZIO */}
+          {/* SIDEBAR - SIGILLATA */}
           <aside className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24 self-start">
             <div className="bg-[#f9f9f6] rounded-2xl p-5 border border-gray-100 shadow-sm">
               <h4 className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 border-b border-gray-100 pb-2 text-center">Specs</h4>
-              <div className="space-y-2.5 text-[12px]">
+              <div className="space-y-2.5 text-[12px] mb-5">
                 {[{l:'Software', v:'Google Sheets'}, {l:'License', v:'Personal'}, {l:'Format', v:'Copy'}].map((item, i) => (
-                  <div key={i} className="flex justify-between items-center border-b border-gray-50 pb-1.5 last:border-0">
+                  <div key={i} className="flex justify-between items-center border-b border-gray-50 pb-1.5 last:border-0 last:pb-0">
                     <span className="text-gray-400 font-bold">{item.l}</span>
                     <span className="text-[#1f2937] font-bold">{item.v}</span>
                   </div>
                 ))}
               </div>
 
-              {/* TASTO DOWNLOAD - ATTACCATO */}
+              {/* TASTO DOWNLOAD - MARGINE MT-5 PER PRECISIONE */}
               <a
                 href={template.google_sheets_url}
                 target="_blank"
-                className="flex items-center justify-center gap-2 w-full bg-[#1F5C3E] text-white py-3.5 rounded-xl font-bold text-[14px] hover:bg-black transition-all shadow-md no-underline mt-5"
+                className="flex items-center justify-center gap-2 w-full bg-[#1F5C3E] text-white py-3.5 rounded-xl font-bold text-[14px] hover:bg-black transition-all shadow-md no-underline"
               >
                 <Download size={18} /> Download Now
               </a>
 
-              {/* CERCHIETTI VERDI - DENTRO IL BOX */}
-              <div className="flex flex-wrap justify-center gap-3 text-[9px] font-black text-gray-400 uppercase tracking-tight mt-5">
+              {/* CERCHIETTI VERDI - ATTACCATI AL TASTO SENZA SPAZI EXTRA */}
+              <div className="flex flex-wrap justify-center gap-3 text-[9px] font-black text-gray-400 uppercase tracking-tight mt-4">
                 <div className="flex items-center gap-1"><CheckCircle2 size={11} className="text-[#C0DD97]" /> No macros</div>
                 <div className="flex items-center gap-1"><CheckCircle2 size={11} className="text-[#C0DD97]" /> 100% free</div>
               </div>
             </div>
 
-            <div className="mt-4">
+            {/* SIDEBAR CONTENUTI - MARGINE RIDOTTO */}
+            <div className="mt-2 lg:mt-4">
               <Sidebar />
             </div>
           </aside>
         </div>
       </main>
+
+      {/* LIGHTBOX */}
+      {lightboxImg && (
+        <div className="fixed inset-0 bg-black/95 z-[999] flex items-center justify-center p-4" onClick={() => setLightboxImg(null)}>
+          <button className="absolute top-6 right-6 text-white/70 hover:text-white">
+            <X size={35} />
+          </button>
+          <img src={lightboxImg} className="max-w-full max-h-full rounded-lg object-contain shadow-2xl" alt="Zoomed view" />
+        </div>
+      )}
+
       <Footer />
     </div>
   )
