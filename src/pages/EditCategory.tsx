@@ -7,7 +7,8 @@ interface Category {
   name: string;
   slug: string;
   seo_title: string;
-  meta_description: string;
+  description: string; // Corretto: corrisponde a Supabase
+  image_url: string;   // Aggiunto: corrisponde a Supabase
   placement: string;
   sort_order: number;
 }
@@ -15,7 +16,6 @@ interface Category {
 export default function EditCategory() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -25,7 +25,8 @@ export default function EditCategory() {
     name: '',
     slug: '',
     seo_title: '',
-    meta_description: '',
+    description: '', // Corretto
+    image_url: '',   // Corretto
     placement: 'sidebar',
     sort_order: 0,
   });
@@ -48,10 +49,19 @@ export default function EditCategory() {
 
       if (error) throw error;
       if (data) {
-        setCategory(data);
-        setFormData(data);
+        // Mappiamo i dati dal DB allo stato del form
+        setFormData({
+          name: data.name || '',
+          slug: data.slug || '',
+          seo_title: data.seo_title || '',
+          description: data.description || '',
+          image_url: data.image_url || '',
+          placement: data.placement || 'sidebar',
+          sort_order: data.sort_order || 0,
+        });
       }
     } catch (err) {
+      console.error(err);
       setMessage('Error loading category');
       setMessageType('error');
     } finally {
@@ -80,14 +90,14 @@ export default function EditCategory() {
     } else {
       setFormData(prev => ({
         ...prev,
-        [name]: name === 'sort_order' ? parseInt(value) : value,
+        [name]: name === 'sort_order' ? parseInt(value) || 0 : value,
       }));
     }
   };
 
   const handleSave = async () => {
     if (!formData.name || !formData.slug) {
-      setMessage('Please fill in all required fields');
+      setMessage('Please fill in all required fields (Name and Slug)');
       setMessageType('error');
       return;
     }
@@ -114,7 +124,8 @@ export default function EditCategory() {
       setMessageType('success');
       setTimeout(() => navigate('/admin/categories'), 2000);
     } catch (err) {
-      setMessage('Error saving category');
+      console.error(err);
+      setMessage('Error saving category. Check if all columns match.');
       setMessageType('error');
     } finally {
       setSaving(false);
@@ -124,134 +135,81 @@ export default function EditCategory() {
   if (loading) return <div className="p-8">Loading...</div>;
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-48 bg-green-900 text-white p-6">
+    <div className="flex min-h-screen bg-gray-100 font-inter">
+      {/* Sidebar Admin */}
+      <aside className="w-48 bg-[#1F5C3E] text-white p-6 shrink-0">
         <div className="mb-8">
-          <div className="text-2xl font-bold mb-2">TS</div>
-          <div className="text-sm">TrackySheets Admin</div>
+          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center font-black text-[#1F5C3E] mb-2">TS</div>
+          <div className="text-xs font-bold uppercase tracking-widest opacity-70">Admin Panel</div>
         </div>
-        <nav className="space-y-2">
-          <a href="/admin/templates" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Templates</a>
-          <a href="/admin/categories" className="block px-4 py-2 rounded bg-white bg-opacity-10 border-l-4 border-green-100">Categories</a>
-          <a href="/admin/settings" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Settings</a>
-          <a href="/admin/dashboard" className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-5">Dashboard</a>
+        <nav className="space-y-4">
+          <a href="/admin/templates" className="block text-[13px] font-bold no-underline text-white/70 hover:text-white">Templates</a>
+          <a href="/admin/categories" className="block text-[13px] font-bold no-underline text-white border-l-2 border-white pl-2">Categories</a>
+          <a href="/admin/settings" className="block text-[13px] font-bold no-underline text-white/70 hover:text-white">Settings</a>
         </nav>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 p-8">
-        <div className="max-w-4xl">
-          <h1 className="text-3xl font-bold text-green-900 mb-6">{id && id !== 'new' ? 'Edit Category' : 'New Category'}</h1>
+      <main className="flex-1 p-10">
+        <div className="max-w-3xl">
+          <h1 className="text-2xl font-black text-gray-800 mb-8 uppercase tracking-tight">
+            {id && id !== 'new' ? 'Edit Category' : 'Create New Category'}
+          </h1>
 
           {message && (
-            <div className={`p-4 rounded mb-6 ${messageType === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-              {messageType === 'success' ? '✅' : '❌'} {message}
+            <div className={`p-4 rounded-xl mb-6 font-bold shadow-sm ${messageType === 'success' ? 'bg-green-100 text-[#1F5C3E]' : 'bg-red-100 text-red-700'}`}>
+              {message}
             </div>
           )}
 
-          <div className="bg-white rounded-lg shadow p-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
             <form className="space-y-6">
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Category Name *</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder="Category name"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Category Name *</label>
+                  <input type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-100 rounded-xl bg-gray-50 font-medium outline-none focus:ring-2 focus:ring-[#1F5C3E]/20" />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Slug *</label>
+                  <input type="text" name="slug" value={formData.slug} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-100 rounded-xl bg-gray-50 font-medium outline-none" />
+                </div>
               </div>
 
-              {/* Slug */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Slug *</label>
-                <input
-                  type="text"
-                  name="slug"
-                  value={formData.slug}
-                  onChange={handleInputChange}
-                  placeholder="auto-generated"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">SEO Title</label>
+                <input type="text" name="seo_title" value={formData.seo_title} onChange={handleInputChange} maxLength={60} className="w-full px-4 py-3 border border-gray-100 rounded-xl bg-gray-50 font-medium outline-none" />
               </div>
 
-              {/* SEO Title */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">SEO Title</label>
-                <input
-                  type="text"
-                  name="seo_title"
-                  value={formData.seo_title}
-                  onChange={handleInputChange}
-                  placeholder="SEO title"
-                  maxLength={60}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-                <p className="text-xs text-gray-500 mt-1">{formData.seo_title.length}/60</p>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Description (Meta Description)</label>
+                <textarea name="description" value={formData.description} onChange={handleInputChange} rows={3} maxLength={160} className="w-full px-4 py-3 border border-gray-100 rounded-xl bg-gray-50 font-medium outline-none" />
               </div>
 
-              {/* Meta Description */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Meta Description</label>
-                <textarea
-                  name="meta_description"
-                  value={formData.meta_description}
-                  onChange={handleInputChange}
-                  placeholder="Meta description"
-                  rows={2}
-                  maxLength={160}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-                <p className="text-xs text-gray-500 mt-1">{formData.meta_description.length}/160</p>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Category Image URL</label>
+                <input type="text" name="image_url" value={formData.image_url} onChange={handleInputChange} placeholder="https://..." className="w-full px-4 py-3 border border-gray-100 rounded-xl bg-gray-50 font-medium outline-none" />
               </div>
 
-              {/* Placement */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Placement</label>
-                <select
-                  name="placement"
-                  value={formData.placement}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                >
-                  <option value="sidebar">Sidebar</option>
-                  <option value="top">Top Navigation</option>
-                  <option value="both">Both</option>
-                </select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Placement</label>
+                  <select name="placement" value={formData.placement} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-100 rounded-xl bg-gray-50 font-medium outline-none">
+                    <option value="sidebar">Sidebar</option>
+                    <option value="top">Top Navigation</option>
+                    <option value="both">Both</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Sort Order</label>
+                  <input type="number" name="sort_order" value={formData.sort_order} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-100 rounded-xl bg-gray-50 font-medium outline-none" />
+                </div>
               </div>
 
-              {/* Sort Order */}
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Sort Order</label>
-                <input
-                  type="number"
-                  name="sort_order"
-                  value={formData.sort_order}
-                  onChange={handleInputChange}
-                  placeholder="0"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                />
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-4 pt-6 border-t">
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="bg-green-700 hover:bg-green-800 disabled:bg-gray-400 text-white font-bold py-2 px-6 rounded-lg transition"
-                >
-                  {saving ? '💾 Saving...' : '💾 Save Category'}
+              <div className="flex gap-4 pt-8 border-t border-gray-50">
+                <button type="button" onClick={handleSave} disabled={saving} className="bg-[#1F5C3E] hover:bg-black text-white font-bold py-4 px-8 rounded-xl transition shadow-lg shadow-[#1F5C3E]/20 disabled:bg-gray-300">
+                  {saving ? 'Saving...' : 'Save Category'}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/admin/categories')}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg transition"
-                >
-                  ↩️ Cancel
+                <button type="button" onClick={() => navigate('/admin/categories')} className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-4 px-8 rounded-xl transition">
+                  Cancel
                 </button>
               </div>
             </form>
@@ -261,5 +219,3 @@ export default function EditCategory() {
     </div>
   );
 }
-
-
