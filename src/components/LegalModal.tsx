@@ -13,43 +13,51 @@ export default function LegalModal({ isOpen, onClose, title, content }: LegalMod
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 antialiased">
-      {/* Overlay scuro che sfoca lo sfondo */}
+      {/* Overlay scuro con sfocatura */}
       <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       ></div>
 
-      {/* Finestra Modal */}
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+      {/* Finestra Modal - Stile ServiceNow */}
+      <div className="relative w-full max-w-xl bg-white rounded-[24px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
         
-        {/* Header con Titolo e tasto chiusura */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide">
-            {title}
-          </h3>
-          <button 
-            onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X size={24} />
-          </button>
-        </div>
-
-        {/* Contenuto Dinamico con Scroll */}
-        <div className="px-8 py-6 max-h-[70vh] overflow-y-auto">
-          <div className="text-gray-600 leading-relaxed text-[15px] whitespace-pre-wrap font-medium">
-            {content}
+        {/* Header con Logo Centrale */}
+        <div className="pt-10 pb-4 flex flex-col items-center">
+          <div className="w-14 h-14 bg-[#1F5C3E] rounded-2xl flex items-center justify-center font-black text-white text-xl mb-4 shadow-lg shadow-[#1F5C3E]/20">
+            TS
           </div>
-        </div>
-
-        {/* Footer del Modal per chiudere */}
-        <div className="px-6 py-4 border-t border-gray-100 flex justify-end">
+          <h2 className="text-2xl font-bold text-[#1f2937] tracking-tight">
+            {title}
+          </h2>
           <button 
             onClick={onClose}
-            className="px-6 py-2 bg-gray-900 text-white text-[13px] font-bold rounded-xl hover:bg-[#1F5C3E] transition-colors"
+            className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-400 transition-colors"
           >
-            Close
+            <X size={20} />
           </button>
+        </div>
+
+        {/* Contenuto con interpretazione HTML (Risolve i simboli strani) */}
+        <div className="px-10 py-4 max-h-[60vh] overflow-y-auto text-left">
+          <div 
+            className="text-[#4b5563] leading-relaxed text-[15px] font-medium space-y-4 legal-content"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
+        </div>
+
+        {/* Footer con Pulsante Smussato Verde */}
+        <div className="px-10 py-8 flex flex-col gap-3">
+          <button 
+            onClick={onClose}
+            className="w-full py-4 bg-[#1F5C3E] text-white text-[15px] font-bold rounded-2xl hover:bg-black transition-all shadow-md"
+          >
+            Accept and close
+          </button>
+          
+          <p className="text-[11px] text-gray-400 text-center font-medium">
+            TrackySheets Free Templates © 2026
+          </p>
         </div>
       </div>
     </div>
