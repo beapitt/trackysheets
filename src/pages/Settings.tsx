@@ -49,7 +49,7 @@ export default function Settings() {
     try {
       const { error } = await supabase
         .from('settings')
-        .update(settings) // Inviamo tutto l'oggetto settings aggiornato
+        .update(settings) 
         .eq('id', settings.id);
 
       if (error) throw error;
@@ -77,20 +77,22 @@ export default function Settings() {
         {/* GENERAL SEO & CONFIG */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h2 className="text-xs font-black text-[#1F5C3E] uppercase tracking-[0.2em] mb-4 border-b pb-2">General & SEO</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Site Name</label>
-              <input type="text" className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 font-medium" 
-                value={settings.site_name || ''} onChange={e => setSettings({...settings, site_name: e.target.value})} />
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Site Name</label>
+                <input type="text" className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 font-medium text-gray-800 text-[13px] outline-none" 
+                  value={settings.site_name || ''} onChange={e => setSettings({...settings, site_name: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Admin Email</label>
+                <input type="email" className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 font-medium text-gray-800 text-[13px] outline-none" 
+                  value={settings.admin_email || ''} onChange={e => setSettings({...settings, admin_email: e.target.value})} />
+              </div>
             </div>
             <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Admin Email</label>
-              <input type="email" className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 font-medium" 
-                value={settings.admin_email || ''} onChange={e => setSettings({...settings, admin_email: e.target.value})} />
-            </div>
-            <div className="md:col-span-2">
               <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Site Meta Description (Home SEO)</label>
-              <textarea className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 h-20 font-medium" 
+              <textarea className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 h-20 font-medium text-gray-800 text-[13px] outline-none" 
                 value={settings.site_description || ''} onChange={e => setSettings({...settings, site_description: e.target.value})} />
             </div>
           </div>
@@ -102,12 +104,12 @@ export default function Settings() {
           <div className="space-y-4">
             <div>
               <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Hero Title</label>
-              <input type="text" className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 font-medium" 
+              <input type="text" className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 font-medium text-gray-800 text-[13px] outline-none" 
                 value={settings.hero_title || ''} onChange={e => setSettings({...settings, hero_title: e.target.value})} />
             </div>
             <div>
               <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Hero Subtitle</label>
-              <textarea className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 h-20 font-medium" 
+              <textarea className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 h-24 font-medium text-gray-800 text-[13px] outline-none" 
                 value={settings.hero_subtitle || ''} onChange={e => setSettings({...settings, hero_subtitle: e.target.value})} />
             </div>
           </div>
@@ -119,22 +121,22 @@ export default function Settings() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">YouTube URL</label>
-              <input type="text" className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 font-medium" 
+              <input type="text" className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 font-medium text-gray-800 text-[13px] outline-none" 
                 value={settings.youtube_url || ''} onChange={e => setSettings({...settings, youtube_url: e.target.value})} />
             </div>
             <div>
               <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Pinterest URL</label>
-              <input type="text" className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 font-medium" 
+              <input type="text" className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 font-medium text-gray-800 text-[13px] outline-none" 
                 value={settings.pinterest_url || ''} onChange={e => setSettings({...settings, pinterest_url: e.target.value})} />
             </div>
             <div>
               <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Featured Video ID (Home)</label>
-              <input type="text" className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 font-medium" placeholder="e.g. dQw4w9WgXcQ"
+              <input type="text" className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 font-medium text-gray-800 text-[13px] outline-none" placeholder="e.g. dQw4w9WgXcQ"
                 value={settings.featured_video_id || ''} onChange={e => setSettings({...settings, featured_video_id: e.target.value})} />
             </div>
             <div>
               <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Google Analytics ID</label>
-              <input type="text" className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 font-medium" placeholder="G-XXXXXXXXXX"
+              <input type="text" className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 font-medium text-gray-800 text-[13px] outline-none" placeholder="G-XXXXXXXXXX"
                 value={settings.ga_id || ''} onChange={e => setSettings({...settings, ga_id: e.target.value})} />
             </div>
           </div>
@@ -146,17 +148,17 @@ export default function Settings() {
           <div className="space-y-4">
             <div>
               <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Privacy Policy</label>
-              <textarea className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 h-32 font-medium" 
+              <textarea className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 h-36 font-medium text-gray-800 text-[13px] outline-none" 
                 value={settings.privacy_policy || ''} onChange={e => setSettings({...settings, privacy_policy: e.target.value})} />
             </div>
             <div>
               <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Terms of Use</label>
-              <textarea className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 h-32 font-medium" 
+              <textarea className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 h-36 font-medium text-gray-800 text-[13px] outline-none" 
                 value={settings.terms_of_use || ''} onChange={e => setSettings({...settings, terms_of_use: e.target.value})} />
             </div>
             <div>
               <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Disclaimer</label>
-              <textarea className="w-full p-3 border border-gray-100 rounded-xl bg-gray-50 h-32 font-medium" 
+              <textarea className="w-full p-3.5 border border-gray-100 rounded-xl bg-gray-50/50 h-36 font-medium text-gray-800 text-[13px] outline-none" 
                 value={settings.disclaimer || ''} onChange={e => setSettings({...settings, disclaimer: e.target.value})} />
             </div>
           </div>
