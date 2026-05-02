@@ -5,8 +5,9 @@ import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
 import Sidebar from '../layout/Sidebar'
 import { ChevronDown, X } from 'lucide-react'
+import { usePageMeta } from '../hooks/usePageMeta' // Importiamo il tuo nuovo hook
 
-// --- SOTTO-COMPONENTI GRAFICI (Design Claude AI) ---
+// --- SOTTO-COMPONENTI GRAFICI ---
 const CheckIcon = () => (
   <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
     <path d="M2 5l2.5 2.5L8 3" stroke="#1F5C3E" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
@@ -47,6 +48,43 @@ export default function TemplateDetail() {
     window.scrollTo(0, 0)
   }, [slug])
 
+  // --- LOGICA SEO & GEO (JSON-LD) ---
+  const seoTitle = template ? `${template.title} – Free Google Sheets Template | TrackySheets` : 'Loading...';
+  const seoDesc = template ? `Download ${template.title} for free. ${template.short_description} No login required. Safe and professional file.` : '';
+  
+  const schema = template ? {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": template.title,
+    "description": template.long_description,
+    "url": `https://trackysheets.vercel.app/template/${template.slug}`,
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Google Sheets, Microsoft Excel",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "TrackySheets"
+    },
+    "mainEntity": {
+      "@type": "FAQPage",
+      "mainEntity": (template.faqs || []).map((f: any) => ({
+        "@type": "Question",
+        "name": f.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": f.a
+        }
+      }))
+    }
+  } : null;
+
+  // Attiviamo l'hook
+  usePageMeta(seoTitle, seoDesc, schema);
+
   if (loading || !template) return null
 
   const gallery = [template.thumbnail, template.img_1, template.img_2, template.img_3].filter(Boolean)
@@ -65,7 +103,6 @@ export default function TemplateDetail() {
 
       <main className="max-w-[1440px] mx-auto px-5 md:px-10 pt-4 md:pt-6 pb-12">
         
-        {/* TITOLO E DESCRIZIONE BREVE */}
         <div className="mb-5 text-left">
           <h1 className="text-[26px] md:text-[34px] font-bold tracking-tight text-[#374151] leading-tight">
             {template.title}
@@ -84,7 +121,7 @@ export default function TemplateDetail() {
                 className="aspect-video bg-[#f9f9f7] rounded-[24px] overflow-hidden border border-gray-100 shadow-sm cursor-zoom-in group relative"
                 onClick={() => setLightboxImg(selectedImg)}
               >
-                <img src={selectedImg || ''} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.01]" alt="View" />
+                <img src={selectedImg || ''} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.01]" alt={template.title} />
               </div>
 
               <div className="flex gap-2 mt-2 overflow-x-auto pb-1 no-scrollbar">
@@ -96,7 +133,7 @@ export default function TemplateDetail() {
                       selectedImg === img ? 'border-[#1F5C3E] shadow-md' : 'border-transparent opacity-60'
                     }`}
                   >
-                    <img src={img} className="w-full h-full object-cover" alt="Thumb" />
+                    <img src={img} className="w-full h-full object-cover" alt={`${template.title} screenshot ${i+1}`} />
                   </button>
                 ))}
               </div>
@@ -109,7 +146,7 @@ export default function TemplateDetail() {
 
             {/* HOW IT WORKS */}
             <div className="mb-8 bg-[#f9f9f6] p-7 rounded-[28px] border border-gray-100 max-w-4xl text-left">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#1F5C3E] mb-5">How it works</h3>
+              <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#1F5C3E] mb-5">How it works</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
                   { t: 'Click Download Now', d: 'Instant access to the file link.' },
@@ -121,7 +158,7 @@ export default function TemplateDetail() {
                       {i + 1}
                     </div>
                     <div>
-                      <h4 className="text-[14px] font-bold text-[#1f2937] mb-0.5">{step.t}</h4>
+                      <h3 className="text-[14px] font-bold text-[#1f2937] mb-0.5">{step.t}</h3>
                       <p className="text-[12px] text-gray-500 leading-snug">{step.d}</p>
                     </div>
                   </div>
@@ -132,7 +169,7 @@ export default function TemplateDetail() {
             {/* FAQ CENTRALI */}
             {faqData.length > 0 && (
               <div className="mb-10 max-w-4xl text-left px-1">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Frequently Asked Questions</h3>
+                <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Frequently Asked Questions</h2>
                 <div className="space-y-1.5">
                   {faqData.map((item: any, i: number) => (
                     <div key={i} className="border border-gray-50 rounded-xl overflow-hidden">
@@ -155,10 +192,7 @@ export default function TemplateDetail() {
             )}
           </div>
 
-          {/* SIDEBAR */}
           <aside className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24 self-start space-y-6">
-            
-            {/* --- SPECS BOX CLAUDE AI --- */}
             <div className="flex flex-col w-full shadow-sm">
               <div className="bg-[#f5f4ed] rounded-t-[14px] px-5 pt-4 pb-3 border border-[#e8e6de] border-b-0">
                 <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-400 mb-3">Technical Specs</p>
@@ -192,8 +226,6 @@ export default function TemplateDetail() {
                 ))}
               </div>
             </div>
-
-            {/* La Sidebar gestirà automaticamente il video e il resto delle categorie */}
             <Sidebar />
           </aside>
         </div>
