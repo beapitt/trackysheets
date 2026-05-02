@@ -13,16 +13,16 @@ export default function LegalModal({ isOpen, onClose, title, content }: LegalMod
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 antialiased">
-      {/* Overlay scuro con sfocatura */}
+      {/* Overlay scuro con sfocatura leggera */}
       <div 
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       ></div>
 
-      {/* Finestra Modal - Stile ServiceNow */}
-      <div className="relative w-full max-w-xl bg-white rounded-[24px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+      {/* Finestra Modal - Design ispirato a ServiceNow */}
+      <div className="relative w-full max-w-xl bg-white rounded-[32px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
         
-        {/* Header con Logo Centrale */}
+        {/* Header: Logo TS centrato */}
         <div className="pt-10 pb-4 flex flex-col items-center">
           <div className="w-14 h-14 bg-[#1F5C3E] rounded-2xl flex items-center justify-center font-black text-white text-xl mb-4 shadow-lg shadow-[#1F5C3E]/20">
             TS
@@ -30,33 +30,34 @@ export default function LegalModal({ isOpen, onClose, title, content }: LegalMod
           <h2 className="text-2xl font-bold text-[#1f2937] tracking-tight">
             {title}
           </h2>
+          {/* Tasto X in alto a destra */}
           <button 
             onClick={onClose}
-            className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-400 transition-colors"
+            className="absolute top-8 right-8 p-2 rounded-full hover:bg-gray-100 text-gray-400 transition-colors"
           >
             <X size={20} />
           </button>
         </div>
 
-        {/* Contenuto con interpretazione HTML (Risolve i simboli strani) */}
-        <div className="px-10 py-4 max-h-[60vh] overflow-y-auto text-left">
+        {/* Corpo del testo: interpreta i tag HTML (Bold, Br, ecc.) */}
+        <div className="px-10 py-4 max-h-[55vh] overflow-y-auto text-left">
           <div 
-            className="text-[#4b5563] leading-relaxed text-[15px] font-medium space-y-4 legal-content"
+            className="text-[#4b5563] leading-relaxed text-[15px] font-medium legal-content-body"
             dangerouslySetInnerHTML={{ __html: content }}
           />
         </div>
 
-        {/* Footer con Pulsante Smussato Verde */}
-        <div className="px-10 py-8 flex flex-col gap-3">
+        {/* Footer: Pulsante Verde Smussato */}
+        <div className="px-10 pt-6 pb-10 flex flex-col gap-4">
           <button 
             onClick={onClose}
-            className="w-full py-4 bg-[#1F5C3E] text-white text-[15px] font-bold rounded-2xl hover:bg-black transition-all shadow-md"
+            className="w-full py-4 bg-[#1F5C3E] text-white text-[15px] font-bold rounded-[18px] hover:bg-black transition-all shadow-md active:scale-[0.98]"
           >
-            Accept and close
+            Close
           </button>
           
-          <p className="text-[11px] text-gray-400 text-center font-medium">
-            TrackySheets Free Templates © 2026
+          <p className="text-[10px] text-gray-300 text-center font-bold uppercase tracking-widest">
+            TrackySheets • Free Resources
           </p>
         </div>
       </div>
