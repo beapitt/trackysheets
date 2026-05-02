@@ -48,7 +48,8 @@ export default function TemplateDetail() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+        {/* GRID LAYOUT - RIDOTTO GAP SU MOBILE */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-10 items-start">
           
           <div className="lg:col-span-8 xl:col-span-9">
             {/* GALLERY */}
@@ -75,14 +76,14 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            <div className="mb-8 max-w-4xl text-left">
+            <div className="mb-8 max-w-4xl text-left px-1">
               <div className="text-[16px] text-[#4b5563] leading-relaxed whitespace-pre-wrap font-medium">
                 {template.long_description}
               </div>
             </div>
 
-            {/* GUIDE BOX - MARGINE RIDOTTO PER AVVICINARE LA SIDEBAR SU MOBILE */}
-            <div className="mb-4 lg:mb-8 bg-gray-50/50 p-6 rounded-2xl border border-gray-100 max-w-4xl text-left">
+            {/* GUIDE BOX - AZZERATO MARGINE INFERIORE SU MOBILE */}
+            <div className="mb-0 lg:mb-10 bg-gray-50/50 p-6 rounded-2xl border border-gray-100 max-w-4xl text-left">
               <h3 className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Guide</h3>
               <div className="space-y-3">
                 {['Click Download Now', 'Select Make a copy', 'Instant access'].map((step, i) => (
@@ -95,12 +96,17 @@ export default function TemplateDetail() {
             </div>
           </div>
 
-          {/* SIDEBAR - SIGILLATA */}
-          <aside className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24 self-start">
-            <div className="bg-[#f9f9f6] rounded-2xl p-5 border border-gray-100 shadow-sm">
+          {/* SIDEBAR - ATTACCATA AL BOX SOPRA SU MOBILE */}
+          <aside className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24 self-start mt-2 lg:mt-0">
+            <div className="bg-[#f9f9f6] rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col">
               <h4 className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 border-b border-gray-100 pb-2 text-center">Specs</h4>
+              
               <div className="space-y-2.5 text-[12px] mb-5">
-                {[{l:'Software', v:'Google Sheets'}, {l:'License', v:'Personal'}, {l:'Format', v:'Copy'}].map((item, i) => (
+                {[
+                  {l:'Software', v:'Google Sheets'}, 
+                  {l:'License', v:'Personal Use'}, 
+                  {l:'Format', v:'Instant Copy'}
+                ].map((item, i) => (
                   <div key={i} className="flex justify-between items-center border-b border-gray-50 pb-1.5 last:border-0 last:pb-0">
                     <span className="text-gray-400 font-bold">{item.l}</span>
                     <span className="text-[#1f2937] font-bold">{item.v}</span>
@@ -108,7 +114,6 @@ export default function TemplateDetail() {
                 ))}
               </div>
 
-              {/* TASTO DOWNLOAD - MARGINE MT-5 PER PRECISIONE */}
               <a
                 href={template.google_sheets_url}
                 target="_blank"
@@ -117,15 +122,36 @@ export default function TemplateDetail() {
                 <Download size={18} /> Download Now
               </a>
 
-              {/* CERCHIETTI VERDI - ATTACCATI AL TASTO SENZA SPAZI EXTRA */}
-              <div className="flex flex-wrap justify-center gap-3 text-[9px] font-black text-gray-400 uppercase tracking-tight mt-4">
+              <div className="flex flex-wrap justify-center gap-3 text-[9px] font-black text-gray-400 uppercase tracking-tight mt-5">
                 <div className="flex items-center gap-1"><CheckCircle2 size={11} className="text-[#C0DD97]" /> No macros</div>
                 <div className="flex items-center gap-1"><CheckCircle2 size={11} className="text-[#C0DD97]" /> 100% free</div>
               </div>
             </div>
 
-            {/* SIDEBAR CONTENUTI - MARGINE RIDOTTO */}
-            <div className="mt-2 lg:mt-4">
+            {/* FAQ - SPOSTATE SOTTO IL BOX DOWNLOAD SU MOBILE PER COMPATTEZZA */}
+            {faqData.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-gray-100 text-left px-1">
+                <h3 className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">FAQ</h3>
+                <div className="divide-y divide-gray-50">
+                  {faqData.map((item: any, i: number) => (
+                    <div key={i} className="py-0">
+                      <button
+                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                        className="w-full flex justify-between items-center py-3 text-left group"
+                      >
+                        <span className="text-[13px] font-bold text-[#1f2937] group-hover:text-[#1F5C3E] transition-colors">{item.q}</span>
+                        <ChevronDown size={14} className={`transition-transform duration-300 ${openFaq === i ? 'rotate-180 text-[#1F5C3E]' : 'text-gray-300'}`} />
+                      </button>
+                      <div className={`transition-all duration-200 overflow-hidden ${openFaq === i ? 'max-h-40 pb-3 opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <p className="text-[13px] text-[#6b7280] leading-relaxed">{item.a}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6">
               <Sidebar />
             </div>
           </aside>
