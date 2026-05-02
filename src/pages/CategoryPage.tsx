@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
 import Sidebar from '../layout/Sidebar'
+import { usePageMeta } from '../hooks/usePageMeta' // Importiamo l'hook SEO
 
 export default function CategoryPage() {
   const { slug } = useParams()
@@ -15,7 +16,7 @@ export default function CategoryPage() {
     async function fetchCategoryData() {
       setLoading(true)
       
-      // 1. Troviamo la categoria corretta tramite lo slug
+      // 1. Cerchiamo la categoria tramite lo slug
       const { data: catData } = await supabase
         .from('categories')
         .select('*')
@@ -25,8 +26,7 @@ export default function CategoryPage() {
       if (catData) {
         setCategory(catData)
         
-        // 2. CORREZIONE: Filtriamo i template usando il NOME della categoria
-        // perché nel tuo DB la colonna si chiama 'category' (testo)
+        // 2. Filtriamo i template usando il NOME della categoria
         const { data: tData } = await supabase
           .from('templates')
           .select('*')
@@ -41,6 +41,32 @@ export default function CategoryPage() {
     fetchCategoryData()
     window.scrollTo(0, 0)
   }, [slug])
+
+  // --- LOGICA SEO & GEO ---
+  // Se la categoria esiste, usiamo i suoi dati SEO, altrimenti dei valori di fallback
+  const seoTitle = category?.seo_title 
+    ? category.seo_title 
+    : `${category?.name || 'Templates'} for Google Sheets | Free Download`;
+    
+  const seoDesc = category?.description 
+    ? category.description 
+    : `Download free ${category?.name || ''} Google Sheets templates. Professional spreadsheets, easy to use, no login required.`;
+
+  // Schema JSON-LD per la categoria (GEO)
+  const schema = category ? {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": seoTitle,
+    "description": seoDesc,
+    "url": `https://trackysheets.vercel.app/category/${slug}`,
+    "publisher": {
+      "@type": "Organization",
+      "name": "TrackySheets"
+    }
+  } : null;
+
+  // Attivazione Meta Tag e Schema
+  usePageMeta(seoTitle, seoDesc, schema);
 
   if (loading) return null;
 
@@ -60,6 +86,12 @@ export default function CategoryPage() {
               <h1 className="text-[26px] md:text-[34px] font-bold text-[#1f2937] leading-tight uppercase">
                 {category?.name || slug}
               </h1>
+              {/* Mostriamo la descrizione della categoria se presente (ottimo per la SEO) */}
+              {category?.description && (
+                <p className="mt-4 text-gray-500 text-[15px] max-w-2xl leading-relaxed">
+                  {category.description}
+                </p>
+              )}
             </header>
 
             {/* GRIGLIA TEMPLATE */}
