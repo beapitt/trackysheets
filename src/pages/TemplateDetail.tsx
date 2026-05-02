@@ -4,10 +4,9 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
 import Sidebar from '../layout/Sidebar'
-import { ChevronDown, X, MonitorPlay } from 'lucide-react'
+import { ChevronDown, X } from 'lucide-react'
 
 // --- SOTTO-COMPONENTI GRAFICI (Design Claude AI) ---
-
 const CheckIcon = () => (
   <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
     <path d="M2 5l2.5 2.5L8 3" stroke="#1F5C3E" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
@@ -53,14 +52,6 @@ export default function TemplateDetail() {
   const gallery = [template.thumbnail, template.img_1, template.img_2, template.img_3].filter(Boolean)
   const faqData = Array.isArray(template.faqs) ? template.faqs : []
 
-  const getYouTubeID = (url: string) => {
-    if (!url) return null;
-    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\??v?=?))([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[7].length === 11) ? match[7] : null;
-  };
-  const videoId = template.youtube_url ? getYouTubeID(template.youtube_url) : null;
-
   const specs = [
     { label: "Software", value: "Google Sheets" },
     { label: "License", value: "Personal Use" },
@@ -74,7 +65,7 @@ export default function TemplateDetail() {
 
       <main className="max-w-[1440px] mx-auto px-5 md:px-10 pt-4 md:pt-6 pb-12">
         
-        {/* TITOLO E DESCRIZIONE BREVE (No Italic, Grigio Antracite) */}
+        {/* TITOLO E DESCRIZIONE BREVE */}
         <div className="mb-5 text-left">
           <h1 className="text-[26px] md:text-[34px] font-bold tracking-tight text-[#374151] leading-tight">
             {template.title}
@@ -112,13 +103,11 @@ export default function TemplateDetail() {
             </div>
 
             {/* DESCRIPTION */}
-            <div className="mb-8 max-w-4xl text-left px-1">
-              <div className="text-[16px] text-[#4b5563] leading-relaxed whitespace-pre-wrap font-medium">
-                {template.long_description}
-              </div>
+            <div className="mb-8 max-w-4xl text-left px-1 text-[16px] leading-relaxed font-medium whitespace-pre-wrap">
+              {template.long_description}
             </div>
 
-            {/* HOW IT WORKS (CERCHIETTI) */}
+            {/* HOW IT WORKS */}
             <div className="mb-8 bg-[#f9f9f6] p-7 rounded-[28px] border border-gray-100 max-w-4xl text-left">
               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#1F5C3E] mb-5">How it works</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -194,7 +183,7 @@ export default function TemplateDetail() {
                 </span>
                 <ChevronRight />
               </a>
-              <div className="flex justify-between pt-3 px-1">
+              <div className="flex justify-around pt-3 px-1">
                 {["No macros", "Safe file", "Free forever"].map((label) => (
                   <span key={label} className="flex items-center gap-1 text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
                     <CheckIcon />
@@ -204,19 +193,7 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* VIDEO TUTORIAL */}
-            {videoId && (
-              <div className="bg-white rounded-[24px] p-1.5 border border-gray-100 shadow-sm overflow-hidden">
-                <div className="aspect-video bg-black rounded-[20px] overflow-hidden relative">
-                  <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allowFullScreen title="Guide" />
-                </div>
-                <div className="p-3 flex items-center gap-2">
-                  <MonitorPlay size={14} className="text-[#1F5C3E]" />
-                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Video Tutorial</span>
-                </div>
-              </div>
-            )}
-
+            {/* La Sidebar gestirà automaticamente il video e il resto delle categorie */}
             <Sidebar />
           </aside>
         </div>
