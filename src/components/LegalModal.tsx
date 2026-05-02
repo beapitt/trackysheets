@@ -39,10 +39,10 @@ export default function LegalModal({ isOpen, onClose, title, content }: LegalMod
           </button>
         </div>
 
-        {/* Corpo del testo: interpreta i tag HTML (Bold, Br, ecc.) */}
-        <div className="px-10 py-4 max-h-[55vh] overflow-y-auto text-left">
+        {/* Corpo del testo con scrollbar moderna */}
+        <div className="px-10 py-4 max-h-[55vh] overflow-y-auto text-left legal-modal-scroll">
           <div 
-            className="text-[#4b5563] leading-relaxed text-[15px] font-medium legal-content-body"
+            className="text-[#4b5563] leading-relaxed text-[15px] font-medium"
             dangerouslySetInnerHTML={{ __html: content }}
           />
         </div>
