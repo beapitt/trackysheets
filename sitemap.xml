@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://trackysheets.vercel.app/</loc>
+    <priority>1.0</priority>
+  </url>
+  
+  <url>
+    <loc>https://trackysheets.vercel.app/category/invoicing-billing</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://trackysheets.vercel.app/category/personal-finance</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://trackysheets.vercel.app/category/real-estate-rental</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://trackysheets.vercel.app/category/project-management</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://trackysheets.vercel.app/category/productivity-lifestyle</loc>
+    <priority>0.8</priority>
+  </url>
+</urlset>
