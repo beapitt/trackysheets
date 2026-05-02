@@ -12,11 +12,14 @@ export default function Terms() {
     async function fetchTerms() {
       const { data } = await supabase
         .from('settings')
-        .select('terms_of_service')
+        .select('*') // Preleviamo tutto per sicurezza
         .maybeSingle();
       
-      if (data?.terms_of_service) {
-        setContent(data.terms_of_service);
+      // Controllo incrociato: prova a leggere 'terms_of_use' o 'terms_of_service'
+      const termsData = data?.terms_of_use || data?.terms_of_service;
+      
+      if (termsData) {
+        setContent(termsData);
       }
       setLoading(false);
     }
@@ -25,37 +28,46 @@ export default function Terms() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white font-sans text-left overflow-y-auto">
+    <div className="flex flex-col min-h-screen bg-white font-inter text-[#4b5563] antialiased overflow-x-hidden">
       <Navbar />
       
-      <div className="flex-grow w-full max-w-[1550px] mx-auto px-4 md:px-12 py-10">
-        <div className="flex flex-col lg:flex-row items-start gap-12">
+      <main className="flex-grow w-full max-w-[1440px] mx-auto px-5 md:px-10 pt-6 md:pt-8 pb-16">
+        <div className="flex flex-col lg:flex-row gap-10">
           
-          <main className="w-full lg:flex-1 min-w-0">
-            <h1 className="text-[24px] md:text-[32px] font-bold text-[#1f2937] mb-6 border-b pb-4 uppercase tracking-tight text-left">
-              Terms of Service
-            </h1>
+          <div className="flex-1 min-w-0">
+            {/* INTESTAZIONE */}
+            <div className="mb-8 border-b border-gray-50 pb-6 text-left">
+              <p className="text-[10px] font-black tracking-[0.2em] uppercase text-[#1F5C3E] mb-1">Legal</p>
+              <h1 className="text-[26px] md:text-[34px] font-bold text-[#1f2937] leading-tight uppercase">
+                Terms of Use
+              </h1>
+            </div>
             
             {loading ? (
-              <p className="text-gray-400 italic font-bold text-[10px] uppercase tracking-widest">Loading terms...</p>
+              <div className="py-20 text-center">
+                <p className="text-gray-400 italic font-bold text-[10px] uppercase tracking-widest animate-pulse">Loading terms...</p>
+              </div>
             ) : (
               <div 
-                className="prose prose-slate max-w-none text-[15px] leading-relaxed text-gray-600 mb-20 text-left"
+                className="text-[15px] leading-relaxed text-[#4b5563] font-medium space-y-6 text-left"
                 dangerouslySetInnerHTML={{ __html: content }} 
               />
             )}
             
             {!loading && !content && (
-              <p className="text-gray-400 italic">Please update content in Admin Settings.</p>
+              <div className="bg-gray-50 p-10 rounded-3xl border border-dashed border-gray-200 text-center">
+                <p className="text-gray-400 italic text-sm">Please update content in Admin Settings (Check 'terms_of_use' field).</p>
+              </div>
             )}
-          </main>
+          </div>
 
-          <aside className="w-full lg:w-[320px] shrink-0 sticky top-24 self-start">
+          {/* SIDEBAR ALLINEATA */}
+          <aside className="w-full lg:w-[300px] shrink-0 lg:sticky lg:top-24 self-start">
              <Sidebar />
           </aside>
           
         </div>
-      </div>
+      </main>
       
       <Footer />
     </div>
