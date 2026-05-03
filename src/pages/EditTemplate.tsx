@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, X } from 'lucide-react';
 
 export default function EditTemplate() {
   const { id } = useParams();
@@ -19,7 +19,6 @@ export default function EditTemplate() {
     featured: false, status: 'published'
   });
 
-  // Stato specifico per le FAQ (Metodo Pro)
   const [faqs, setFaqs] = useState<{ q: string; a: string }[]>([]);
 
   useEffect(() => {
@@ -30,8 +29,12 @@ export default function EditTemplate() {
         const { data } = await supabase.from('templates').select('*').eq('id', id).single();
         if (data) {
           setFormData(data);
-          setPreviews({thumbnail: data.thumbnail, img_1: data.img_1, img_2: data.img_2, img_3: data.img_3});
-          // Carica le FAQ se esistono, altrimenti array vuoto
+          setPreviews({
+            thumbnail: data.thumbnail, 
+            img_1: data.img_1, 
+            img_2: data.img_2, 
+            img_3: data.img_3
+          });
           setFaqs(Array.isArray(data.faqs) ? data.faqs : []);
         }
       }
@@ -44,9 +47,18 @@ export default function EditTemplate() {
     const file = e.target.files[0];
     const name = e.target.name;
     if (file) {
-      setFiles({...files, [name]: file});
-      setPreviews({...previews, [name]: URL.createObjectURL(file)});
+      setFiles({ ...files, [name]: file });
+      setPreviews({ ...previews, [name]: URL.createObjectURL(file) });
     }
+  };
+
+  // FUNZIONE PER RIMUOVERE L'IMMAGINE
+  const removeImage = (field: string) => {
+    setPreviews({ ...previews, [field]: null });
+    setFormData({ ...formData, [field]: '' });
+    const newFiles = { ...files };
+    delete newFiles[field];
+    setFiles(newFiles);
   };
 
   const upload = async (file: File, path: string) => {
@@ -56,7 +68,6 @@ export default function EditTemplate() {
     return data.publicUrl;
   };
 
-  // Funzioni per gestire le FAQ
   const handleAddFaq = () => {
     setFaqs([...faqs, { q: '', a: '' }]);
   };
@@ -76,7 +87,7 @@ export default function EditTemplate() {
     try {
       let finalData = { 
         ...formData,
-        faqs: faqs // Aggiungiamo l'array delle FAQ ai dati da salvare
+        faqs: faqs 
       };
       
       for (const [key, file] of Object.entries(files)) {
@@ -96,7 +107,7 @@ export default function EditTemplate() {
     }
   };
 
-  if (loading) return <div className="p-10 font-sans">Loading...</div>;
+  if (loading) return <div className="p-10 font-sans text-center">Loading...</div>;
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen font-sans text-left text-gray-800">
@@ -106,11 +117,11 @@ export default function EditTemplate() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
             <label className="text-xs font-bold uppercase text-gray-400">Title *</label>
-            <input value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-3 border rounded mt-1 outline-none" />
+            <input value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-3 border rounded mt-1 outline-none focus:border-green-800" />
           </div>
           <div>
             <label className="text-xs font-bold uppercase text-gray-400">Category *</label>
-            <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full p-3 border rounded mt-1">
+            <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full p-3 border rounded mt-1 outline-none">
               <option value="">Select...</option>
               {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
             </select>
@@ -119,23 +130,44 @@ export default function EditTemplate() {
 
         <div className="mb-6">
           <label className="text-xs font-bold uppercase text-gray-400">Short Description</label>
-          <textarea value={formData.short_description} onChange={e => setFormData({...formData, short_description: e.target.value})} className="w-full p-3 border rounded mt-1" rows={2} />
+          <textarea value={formData.short_description} onChange={e => setFormData({...formData, short_description: e.target.value})} className="w-full p-3 border rounded mt-1 outline-none" rows={2} />
         </div>
 
+        {/* --- SEZIONE IMMAGINI CON TASTO RIMOZIONE --- */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {['thumbnail', 'img_1', 'img_2', 'img_3'].map(f => (
-            <div key={f} className="border p-2 rounded bg-gray-50 text-center">
-              <label className="block text-[10px] font-bold uppercase mb-1">{f}</label>
-              <input type="file" name={f} onChange={handleFile} className="w-full text-[10px]" />
-              {previews[f] && <img src={previews[f]} className="mt-2 w-full h-20 object-cover rounded" alt="preview" />}
+            <div key={f} className="border p-2 rounded bg-gray-50 text-center relative">
+              
+              {/* Tasto Rimuovi (X) */}
+              {previews[f] && (
+                <button
+                  type="button"
+                  onClick={() => removeImage(f)}
+                  className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 shadow-lg hover:bg-red-700 z-10 transition-colors"
+                  title="Remove image"
+                >
+                  <X size={14} />
+                </button>
+              )}
+
+              <label className="block text-[10px] font-bold uppercase mb-1">{f.replace('_', ' ')}</label>
+              <input type="file" name={f} onChange={handleFile} className="w-full text-[10px] mb-2" />
+              
+              {previews[f] ? (
+                <img src={previews[f]} className="w-full h-24 object-cover rounded shadow-sm border border-gray-200" alt="preview" />
+              ) : (
+                <div className="w-full h-24 border-2 border-dashed border-gray-200 rounded flex items-center justify-center text-gray-300 text-[10px] bg-white italic">
+                  No image
+                </div>
+              )}
             </div>
           ))}
         </div>
 
-        {/* --- SEZIONE FAQ "PRO" --- */}
+        {/* --- SEZIONE FAQ --- */}
         <div className="border-t pt-6 mb-8">
           <div className="flex items-center justify-between mb-4">
-            <label className="block text-xs font-bold uppercase text-gray-400">Template Specific FAQs (SEO & User Support)</label>
+            <label className="block text-xs font-bold uppercase text-gray-400">Template Specific FAQs</label>
             <button 
               type="button" 
               onClick={handleAddFaq}
@@ -147,17 +179,17 @@ export default function EditTemplate() {
           
           <div className="space-y-3">
             {faqs.map((faq, index) => (
-              <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-200 relative group">
+              <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-200 relative">
                 <button 
                   type="button" 
                   onClick={() => handleRemoveFaq(index)}
-                  className="absolute top-2 right-2 text-gray-300 hover:text-red-600 transition"
+                  className="absolute top-2 right-2 text-gray-400 hover:text-red-600 transition"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={16} />
                 </button>
-                <div className="space-y-2 pr-6">
+                <div className="space-y-2 pr-8">
                   <input 
-                    placeholder="Question (e.g. Can I change the currency?)" 
+                    placeholder="Question..." 
                     value={faq.q} 
                     onChange={e => handleFaqChange(index, 'q', e.target.value)}
                     className="w-full p-2 text-sm font-bold border rounded bg-white outline-none focus:border-green-800"
@@ -174,25 +206,24 @@ export default function EditTemplate() {
             ))}
           </div>
         </div>
-        {/* --- FINE SEZIONE FAQ --- */}
 
         <div className="space-y-4 border-t pt-6">
-          <label className="block text-xs font-bold uppercase text-gray-300">Links & SEO</label>
-          <input placeholder="Download URL" value={formData.download_url} onChange={e => setFormData({...formData, download_url: e.target.value})} className="w-full p-3 border rounded" />
-          <input placeholder="SEO Title" value={formData.seo_title} onChange={e => setFormData({...formData, seo_title: e.target.value})} className="w-full p-3 border rounded" />
-          <textarea placeholder="Meta Description" value={formData.meta_description} onChange={e => setFormData({...formData, meta_description: e.target.value})} className="w-full p-3 border rounded" />
+          <label className="block text-xs font-bold uppercase text-gray-400">Links & SEO</label>
+          <input placeholder="Download URL" value={formData.download_url} onChange={e => setFormData({...formData, download_url: e.target.value})} className="w-full p-3 border rounded outline-none focus:border-green-800" />
+          <input placeholder="SEO Title" value={formData.seo_title} onChange={e => setFormData({...formData, seo_title: e.target.value})} className="w-full p-3 border rounded outline-none focus:border-green-800" />
+          <textarea placeholder="Meta Description" value={formData.meta_description} onChange={e => setFormData({...formData, meta_description: e.target.value})} className="w-full p-3 border rounded outline-none focus:border-green-800" rows={3} />
           
-          <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full p-3 border rounded">
+          <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full p-3 border rounded outline-none bg-white">
             <option value="draft">Draft</option>
             <option value="published">Published</option>
           </select>
         </div>
 
         <div className="mt-8 flex gap-4">
-          <button onClick={handleSave} disabled={saving} className="flex-1 bg-green-800 text-white p-4 rounded font-bold uppercase hover:bg-green-900 transition">
+          <button onClick={handleSave} disabled={saving} className="flex-1 bg-green-800 text-white p-4 rounded-lg font-bold uppercase hover:bg-green-900 transition shadow-md disabled:bg-gray-400">
             {saving ? 'Saving...' : 'Save Template'}
           </button>
-          <Link to="/admin/templates" className="p-4 text-gray-400 font-bold no-underline uppercase text-sm">Cancel</Link>
+          <Link to="/admin/templates" className="p-4 text-gray-500 font-bold uppercase text-sm flex items-center justify-center">Cancel</Link>
         </div>
       </div>
     </div>
