@@ -52,7 +52,6 @@ export default function EditTemplate() {
     }
   };
 
-  // FUNZIONE PER RIMUOVERE L'IMMAGINE
   const removeImage = (field: string) => {
     setPreviews({ ...previews, [field]: null });
     setFormData({ ...formData, [field]: '' });
@@ -128,31 +127,45 @@ export default function EditTemplate() {
           </div>
         </div>
 
-        <div className="mb-6">
-          <label className="text-xs font-bold uppercase text-gray-400">Short Description</label>
-          <textarea value={formData.short_description} onChange={e => setFormData({...formData, short_description: e.target.value})} className="w-full p-3 border rounded mt-1 outline-none" rows={2} />
+        {/* --- DESCRIZIONI --- */}
+        <div className="space-y-6 mb-6">
+          <div>
+            <label className="text-xs font-bold uppercase text-gray-400">Short Description</label>
+            <textarea 
+              value={formData.short_description} 
+              onChange={e => setFormData({...formData, short_description: e.target.value})} 
+              className="w-full p-3 border rounded mt-1 outline-none focus:border-green-800" 
+              rows={2} 
+              placeholder="A short tagline for the top of the page..."
+            />
+          </div>
+          <div>
+            <label className="text-xs font-bold uppercase text-gray-400">Long Description (Product Details)</label>
+            <textarea 
+              value={formData.long_description} 
+              onChange={e => setFormData({...formData, long_description: e.target.value})} 
+              className="w-full p-3 border rounded mt-1 outline-none focus:border-green-800" 
+              rows={6} 
+              placeholder="Detailed explanation of features, how to use, and benefits..."
+            />
+          </div>
         </div>
 
-        {/* --- SEZIONE IMMAGINI CON TASTO RIMOZIONE --- */}
+        {/* --- IMMAGINI --- */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {['thumbnail', 'img_1', 'img_2', 'img_3'].map(f => (
             <div key={f} className="border p-2 rounded bg-gray-50 text-center relative">
-              
-              {/* Tasto Rimuovi (X) */}
               {previews[f] && (
                 <button
                   type="button"
                   onClick={() => removeImage(f)}
                   className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 shadow-lg hover:bg-red-700 z-10 transition-colors"
-                  title="Remove image"
                 >
                   <X size={14} />
                 </button>
               )}
-
               <label className="block text-[10px] font-bold uppercase mb-1">{f.replace('_', ' ')}</label>
               <input type="file" name={f} onChange={handleFile} className="w-full text-[10px] mb-2" />
-              
               {previews[f] ? (
                 <img src={previews[f]} className="w-full h-24 object-cover rounded shadow-sm border border-gray-200" alt="preview" />
               ) : (
@@ -164,7 +177,7 @@ export default function EditTemplate() {
           ))}
         </div>
 
-        {/* --- SEZIONE FAQ --- */}
+        {/* --- FAQ --- */}
         <div className="border-t pt-6 mb-8">
           <div className="flex items-center justify-between mb-4">
             <label className="block text-xs font-bold uppercase text-gray-400">Template Specific FAQs</label>
@@ -176,10 +189,9 @@ export default function EditTemplate() {
               + Add FAQ
             </button>
           </div>
-          
           <div className="space-y-3">
             {faqs.map((faq, index) => (
-              <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-200 relative">
+              <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-200 relative text-left">
                 <button 
                   type="button" 
                   onClick={() => handleRemoveFaq(index)}
@@ -187,7 +199,7 @@ export default function EditTemplate() {
                 >
                   <Trash2 size={16} />
                 </button>
-                <div className="space-y-2 pr-8">
+                <div className="space-y-2 pr-8 text-left">
                   <input 
                     placeholder="Question..." 
                     value={faq.q} 
@@ -207,6 +219,7 @@ export default function EditTemplate() {
           </div>
         </div>
 
+        {/* --- LINKS & SEO --- */}
         <div className="space-y-4 border-t pt-6">
           <label className="block text-xs font-bold uppercase text-gray-400">Links & SEO</label>
           <input placeholder="Download URL" value={formData.download_url} onChange={e => setFormData({...formData, download_url: e.target.value})} className="w-full p-3 border rounded outline-none focus:border-green-800" />
