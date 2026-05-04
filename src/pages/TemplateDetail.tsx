@@ -34,7 +34,7 @@ export default function TemplateDetail() {
   const [selectedImg, setSelectedImg] = useState<string | null>(null)
   const [lightboxImg, setLightboxImg] = useState<string | null>(null)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
-  const [isExpanded, setIsExpanded] = useState(false) // Stato per il Read More
+  const [isExpanded, setIsExpanded] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -50,14 +50,14 @@ export default function TemplateDetail() {
   }, [slug])
 
   // --- LOGICA SEO & GEO (JSON-LD) ---
-  const seoTitle = template ? `${template.title} – Free Google Sheets Template | TrackySheets` : 'Loading...';
-  const seoDesc = template ? `Download ${template.title} for free. ${template.short_description} No login required. Safe and professional file.` : '';
+  const seoTitle = template ? `${template.seo_title || template.title}` : 'Loading...';
+  const seoDesc = template ? (template.meta_description || '') : '';
   
   const schema = template ? {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": template.title,
-    "description": template.long_description,
+    "description": template.meta_description,
     "url": `https://trackysheets.vercel.app/template/${template.slug}`,
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Google Sheets, Microsoft Excel",
@@ -142,15 +142,16 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* LONG DESCRIPTION CON EFFETTO READ MORE */}
+            {/* LONG DESCRIPTION COMPATTA CON READ MORE */}
             {template.long_description && (
               <div className="mb-10 max-w-4xl text-left px-1">
                 <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Product Details</h2>
                 
-                <div className={`relative transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-32'}`}>
-                  <div className="text-[15px] md:text-[16px] leading-relaxed font-medium text-[#4b5563] whitespace-pre-wrap">
-                    {template.long_description}
-                  </div>
+                <div className={`relative transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[3000px]' : 'max-h-32'}`}>
+                  <div 
+                    className="text-[15px] md:text-[16px] leading-snug font-medium text-[#4b5563] space-y-3"
+                    dangerouslySetInnerHTML={{ __html: template.long_description.replace(/\n/g, '<br />') }}
+                  />
                   
                   {!isExpanded && (
                     <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent" />
@@ -229,7 +230,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
               <a
-                href={template.download_url} // Verificato: deve puntare a download_url con /copy
+                href={template.download_url} 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-between bg-[#1F5C3E] hover:bg-black text-white px-5 py-4 rounded-b-[14px] border border-[#1F5C3E] transition-all no-underline group"
