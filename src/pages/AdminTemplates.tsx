@@ -78,7 +78,7 @@ export default function AdminTemplates() {
       <div className="max-w-6xl mx-auto text-left">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-black text-[#14532d] uppercase tracking-tight">Manage Templates</h1>
-          <button onClick={() => setEditingTemplate({ title: '', slug: '', status: 'draft', faqs: [], software: 'Google Sheets', file_format: 'Instant Copy' })} className="bg-[#1a8856] text-white px-6 py-2 rounded-lg font-bold shadow-md hover:bg-[#14532d] transition">+ Add New</button>
+          <button onClick={() => setEditingTemplate({ title: '', slug: '', status: 'draft', faqs: [], software: 'Google Sheets', file_format: 'Instant Copy', short_description: '', long_description: '' })} className="bg-[#1a8856] text-white px-6 py-2 rounded-lg font-bold shadow-md hover:bg-[#14532d] transition">+ Add New</button>
         </div>
 
         {editingTemplate ? (
@@ -114,11 +114,34 @@ export default function AdminTemplates() {
               </div>
             </div>
 
+            {/* DESCRIPTIONS SECTION */}
+            <div className="space-y-6 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
+              <div>
+                <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Short Description (Sub-title)</label>
+                <input 
+                  type="text" 
+                  value={editingTemplate.short_description || ''} 
+                  onChange={(e) => setEditingTemplate({...editingTemplate, short_description: e.target.value})} 
+                  className="w-full p-3 border border-gray-200 rounded-lg outline-none focus:border-[#1a8856]" 
+                  placeholder="One catchy sentence for the top of the page..."
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">Long Description (Product Details)</label>
+                <textarea 
+                  value={editingTemplate.long_description || ''} 
+                  onChange={(e) => setEditingTemplate({...editingTemplate, long_description: e.target.value})} 
+                  className="w-full p-3 border border-gray-200 rounded-lg h-40 outline-none focus:border-[#1a8856]" 
+                  placeholder="Explain what the template does, features, and benefits..."
+                />
+              </div>
+            </div>
+
             {/* MEDIA & DRIVE */}
             <div className="p-6 bg-green-50/20 rounded-xl border border-green-100 space-y-6">
               <div>
                 <label className="block text-[10px] font-black text-[#14532d] uppercase mb-2 tracking-widest">Download URL (Google Drive)</label>
-                <input type="text" value={editingTemplate.download_url || ''} onChange={(e) => setEditingTemplate({...editingTemplate, download_url: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg outline-none" placeholder="https://docs.google.com/spreadsheets/d/..." />
+                <input type="text" value={editingTemplate.download_url || ''} onChange={(e) => setEditingTemplate({...editingTemplate, download_url: e.target.value})} className="w-full p-3 border border-gray-200 rounded-lg outline-none" placeholder="https://docs.google.com/spreadsheets/d/.../copy" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {['thumbnail', 'img_1', 'img_2', 'img_3'].map((field) => (
