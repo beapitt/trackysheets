@@ -49,7 +49,7 @@ export default function TemplateDetail() {
     window.scrollTo(0, 0)
   }, [slug])
 
-  // --- LOGICA SEO & GEO (JSON-LD) ---
+  // --- LOGICA SEO ---
   const seoTitle = template ? `${template.seo_title || template.title}` : 'Loading...';
   const seoDesc = template ? (template.meta_description || '') : '';
   
@@ -61,24 +61,14 @@ export default function TemplateDetail() {
     "url": `https://trackysheets.vercel.app/template/${template.slug}`,
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Google Sheets, Microsoft Excel",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "TrackySheets"
-    },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "publisher": { "@type": "Organization", "name": "TrackySheets" },
     "mainEntity": {
       "@type": "FAQPage",
       "mainEntity": (template.faqs || []).map((f: any) => ({
         "@type": "Question",
         "name": f.q,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": f.a
-        }
+        "acceptedAnswer": { "@type": "Answer", "text": f.a }
       }))
     }
   } : null;
@@ -97,13 +87,28 @@ export default function TemplateDetail() {
     { label: "Access", value: "No Login Required" },
   ];
 
+  // Funzione per formattare il testo: grassetto automatico per titoli che finiscono con ":"
+  const formatDescription = (text: string) => {
+    if (!text) return "";
+    return text
+      .split('\n')
+      .map(line => {
+        // Se la riga finisce con ":" la mettiamo in grassetto
+        if (line.trim().endsWith(':')) {
+          return `<b>${line}</b>`;
+        }
+        // Supporto per il grassetto manuale tramite b o strong
+        return line;
+      })
+      .join('<br />');
+  };
+
   return (
     <div className="min-h-screen bg-white text-[#4b5563] font-inter antialiased overflow-x-hidden">
       <Navbar />
 
       <main className="max-w-[1440px] mx-auto px-5 md:px-10 pt-4 md:pt-6 pb-12">
         
-        {/* TITOLO E SHORT DESCRIPTION */}
         <div className="mb-6 text-left">
           <h1 className="text-[26px] md:text-[34px] font-bold tracking-tight text-[#374151] leading-tight">
             {template.title}
@@ -118,7 +123,6 @@ export default function TemplateDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           <div className="lg:col-span-8 xl:col-span-9">
-            {/* GALLERY */}
             <div className="mb-8">
               <div
                 className="aspect-video bg-[#f9f9f7] rounded-[24px] overflow-hidden border border-gray-100 shadow-sm cursor-zoom-in group relative"
@@ -142,15 +146,15 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* LONG DESCRIPTION COMPATTA CON READ MORE */}
+            {/* LONG DESCRIPTION COMPATTA E INTELLIGENTE */}
             {template.long_description && (
               <div className="mb-10 max-w-4xl text-left px-1">
                 <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Product Details</h2>
                 
-                <div className={`relative transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[3000px]' : 'max-h-32'}`}>
+                <div className={`relative transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-32'}`}>
                   <div 
-                    className="text-[15px] md:text-[16px] leading-snug font-medium text-[#4b5563] space-y-3"
-                    dangerouslySetInnerHTML={{ __html: template.long_description.replace(/\n/g, '<br />') }}
+                    className="text-[14px] md:text-[15px] leading-[1.4] font-medium text-[#4b5563]"
+                    dangerouslySetInnerHTML={{ __html: formatDescription(template.long_description) }}
                   />
                   
                   {!isExpanded && (
