@@ -5,7 +5,7 @@ import Navbar from '../layout/Navbar'
 import Footer from '../components/Footer'
 import Sidebar from '../layout/Sidebar'
 import { ChevronDown, X } from 'lucide-react'
-import { usePageMeta } from '../hooks/usePageMeta' // Importiamo il tuo nuovo hook
+import { usePageMeta } from '../hooks/usePageMeta'
 
 // --- SOTTO-COMPONENTI GRAFICI ---
 const CheckIcon = () => (
@@ -34,6 +34,7 @@ export default function TemplateDetail() {
   const [selectedImg, setSelectedImg] = useState<string | null>(null)
   const [lightboxImg, setLightboxImg] = useState<string | null>(null)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [isExpanded, setIsExpanded] = useState(false) // Stato per il Read More
 
   useEffect(() => {
     async function fetchData() {
@@ -82,7 +83,6 @@ export default function TemplateDetail() {
     }
   } : null;
 
-  // Attiviamo l'hook
   usePageMeta(seoTitle, seoDesc, schema);
 
   if (loading || !template) return null
@@ -103,20 +103,23 @@ export default function TemplateDetail() {
 
       <main className="max-w-[1440px] mx-auto px-5 md:px-10 pt-4 md:pt-6 pb-12">
         
-        <div className="mb-5 text-left">
+        {/* TITOLO E SHORT DESCRIPTION */}
+        <div className="mb-6 text-left">
           <h1 className="text-[26px] md:text-[34px] font-bold tracking-tight text-[#374151] leading-tight">
             {template.title}
           </h1>
-          <p className="text-[15px] md:text-[16px] text-[#6b7280] mt-2 font-medium max-w-4xl leading-relaxed">
-            {template.short_description}
-          </p>
+          {template.short_description && (
+            <p className="text-[15px] md:text-[17px] text-[#6b7280] mt-3 font-medium max-w-3xl leading-relaxed">
+              {template.short_description}
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           <div className="lg:col-span-8 xl:col-span-9">
             {/* GALLERY */}
-            <div className="mb-4">
+            <div className="mb-8">
               <div
                 className="aspect-video bg-[#f9f9f7] rounded-[24px] overflow-hidden border border-gray-100 shadow-sm cursor-zoom-in group relative"
                 onClick={() => setLightboxImg(selectedImg)}
@@ -139,13 +142,33 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* DESCRIPTION */}
-            <div className="mb-8 max-w-4xl text-left px-1 text-[16px] leading-relaxed font-medium whitespace-pre-wrap">
-              {template.long_description}
-            </div>
+            {/* LONG DESCRIPTION CON EFFETTO READ MORE */}
+            {template.long_description && (
+              <div className="mb-10 max-w-4xl text-left px-1">
+                <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Product Details</h2>
+                
+                <div className={`relative transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[2000px]' : 'max-h-32'}`}>
+                  <div className="text-[15px] md:text-[16px] leading-relaxed font-medium text-[#4b5563] whitespace-pre-wrap">
+                    {template.long_description}
+                  </div>
+                  
+                  {!isExpanded && (
+                    <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent" />
+                  )}
+                </div>
+
+                <button 
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="mt-3 text-[12px] font-bold text-[#1F5C3E] uppercase tracking-wider hover:underline flex items-center gap-1"
+                >
+                  {isExpanded ? 'Show less' : 'Read full description'}
+                  <ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+            )}
 
             {/* HOW IT WORKS */}
-            <div className="mb-8 bg-[#f9f9f6] p-7 rounded-[28px] border border-gray-100 max-w-4xl text-left">
+            <div className="mb-10 bg-[#f9f9f6] p-7 rounded-[28px] border border-gray-100 max-w-4xl text-left">
               <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#1F5C3E] mb-5">How it works</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
@@ -166,13 +189,13 @@ export default function TemplateDetail() {
               </div>
             </div>
 
-            {/* FAQ CENTRALI */}
+            {/* FAQ */}
             {faqData.length > 0 && (
               <div className="mb-10 max-w-4xl text-left px-1">
                 <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Frequently Asked Questions</h2>
                 <div className="space-y-1.5">
                   {faqData.map((item: any, i: number) => (
-                    <div key={i} className="border border-gray-50 rounded-xl overflow-hidden">
+                    <div key={i} className="border border-gray-50 rounded-xl overflow-hidden shadow-sm">
                       <button
                         onClick={() => setOpenFaq(openFaq === i ? null : i)}
                         className="w-full flex justify-between items-center p-4 text-left bg-white hover:bg-gray-50 transition-colors"
@@ -180,7 +203,7 @@ export default function TemplateDetail() {
                         <span className="text-[14px] font-bold text-[#1f2937]">{item.q}</span>
                         <ChevronDown size={16} className={`transition-transform duration-300 ${openFaq === i ? 'rotate-180 text-[#1F5C3E]' : 'text-gray-300'}`} />
                       </button>
-                      <div className={`transition-all duration-300 overflow-hidden ${openFaq === i ? 'max-h-[300px]' : 'max-h-0'}`}>
+                      <div className={`transition-all duration-300 overflow-hidden ${openFaq === i ? 'max-h-[500px]' : 'max-h-0'}`}>
                         <div className="p-4 pt-0 bg-white text-[14px] leading-relaxed text-[#6b7280]">
                           {item.a}
                         </div>
@@ -206,7 +229,7 @@ export default function TemplateDetail() {
                 </div>
               </div>
               <a
-                href={template.google_sheets_url}
+                href={template.download_url} // Verificato: deve puntare a download_url con /copy
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-between bg-[#1F5C3E] hover:bg-black text-white px-5 py-4 rounded-b-[14px] border border-[#1F5C3E] transition-all no-underline group"
